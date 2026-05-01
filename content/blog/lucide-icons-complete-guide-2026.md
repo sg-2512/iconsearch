@@ -2,7 +2,7 @@
 title: "Lucide Icons Complete Guide 2026 — Everything You Need to Know"
 description: "A comprehensive guide to Lucide Icons in 2026. Installation, usage in React and Next.js, tips, tricks, and comparisons with alternatives."
 date: "2026-03-15"
-author: "IconHub Team"
+author: "IconSearch Team"
 category: "Guide"
 tags: ["lucide", "react", "nextjs", "icons"]
 featured: true

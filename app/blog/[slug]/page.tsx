@@ -215,7 +215,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           color: 'var(--text-dim)',
           fontFamily: 'JetBrains Mono, monospace',
         }}>
-          // This article was researched and edited by the IconHub team.
+          // This article was researched and edited by the IconSearch team.
           Content may be AI-assisted and is reviewed for accuracy.
         </div>
         

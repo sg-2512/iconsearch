@@ -1,6 +1,6 @@
 export const metadata = {
-  title: 'Contact — IconHub',
-  description: 'Get in touch with the IconHub team. We welcome feedback, suggestions, and partnership inquiries.',
+  title: 'Contact — IconSearch',
+  description: 'Get in touch with the IconSearch team. We welcome feedback, suggestions, and partnership inquiries.',
 }
 
 export default function ContactPage() {
@@ -27,10 +27,10 @@ export default function ContactPage() {
             CONTACT DETAILS
           </h2>
           {[
-            { label: 'General Enquiries', value: 'hello@iconhub.dev', icon: '✉' },
-            { label: 'Privacy & Legal', value: 'privacy@iconhub.dev', icon: '⚖' },
-            { label: 'Partnerships', value: 'partners@iconhub.dev', icon: '🤝' },
-            { label: 'Report an Error', value: 'errors@iconhub.dev', icon: '🐛' },
+            { label: 'General Enquiries', value: 'hello@iconsearch.dev', icon: '✉' },
+            { label: 'Privacy & Legal', value: 'privacy@iconsearch.dev', icon: '⚖' },
+            { label: 'Partnerships', value: 'partners@iconsearch.dev', icon: '🤝' },
+            { label: 'Report an Error', value: 'errors@iconsearch.dev', icon: '🐛' },
           ].map(item => (
             <div key={item.label} style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '8px', padding: '16px 20px' }}>
               <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace', marginBottom: '6px', letterSpacing: '1px' }}>
@@ -46,11 +46,11 @@ export default function ContactPage() {
         {/* Info */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <h2 style={{ fontSize: '13px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '2px', marginBottom: '8px' }}>
-            ABOUT ICONHUB
+            ABOUT ICONSEARCH
           </h2>
           <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '8px', padding: '20px' }}>
             <p style={{ color: 'var(--text-muted)', fontSize: '14px', lineHeight: 1.8, marginBottom: '16px' }}>
-              IconHub is an independent developer resource. We are not affiliated with any of the icon libraries featured on this site.
+              IconSearch is an independent developer resource. We are not affiliated with any of the icon libraries featured on this site.
             </p>
             <p style={{ color: 'var(--text-muted)', fontSize: '14px', lineHeight: 1.8, marginBottom: '16px' }}>
               We welcome contributions, corrections, and suggestions. If you notice incorrect data about any icon library, please email us and we will update it promptly.
@@ -91,9 +91,9 @@ export default function ContactPage() {
         </h2>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           {[
-            { q: 'Can I suggest a new icon library to be added?', a: 'Yes! Email us at hello@iconhub.dev with the library name, GitHub link, and why you think it should be featured. We review all suggestions.' },
-            { q: 'I found incorrect data on your site. How do I report it?', a: 'Please email errors@iconhub.dev with the specific page URL and the correct information. We aim to fix errors within 24 hours.' },
-            { q: 'Can I advertise on IconHub?', a: 'We currently serve ads through Google AdSense. For direct partnerships or sponsored content enquiries, contact partners@iconhub.dev.' },
+            { q: 'Can I suggest a new icon library to be added?', a: 'Yes! Email us at hello@iconsearch.info with the library name, GitHub link, and why you think it should be featured. We review all suggestions.' },
+            { q: 'I found incorrect data on your site. How do I report it?', a: 'Please email errors@iconsearch.info with the specific page URL and the correct information. We aim to fix errors within 24 hours.' },
+            { q: 'Can I advertise on IconSearch?', a: 'We currently serve ads through Google AdSense. For direct partnerships or sponsored content enquiries, contact partners@iconsearch.dev.' },
             { q: 'Can I use your content on my site?', a: 'Our content is original and copyrighted. You may quote small excerpts with attribution and a link back to the original page. Full reproduction is not permitted.' },
           ].map((faq, i) => (
             <div key={i} style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '8px', padding: '20px' }}>

@@ -2,7 +2,7 @@
 title: "How to Migrate from Feather Icons to Lucide Icons (2026 Guide)"
 description: "Step-by-step guide to migrating from react-feather to lucide-react. Feather Icons is unmaintained — here is how to switch in under 10 minutes."
 date: "2026-04-19"
-author: "IconHub Team"
+author: "IconSearch Team"
 category: "Tutorial"
 tags: ["lucide", "feather", "react", "migration", "icons"]
 featured: true
@@ -148,4 +148,4 @@ Before deploying your migrated code, verify:
 
 Migrating from Feather Icons to Lucide Icons takes under 10 minutes for most projects. You get 5x more icons, full TypeScript support, active maintenance, and an identical API. There is no reason to stay on react-feather in 2026.
 
-For a full comparison of Lucide Icons with other alternatives, see our detailed guide at iconshub.netlify.app/icons/lucide-icons.
+For a full comparison of Lucide Icons with other alternatives, see our detailed guide at iconsearch.info/icons/lucide-icons.

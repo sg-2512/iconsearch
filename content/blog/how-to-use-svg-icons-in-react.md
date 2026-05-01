@@ -2,7 +2,7 @@
 title: "How to Use SVG Icons in React (Complete Step-by-Step Guide 2026)"
 description: "Learn how to use SVG icons in React using icon libraries, inline SVG, and imported files. Includes best practices, performance tips, and common mistakes to avoid."
 date: "2026-03-20"
-author: "IconHub Team"
+author: "IconSearch Team"
 category: "Tutorial"
 tags: ["react", "svg", "icons", "tutorial", "nextjs"]
 featured: true

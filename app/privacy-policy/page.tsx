@@ -1,6 +1,6 @@
 export const metadata = {
-  title: 'Privacy Policy — IconHub',
-  description: 'Privacy policy for IconHub. Learn how we collect, use and protect your data.',
+  title: 'Privacy Policy — IconSearch',
+  description: 'Privacy policy for IconSearch. Learn how we collect, use and protect your data.',
 }
 
 export default function PrivacyPolicyPage() {
@@ -23,7 +23,7 @@ export default function PrivacyPolicyPage() {
         {[
           {
             title: '1. Introduction',
-            content: 'Welcome to IconHub ("we", "our", or "us"). IconHub is an independent resource site that helps developers compare and discover open source icon libraries. This Privacy Policy explains how we collect, use, and protect information when you visit iconhub.dev.'
+            content: 'Welcome to IconSearch ("we", "our", or "us"). IconSearch is an independent resource site that helps developers compare and discover open source icon libraries. This Privacy Policy explains how we collect, use, and protect information when you visit iconsearch.dev.'
           },
           {
             title: '2. Information We Collect',
@@ -43,23 +43,23 @@ export default function PrivacyPolicyPage() {
           },
           {
             title: '6. Third Party Links',
-            content: 'IconHub contains links to external websites including GitHub repositories, npm packages, and official documentation sites. We are not responsible for the privacy practices of these external sites. We recommend reviewing their privacy policies before providing any personal information.'
+            content: 'IconSearch contains links to external websites including GitHub repositories, npm packages, and official documentation sites. We are not responsible for the privacy practices of these external sites. We recommend reviewing their privacy policies before providing any personal information.'
           },
           {
             title: '7. Data Security',
-            content: 'IconHub is a static website with no user accounts or database. We do not store any personal data on our servers. All analytics and advertising data is processed by Google according to their privacy policy.'
+            content: 'IconSearch is a static website with no user accounts or database. We do not store any personal data on our servers. All analytics and advertising data is processed by Google according to their privacy policy.'
           },
           {
             title: '8. Children\'s Privacy',
-            content: 'IconHub is not directed at children under the age of 13. We do not knowingly collect personal information from children. If you believe a child has provided us with personal information, please contact us immediately.'
+            content: 'IconSearch is not directed at children under the age of 13. We do not knowingly collect personal information from children. If you believe a child has provided us with personal information, please contact us immediately.'
           },
           {
             title: '9. Changes to This Policy',
-            content: 'We may update this Privacy Policy from time to time. We will notify you of any changes by updating the "Last updated" date at the top of this page. Your continued use of IconHub after any changes constitutes your acceptance of the new Privacy Policy.'
+            content: 'We may update this Privacy Policy from time to time. We will notify you of any changes by updating the "Last updated" date at the top of this page. Your continued use of IconSearch after any changes constitutes your acceptance of the new Privacy Policy.'
           },
           {
             title: '10. Contact Us',
-            content: 'If you have any questions about this Privacy Policy, please contact us at: privacy@iconhub.dev'
+            content: 'If you have any questions about this Privacy Policy, please contact us at: privacy@iconsearch.info'
           },
         ].map(section => (
           <div key={section.title}>

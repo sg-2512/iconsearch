@@ -2,7 +2,7 @@
 title: "How to Build a Consistent Icon System for Your UI (2026 Guide)"
 description: "Learn how to build a consistent icon system for your UI with practical design rules, icon selection tips, size and stroke guidelines, accessibility best practices, and implementation advice."
 date: "2026-03-28"
-author: "IconHub Team"
+author: "IconSearch Team"
 category: "Design"
 tags: ["icons", "design-system", "ui", "ux", "consistency"]
 featured: true

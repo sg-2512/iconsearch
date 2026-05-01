@@ -2,7 +2,7 @@
 title: "How to Choose the Right Icons for Your UI (Complete Guide 2026)"
 description: "A complete guide to choosing the right icons for your UI. Covers design principles, outline vs filled, accessibility, common mistakes, and the best icon libraries."
 date: "2026-03-25"
-author: "IconHub Team"
+author: "IconSearch Team"
 category: "Design"
 tags: ["icons", "ui", "design", "ux", "react"]
 featured: true

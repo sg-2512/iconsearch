@@ -2,7 +2,7 @@ import { getAllPosts } from '../../lib/blog'
 import Link from 'next/link'
 
 export const metadata = {
-  title: 'Blog — Icon Library Guides, Tutorials & Updates | IconHub',
+  title: 'Blog — Icon Library Guides, Tutorials & Updates | IconSearch',
   description: 'Guides, tutorials, comparisons and updates about open source icon libraries for React, Next.js and Vue developers.',
 }
 
