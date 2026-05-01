@@ -1,6 +1,3 @@
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
-
 import { MetadataRoute } from 'next'
 import { icons } from '../lib/icons'
 import { getAllPosts } from '../lib/blog'
