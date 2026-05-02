@@ -1,14 +1,14 @@
-import { MetadataRoute } from 'next'
+import {MetadataRoute} from 'next'
 
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: [
+    rules:[
       {
         userAgent: '*',
         allow: '/',
         disallow: ['/api/'],
       },
     ],
-    sitemap: 'https://iconsearch.info/sitemap.xml',
+    sitemap: 'https://iconsearch.info/sitemap.xml'
   }
 }
