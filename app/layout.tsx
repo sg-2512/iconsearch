@@ -149,6 +149,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </span>
               <div style={{ display: 'flex', gap: '20px' }}>
                 {[
+                  { label: 'About', href: '/about' },
                   { label: 'Best For You', href: '/best-for-you' },
                   { label: 'Privacy Policy', href: '/privacy-policy' },
                   { label: 'Terms', href: '/terms' },
