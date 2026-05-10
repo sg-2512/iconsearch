@@ -290,6 +290,8 @@ export default function HomePage() {
           )}
         </div>
       </section>
+
+      
     {/* FAQ Section */}
       <section style={{ padding: '0 0 80px' }}>
         <h2 style={{ fontSize: '26px', fontWeight: 800, fontFamily: 'Syne, sans-serif', marginBottom: '32px' }}>

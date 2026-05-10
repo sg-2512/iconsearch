@@ -225,6 +225,30 @@ export default function IconSearchPage() {
         </p>
       </section>
 
+
+      {/* SEO Content Section */}
+      <section style={{ marginBottom: '32px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '12px', marginBottom: '24px' }}>
+          {[
+            { number: '11,000+', label: 'Searchable Icons' },
+            { number: '8', label: 'Icon Libraries' },
+            { number: '5', label: 'Frameworks Covered' },
+            { number: '100%', label: 'Free & Open Source' },
+          ].map(stat => (
+            <div key={stat.label} style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '8px', padding: '16px', textAlign: 'center' }}>
+              <div style={{ fontSize: '24px', fontWeight: 800, color: 'var(--accent)', fontFamily: 'JetBrains Mono, monospace' }}>{stat.number}</div>
+              <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>{stat.label}</div>
+            </div>
+          ))}
+        </div>
+        <p style={{ color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.8, marginBottom: '12px' }}>
+          Search across Lucide Icons, Heroicons, Tabler Icons, Phosphor Icons, Radix Icons, Bootstrap Icons, Remix Icon, and Feather Icons simultaneously. Find the same icon name across multiple libraries and compare styles instantly. Copy the React import code with one click.
+        </p>
+        <p style={{ color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.8 }}>
+          Every icon includes the exact npm install command, React import statement, and JSX usage example. Works with React, Next.js App Router, Vue 3, and Svelte.
+        </p>
+      </section>
+      
       {/* Search Bar */}
       <div style={{ marginBottom: '24px' }}>
         <input

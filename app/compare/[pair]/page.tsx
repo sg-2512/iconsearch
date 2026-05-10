@@ -13,13 +13,13 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: { params: Promise<{ pair: string }> }) {
   const { pair } = await params
-  const [slugA, slugB] = pair.split('-vs-')
-  const a = icons.find(i => i.slug === slugA)
-  const b = icons.find(i => i.slug === slugB)
-  if (!a || !b) return {}
+  const [slugA, , slugB] = pair.split('-vs-')
+  const libA = icons.find(i => i.slug === slugA)
+  const libB = icons.find(i => i.slug === slugB)
+  if (!libA || !libB) return {}
   return {
-    title: `${a.name} vs ${b.name} (2026) — Detailed Comparison`,
-    description: `${a.name} vs ${b.name}: icon count, TypeScript support, tree-shaking, bundle size, framework support and more. Find the best icon library for your project.`,
+    title: `${libA.name} vs ${libB.name} — Which is Better for React in 2026?`,
+    description: `Detailed comparison of ${libA.name} and ${libB.name}. Icon count, GitHub stars, TypeScript support, bundle size, and which library to choose for your React or Next.js project.`,
   }
 }
 

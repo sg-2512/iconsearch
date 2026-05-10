@@ -17,8 +17,8 @@ const syne = Syne({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://iconsearch.info'),
-  title: 'IconSearch — Best Free Icon Libraries for Developers',
-  description: 'Compare and find the best free open source icon libraries for React, Next.js, Vue and more.',
+  title: 'IconSearch — Compare Lucide, Heroicons & Tabler Icons for React (2026)',
+  description: 'Find and compare the best free SVG icon libraries for React and Next.js. Side-by-side comparisons, installation guides, and a search tool for 11,000+ icons across Lucide, Heroicons, Tabler, Phosphor and more.',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -128,6 +128,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   { label: 'Compare', href: '/compare' },
                   { label: 'Best For You', href: '/best-for-you' },
                   { label: 'Categories', href: '/icons/category' },
+                  { label: 'License Guide', href: '/licenses' },
                   { label: 'Use Cases', href: '/use-cases' },
                   { label: 'Stats', href: '/stats' },
                   { label: 'Blog', href: '/blog' },
