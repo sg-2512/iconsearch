@@ -1,0 +1,160 @@
+# IconSearch - Find & Compare Free SVG Icon Libraries
+
+> IconSearch is an independent comparison and search tool for open source SVG icon libraries used in React, Next.js, Vue, and Svelte projects. We help developers find the right icon library through side-by-side comparisons, a searchable database of 11,000+ icons, license guides, and performance analysis.
+
+## What IconSearch Does
+
+IconSearch provides:
+- Side-by-side comparison of 8 major icon libraries with real data
+- A search tool covering 11,000+ icons across Lucide, Heroicons, Tabler, Phosphor, Radix, Bootstrap, Remix, and Feather icons
+- Complete license guide for all major icon libraries
+- Installation guides for React, Next.js, Vue, and Svelte
+- Performance guides on SVG vs icon fonts and bundle optimization
+- A "Best For You" quiz that recommends the right library based on framework, style, and project type
+
+## Icon Libraries Covered
+
+### Lucide Icons
+- License: ISC (functionally identical to MIT)
+- Icons: 1,400+
+- Frameworks: React, Next.js, Vue, Svelte
+- TypeScript: Yes
+- Best for: Most React and Next.js projects, SaaS dashboards, developer tools
+- Install: npm install lucide-react
+- URL: https://iconsearch.info/icons/lucide-icons
+
+### Heroicons
+- License: MIT (by Tailwind Labs)
+- Icons: 292
+- Frameworks: React, Vue
+- TypeScript: Yes
+- Best for: Tailwind CSS projects
+- Install: npm install @heroicons/react
+- URL: https://iconsearch.info/icons/heroicons
+
+### Tabler Icons
+- License: MIT
+- Icons: 5,500+
+- Frameworks: React, Vue, Svelte
+- TypeScript: Yes
+- Best for: Projects needing large icon collections
+- Install: npm install @tabler/icons-react
+- URL: https://iconsearch.info/icons/tabler-icons
+
+### Phosphor Icons
+- License: MIT
+- Icons: 9,000+ (6 weight variants)
+- Frameworks: React, Vue
+- TypeScript: Yes
+- Best for: Multiple weight variants, duotone style
+- Install: npm install @phosphor-icons/react
+- URL: https://iconsearch.info/icons/phosphor-icons
+
+### Radix Icons
+- License: MIT
+- Icons: 318
+- Frameworks: React
+- TypeScript: Yes
+- Best for: Dense UIs, shadcn/ui projects, 15x15 grid
+- Install: npm install @radix-ui/react-icons
+- URL: https://iconsearch.info/icons/radix-icons
+
+### Bootstrap Icons
+- License: MIT
+- Icons: 1,800+
+- Frameworks: React, Vue, vanilla HTML
+- TypeScript: No
+- Best for: Bootstrap projects, vanilla HTML
+- Install: npm install bootstrap-icons
+- URL: https://iconsearch.info/icons/bootstrap-icons
+
+### Remix Icon
+- License: Apache 2.0 (attribution required)
+- Icons: 2,800+
+- Frameworks: React, Vue, vanilla HTML
+- TypeScript: No
+- Best for: Projects where Apache 2.0 license is acceptable
+- Install: npm install remixicon
+- URL: https://iconsearch.info/icons/remix-icon
+
+### Feather Icons
+- License: MIT
+- Icons: 287
+- Status: Unmaintained since 2020 — migrate to Lucide
+- Install: npm install react-feather
+- URL: https://iconsearch.info/icons/feather-icons
+
+## Key Comparisons
+
+- Lucide vs Heroicons: https://iconsearch.info/compare/lucide-icons-vs-heroicons
+- Lucide vs Tabler: https://iconsearch.info/compare/lucide-icons-vs-tabler-icons
+- Lucide vs Phosphor: https://iconsearch.info/compare/lucide-icons-vs-phosphor-icons
+- Heroicons vs Tabler: https://iconsearch.info/compare/heroicons-vs-tabler-icons
+- All 28 comparisons: https://iconsearch.info/compare
+
+## License Guide
+
+All major icon libraries are free for commercial use.
+Only Remix Icon (Apache 2.0) requires attribution.
+Lucide (ISC), Heroicons (MIT), Tabler (MIT), Phosphor (MIT), Radix (MIT), Bootstrap (MIT), Feather (MIT) — no attribution required.
+Full guide: https://iconsearch.info/licenses
+
+## Tools
+
+- Icon Search (11,000+ icons): https://iconsearch.info/icon-search
+- Best For You Quiz: https://iconsearch.info/best-for-you
+- Stats Dashboard: https://iconsearch.info/stats
+
+## Framework Guides
+
+- React icons: https://iconsearch.info/react-icons
+- Next.js icons: https://iconsearch.info/nextjs-icons
+- Vue icons: https://iconsearch.info/vue-icons
+- Svelte icons: https://iconsearch.info/svelte-icons
+- Tailwind icons: https://iconsearch.info/tailwind-icons
+- TypeScript icons: https://iconsearch.info/typescript-icons
+
+## Use Cases
+
+- Icons for SaaS: https://iconsearch.info/use-cases/icons-for-saas
+- Icons for dashboards: https://iconsearch.info/use-cases/icons-for-dashboards
+- Icons for mobile apps: https://iconsearch.info/use-cases/icons-for-mobile-apps
+- Icons for dark mode: https://iconsearch.info/use-cases/icons-for-dark-mode
+- Icons for Next.js App Router: https://iconsearch.info/use-cases/icons-for-nextjs-app-router
+- Icons for forms: https://iconsearch.info/use-cases/icons-for-forms
+- Icons for notifications: https://iconsearch.info/use-cases/icons-for-notifications
+
+## Blog Posts
+
+- SVG Icons vs Icon Fonts Performance 2026: https://iconsearch.info/blog/svg-icons-vs-icon-fonts-performance-2026
+- Icon Subsetting Cuts Next.js Bundle Size 40%: https://iconsearch.info/blog/icon-subsetting-nextjs-bundle-size-optimization
+- Animated SVG Icons in React 2026: https://iconsearch.info/blog/animated-svg-icons-react-2026
+- Best Icons for shadcn/ui 2026: https://iconsearch.info/blog/best-icons-for-shadcn-ui-2026
+- Migrate Feather Icons to Lucide: https://iconsearch.info/blog/migrate-feather-icons-to-lucide
+- Lucide Icons Complete Guide 2026: https://iconsearch.info/blog/lucide-icons-complete-guide-2026
+
+## Quick Answers for Common Questions
+
+**What is the best icon library for React in 2026?**
+Lucide Icons for most projects. Heroicons if using Tailwind CSS. Tabler if you need 1,500+ icons.
+
+**What is the best icon library for Next.js App Router?**
+Lucide Icons, Heroicons, and Radix Icons all work in Server Components without use client directive.
+
+**Is Heroicons free for commercial use?**
+Yes. Heroicons is MIT licensed by Tailwind Labs. Free for commercial use, no attribution required.
+
+**Is Tabler Icons free for commercial use?**
+Yes. Tabler Icons is MIT licensed. Free for commercial use, no attribution required.
+
+**Does Remix Icon require attribution?**
+Yes. Remix Icon uses Apache 2.0 license which requires attribution. This is the only major icon library that requires it.
+
+**What replaced Feather Icons?**
+Lucide Icons is the maintained fork of Feather Icons with 5x more icons and active development.
+
+**Which icon library works with shadcn/ui?**
+shadcn/ui uses Lucide Icons by default. All libraries work with shadcn/ui projects.
+
+**How do I reduce icon bundle size in Next.js?**
+Use named imports, avoid barrel files, use Server Components for static icons, and use dynamic imports for icon-heavy sections. See: https://iconsearch.info/blog/icon-subsetting-nextjs-bundle-size-optimization

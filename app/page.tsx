@@ -291,6 +291,27 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Recent additions — links indexed pages to new pages */}
+      <section style={{ marginBottom: '48px' }}>
+        <h2 style={{ fontSize: '13px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '2px', marginBottom: '16px' }}>
+          RECENTLY ADDED
+        </h2>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          {[
+            { label: 'Icon Library License Guide — MIT, Apache, ISC Explained', href: '/licenses' },
+            { label: 'SVG Icons vs Icon Fonts — Performance in 2026', href: '/blog/svg-icons-vs-icon-fonts-performance-2026' },
+            { label: 'How Icon Subsetting Cuts Next.js Bundle Size by 40%', href: '/blog/icon-subsetting-nextjs-bundle-size-optimization' },
+            { label: 'Animated SVG Icons in React — Complete Guide', href: '/blog/animated-svg-icons-react-2026' },
+            { label: 'Best Icons for shadcn/ui in 2026', href: '/blog/best-icons-for-shadcn-ui-2026' },
+          ].map(link => (
+            <a key={link.href} href={link.href} style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', display: 'flex', justifyContent: 'space-between', padding: '10px 14px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '6px' }}>
+              {link.label}
+              <span style={{ color: 'var(--accent)' }}>→</span>
+            </a>
+          ))}
+        </div>
+      </section>
+
       
     {/* FAQ Section */}
       <section style={{ padding: '0 0 80px' }}>

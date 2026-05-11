@@ -2,8 +2,8 @@ import { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Icon Library Licenses — MIT, Apache, ISC Explained (2026)',
-  description: 'Complete guide to icon library licenses. Is Heroicons MIT? Can you use Tabler Icons commercially? Official license sources for Lucide, Heroicons, Tabler, Phosphor and more.',
+  title: 'Heroicons License — MIT, Official Source & Commercial Use (2026)',
+  description: 'Heroicons is MIT licensed by Tailwind Labs. Free for commercial use, no attribution required. Official license source, full breakdown of all icon library licenses.',
 }
 
 const licenseData = [

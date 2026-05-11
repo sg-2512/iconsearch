@@ -30,8 +30,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const icon = icons.find(i => i.slug === slug)
   if (!icon) return {}
   return {
-    title: `${icon.name} — Complete Guide, Installation & Examples (2026)`,
-    description: `${icon.name} complete guide 2026 — installation for ${icon.frameworks.slice(0,2).join(' and ')}, ${icon.iconCount} icons, ${icon.license} license, TypeScript ${icon.typescript ? 'supported' : 'not supported'}. Compare with alternatives.`,
+    title: `${icon.name} — License, Installation & React Guide (2026)`,
+    description: `${icon.name} is ${icon.license} licensed. Free for commercial use. Complete installation guide for React and Next.js, ${icon.iconCount} icons, TypeScript support. Official source confirmed.`,
   }
 }
 
