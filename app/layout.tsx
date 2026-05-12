@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 import Navbar from './components/Navbar'
 import { JetBrains_Mono, Syne } from 'next/font/google'
+import Script from 'next/script'
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
@@ -37,6 +38,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             })
           }}
         />
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=G-T75PM4NWBD`}
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-T75PM4NWBD');
+          `}
+        </Script>
       </head>
       <body>
         <Navbar />
