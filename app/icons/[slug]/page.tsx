@@ -7,6 +7,9 @@ import { remixIconData } from '../../../data/libraries/remix-icon'
 import { featherIconsData } from '../../../data/libraries/feather-icons'
 import { bootstrapIconsData } from '../../../data/libraries/bootstrap-icons'
 import { radixIconsData } from '../../../data/libraries/radix-icons'
+import { fontAwesomeIconsData } from '../../../data/libraries/fontawesome-icons'
+import { reactIconsData } from '../../../data/libraries/react-icons'
+
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
@@ -17,8 +20,10 @@ const libraryData: Record<string, any> = {
   'phosphor-icons': phosphorIconsData,
   'remix-icon': remixIconData,
   'feather-icons': featherIconsData,
+  'font-awesome': fontAwesomeIconsData,
   'bootstrap-icons': bootstrapIconsData,
   'radix-icons': radixIconsData,
+  'react-icons': reactIconsData,
 }
 
 export async function generateStaticParams() {

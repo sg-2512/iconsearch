@@ -179,7 +179,57 @@ export const icons: IconLibrary[] = [
     cons: ["Only 318 icons", "15x15 fixed size only"],
     installCommand: "npm install @radix-ui/react-icons",
     usageExample: "import { HomeIcon } from '@radix-ui/react-icons'\n\nexport default function App() {\n  return <HomeIcon />\n}"
-  }
+  },
+  {
+    name: 'Font Awesome',
+    slug: 'font-awesome',
+    description: 'The internet\'s most popular icon library with 2,000+ free icons and 16,000+ Pro icons. Used by millions of websites worldwide. Available as SVG components for React with the official @fortawesome/react-fontawesome package.',
+    website: 'https://fontawesome.com',
+    github: 'https://github.com/FortAwesome/Font-Awesome',
+    npm: 'https://www.npmjs.com/package/@fortawesome/react-fontawesome',
+    stars: 76500,
+    iconCount: 2058,
+    license: 'Mixed (CC BY 4.0 free icons, MIT code)',
+    frameworks: ['react', 'vue', 'angular', 'svelte'],
+    style: ['solid', 'regular', 'light', 'thin', 'duotone', 'brands'],
+    figmaPlugin: true,
+    typescript: true,
+    treeshakable: true,
+    pros: ["Extensive Library","Infinite Scalability","CSS Customization","Ease of Integration","Accessibility-Minded"],
+    cons:["Performance Overhead","Licensing Costs","Rendering Issues","Size Inconsistencies","Design Sameness"],
+    installCommand: 'npm install @fortawesome/fontawesome-svg-core @fortawesome/free-solid-svg-icons @fortawesome/react-fontawesome',
+    usageExample: "<FontAwesomeIcon icon={faHome} />",
+  },
+
+  {
+    name: 'React Icons',
+    slug: 'react-icons',
+    description: 'One package, 40,000+ icons. Aggregates Font Awesome, Material Design, Heroicons, Tabler, Feather, Bootstrap Icons, and 20+ more icon sets under a single unified React API.',
+    website: 'https://react-icons.github.io/react-icons/',
+    github: 'https://github.com/react-icons/react-icons',
+    npm: 'react-icons',
+    stars: 11500,
+    iconCount: 40000,
+    license: 'MIT',
+    frameworks: ['react', 'nextjs'],
+    style: ['outline', 'filled', 'duotone', 'brands'],
+    figmaPlugin: false,
+    typescript: true,
+    treeshakable: true,
+    pros: [
+      'One package replaces 25+ separate installs',
+      '40,000+ icons — largest vocabulary available',
+      'Unified API across all included sets',
+      'Full TypeScript support',
+    ],
+    cons: [
+      'No consistent visual identity — mixing sets looks inconsistent',
+      'Heavy node_modules footprint',
+      'Not a library — a wrapper around other libraries',
+    ],
+    installCommand: 'npm install react-icons',
+    usageExample: "import { FaHome } from 'react-icons/fa'\nimport { MdSettings } from 'react-icons/md'\nimport { HiUser } from 'react-icons/hi'\n\nexport default function App() {\n  return (\n    <div>\n      <FaHome size={24} />\n      <MdSettings size={24} />\n      <HiUser size={24} />\n    </div>\n  )\n}",
+  },
 ]
 
 export function getIconBySlug(slug: string) {
