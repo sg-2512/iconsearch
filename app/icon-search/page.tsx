@@ -179,6 +179,15 @@ export default function IconSearchPage() {
     return () => window.removeEventListener('keydown', handleKey)
   }, [])
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const urlQuery = params.get('q')
+    if (urlQuery) {
+      setQuery(urlQuery)
+      loadIcons()
+    }
+  }, [])
+
 
   // Lazy load icon data
   async function loadIcons() {

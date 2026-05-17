@@ -8,5 +8,4 @@
 [[headers]]
   for = "/sitemap.xml"
   [headers.values]
-    Cache-Control = "no-cache, no-store, must-revalidate"
     Content-Type = "application/xml"

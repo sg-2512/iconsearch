@@ -157,7 +157,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
             {/* Bottom bar */}
             <div style={{ borderTop: '1px solid var(--border)', paddingTop: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
-              <span style={{ color: 'var(--text-dim)', fontSize: '12px', fontFamily: 'JetBrains Mono, monospace' }}>
+              <span style={{ color: 'var(--text-muted)', fontSize: '12px', fontFamily: 'JetBrains Mono, monospace' }}>
                 <span style={{ color: 'var(--accent)' }}>// </span>
                 IconSearch is an independent resource not affiliated with any icon library project.
               </span>
@@ -169,7 +169,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   { label: 'Terms', href: '/terms' },
                   { label: 'Contact', href: '/contact' },
                 ].map(link => (
-                  <a key={link.href} href={link.href} style={{ color: 'var(--text-dim)', textDecoration: 'none', fontSize: '12px', fontFamily: 'JetBrains Mono, monospace' }}>
+                  <a key={link.href} href={link.href} style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '12px', fontFamily: 'JetBrains Mono, monospace' }}>
                     {link.label}
                   </a>
                 ))}

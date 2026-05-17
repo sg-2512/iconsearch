@@ -124,11 +124,11 @@ function getResult(answers: Answers): Result {
         tags: ['6 weight variants', 'Duotone', 'TypeScript', 'MIT License'],
       },
       secondary: {
-        slug: 'tabler-icons',
-        name: 'Tabler Icons',
-        reason: 'If duotone is not strictly necessary, Tabler Icons offers both outline and filled styles with 5,500+ icons.',
+        slug: 'font-awesome',
+        name: 'Font Awesome',
+        reason: 'Font Awesome Pro also offers duotone icons alongside 10 other styles, making it the best choice if you are open to a paid plan and need brand/social media icons alongside duotone.',
       },
-      summary: 'For duotone icons, Phosphor Icons is the only serious option in the free tier.',
+      summary: 'For duotone icons, Phosphor Icons is the best free option. Font Awesome Pro is the alternative if you need a paid plan.',
     }
   }
 
@@ -170,7 +170,45 @@ function getResult(answers: Answers): Result {
     }
   }
 
-  // Large volume → Tabler
+  // Marketing or Ecommerce → Font Awesome (brand icons matter here)
+  if (project === 'marketing' || project === 'ecommerce') {
+    return {
+      primary: {
+        slug: 'font-awesome',
+        name: 'Font Awesome',
+        reason: `Marketing sites and ecommerce stores almost always need brand and social media icons — GitHub, Twitter, Instagram, LinkedIn, payment logos. Font Awesome is the only major free library that includes 400+ brand icons out of the box via its free-brands-svg-icons package. No other library comes close for this use case.`,
+        installCommand: `npm install @fortawesome/fontawesome-svg-core @fortawesome/free-solid-svg-icons @fortawesome/free-brands-svg-icons @fortawesome/react-fontawesome`,
+        tags: ['400+ brand icons', '2,058 free icons', 'TypeScript', 'MIT code / CC BY 4.0 icons'],
+      },
+      secondary: {
+        slug: 'lucide-icons',
+        name: 'Lucide Icons',
+        reason: 'If your project does not need brand/social logos, Lucide Icons is a cleaner, simpler alternative with a more modern aesthetic and zero attribution requirements.',
+      },
+      summary: 'For marketing and ecommerce projects that need social media and brand logos, Font Awesome is the only free library that covers this out of the box.',
+    }
+  }
+
+  // Personal / Portfolio → React Icons (variety for prototyping)
+  if (project === 'personal') {
+    return {
+      primary: {
+        slug: 'react-icons',
+        name: 'React Icons',
+        reason: 'For personal projects and portfolios, React Icons is the fastest way to get started. One package gives you 40,000+ icons from 25+ libraries — Font Awesome, Material Design, Heroicons, Feather, Bootstrap Icons, and more — all with one unified API. You never have to switch packages when you cannot find the icon you need.',
+        installCommand: 'npm install react-icons',
+        tags: ['40,000+ icons', '25+ icon sets', 'TypeScript', 'MIT License'],
+      },
+      secondary: {
+        slug: 'lucide-icons',
+        name: 'Lucide Icons',
+        reason: 'If you prefer a single focused library with a consistent visual style, Lucide Icons is the cleanest choice for personal projects with 1,400+ well-crafted icons.',
+      },
+      summary: 'For personal projects and portfolios, React Icons gives you maximum choice with minimum setup — one install, 40,000+ icons.',
+    }
+  }
+
+  // Large volume → Tabler (primary) + React Icons (secondary)
   if (volume === 'large') {
     return {
       primary: {
@@ -181,11 +219,11 @@ function getResult(answers: Answers): Result {
         tags: ['5,500+ icons', 'Outline + Filled', 'TypeScript', 'MIT License'],
       },
       secondary: {
-        slug: 'phosphor-icons',
-        name: 'Phosphor Icons',
-        reason: 'If you need multiple weights including duotone alongside a large collection, Phosphor Icons with 1,248 icons in 6 weights is a strong alternative.',
+        slug: 'react-icons',
+        name: 'React Icons',
+        reason: 'If you need icons from multiple design languages — or specifically need brand/tech logos alongside UI icons — React Icons bundles 40,000+ icons from 25+ sets in a single package. It is the better choice when variety matters more than visual consistency.',
       },
-      summary: 'When icon volume is the priority, Tabler Icons is unmatched in the free tier.',
+      summary: 'When icon volume is the priority, Tabler Icons is unmatched in the free tier. React Icons is the alternative if you need icons from multiple design families.',
     }
   }
 
@@ -257,11 +295,11 @@ function getResult(answers: Answers): Result {
         tags: ['CSS font approach', '1,800+ icons', 'Outline + Filled', 'MIT License'],
       },
       secondary: {
-        slug: 'remix-icon',
-        name: 'Remix Icon',
-        reason: 'Remix Icon also works well in vanilla HTML with its CSS font approach and offers 2,800+ icons.',
+        slug: 'font-awesome',
+        name: 'Font Awesome',
+        reason: 'Font Awesome also works perfectly in vanilla HTML via its CDN Kit — paste one script tag and use class names directly. The best choice for vanilla projects that also need brand/social media icons.',
       },
-      summary: 'For vanilla HTML projects, CSS font icon libraries work better than SVG component libraries.',
+      summary: 'For vanilla HTML projects, CSS font icon libraries work better than SVG component libraries. Both Bootstrap Icons and Font Awesome support this pattern.',
     }
   }
 
@@ -275,9 +313,9 @@ function getResult(answers: Answers): Result {
       tags: ['Most popular in 2026', 'TypeScript', 'Tree-shakable', 'ISC License'],
     },
     secondary: {
-      slug: 'heroicons',
-      name: 'Heroicons',
-      reason: 'If you are using Tailwind CSS, Heroicons by the Tailwind team is an excellent alternative with tighter design system integration.',
+      slug: 'react-icons',
+      name: 'React Icons',
+      reason: 'If you find yourself needing icons from multiple design families or want maximum variety in a single install, React Icons bundles 40,000+ icons from 25+ libraries under one API.',
     },
     summary: 'For most React and Next.js projects in 2026, Lucide Icons is the safe default recommendation.',
   }

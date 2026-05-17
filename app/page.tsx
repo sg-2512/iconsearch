@@ -1,6 +1,7 @@
 import { icons } from '../lib/icons'
 import Link from 'next/link'
 import { getAllPosts } from '../lib/blog'
+import HomeSearch from './components/HomeSearch'
 
 export const metadata = {
   title: 'IconSearch — Find & Compare Free SVG Icon Libraries (2026)',
@@ -85,6 +86,9 @@ export default function HomePage() {
             </span>
           ))}
         </div>
+
+        <HomeSearch />
+
         {/* CTA Buttons */}
         <div style={{ display: 'flex', gap: '12px', marginTop: '28px', flexWrap: 'wrap' }}>
           <Link href="/icon-search" style={{
