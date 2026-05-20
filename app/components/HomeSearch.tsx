@@ -44,7 +44,7 @@ export default function HomeSearch() {
               right: '8px',
               top: '50%',
               transform: 'translateY(-50%)',
-              background: 'var(--accent)',
+              background: 'var(--accent-accessible)',
               color: 'white',
               border: 'none',
               borderRadius: '6px',

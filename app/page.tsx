@@ -92,7 +92,7 @@ export default function HomePage() {
         {/* CTA Buttons */}
         <div style={{ display: 'flex', gap: '12px', marginTop: '28px', flexWrap: 'wrap' }}>
           <Link href="/icon-search" style={{
-            background: 'var(--accent)',
+            background: 'var(--accent-accessible)',
             color: 'white',
             padding: '12px 24px',
             borderRadius: '8px',

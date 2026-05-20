@@ -18,6 +18,20 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   }
 }
 
+function parseMdInline(text: string): React.ReactNode {
+  // Handle **bold** and `code` inline
+  const parts = text.split(/(\*\*[^*]+\*\*|`[^`]+`)/g)
+  return parts.map((part, i) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return <strong key={i} style={{ color: 'var(--text)', fontWeight: 700 }}>{part.slice(2, -2)}</strong>
+    }
+    if (part.startsWith('`') && part.endsWith('`')) {
+      return <code key={i} style={{ background: 'var(--code-bg)', color: 'var(--green)', fontFamily: 'JetBrains Mono, monospace', fontSize: '13px', padding: '1px 6px', borderRadius: '4px' }}>{part.slice(1, -1)}</code>
+    }
+    return part
+  })
+}
+
 function renderContent(content: string) {
   const lines = content.split('\n')
   const elements: React.ReactNode[] = []
@@ -29,6 +43,7 @@ function renderContent(content: string) {
   while (i < lines.length) {
     const line = lines[i]
 
+    // Code blocks
     if (line.startsWith('```')) {
       if (!inCodeBlock) {
         inCodeBlock = true
@@ -63,6 +78,109 @@ function renderContent(content: string) {
       continue
     }
 
+    // Markdown table — collect all consecutive table lines
+    if (line.trim().startsWith('|')) {
+      const tableLines: string[] = []
+      while (i < lines.length && lines[i].trim().startsWith('|')) {
+        tableLines.push(lines[i])
+        i++
+      }
+
+      // First row = headers, second row = separator (skip), rest = body
+      const [headerRow, , ...bodyRows] = tableLines
+      const headers = headerRow.split('|').map(h => h.trim()).filter(Boolean)
+      const rows = bodyRows
+        .filter(r => !r.match(/^[\s|:-]+$/)) // skip any extra separator rows
+        .map(r => r.split('|').map(c => c.trim()).filter(Boolean))
+
+      elements.push(
+        <div key={`table-${i}`} style={{ overflowX: 'auto', marginBottom: '32px', marginTop: '8px' }}>
+          <table style={{
+            width: '100%',
+            borderCollapse: 'collapse',
+            fontSize: '13px',
+            fontFamily: 'inherit',
+            border: '1px solid var(--border)',
+            borderRadius: '8px',
+            overflow: 'hidden',
+          }}>
+            <thead>
+              <tr style={{ background: 'var(--bg-secondary)' }}>
+                {headers.map((h, idx) => (
+                  <th key={idx} style={{
+                    padding: '10px 14px',
+                    textAlign: 'left',
+                    fontSize: '11px',
+                    fontWeight: 600,
+                    color: 'var(--text-muted)',
+                    textTransform: 'uppercase',
+                    letterSpacing: '.06em',
+                    borderBottom: '1px solid var(--border)',
+                    whiteSpace: 'nowrap',
+                  }}>
+                    {parseMdInline(h)}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row, ridx) => (
+                <tr key={ridx} style={{
+                  borderBottom: '1px solid var(--border)',
+                  background: ridx % 2 === 0 ? 'transparent' : 'var(--bg-secondary)',
+                }}>
+                  {row.map((cell, cidx) => {
+                    // Style the paid tier column (3rd col, index 2) with badges
+                    const isFree = cell === '$0 — no paid tier'
+                    const isPaid = cell.match(/^\$\d+/)
+                    const isNo = cell === 'No'
+                    const isYes = cell.toLowerCase().includes('yes') || cell.toLowerCase().includes('technically')
+
+                    let badge = null
+                    if (cidx === 2) {
+                      if (isFree) badge = { bg: '#064e3b', color: '#6ee7b7', text: '$0' }
+                      else if (isPaid) badge = { bg: '#78350f', color: '#fcd34d', text: cell.replace(' individual', '') }
+                    }
+                    if (cidx === 4) {
+                      if (isNo) badge = { bg: '#064e3b', color: '#6ee7b7', text: 'No' }
+                      else if (isYes) badge = { bg: '#7f1d1d', color: '#fca5a5', text: cell }
+                    }
+
+                    return (
+                      <td key={cidx} style={{
+                        padding: '9px 14px',
+                        color: cidx === 0 ? 'var(--text)' : 'var(--text-muted)',
+                        fontWeight: cidx === 0 ? 600 : 400,
+                        fontSize: '13px',
+                        verticalAlign: 'middle',
+                      }}>
+                        {badge ? (
+                          <span style={{
+                            display: 'inline-block',
+                            fontSize: '11px',
+                            fontWeight: 600,
+                            padding: '2px 8px',
+                            borderRadius: '4px',
+                            background: badge.bg,
+                            color: badge.color,
+                            whiteSpace: 'nowrap',
+                          }}>
+                            {badge.text}
+                          </span>
+                        ) : parseMdInline(cell)}
+                      </td>
+                    )
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )
+      continue
+    }
+
+    // Headings
     if (line.startsWith('## ')) {
       const heading = line.replace('## ', '')
       const isFaq = heading.toLowerCase().includes('faq') || heading.toLowerCase().includes('frequently asked')
@@ -103,6 +221,7 @@ function renderContent(content: string) {
       continue
     }
 
+    // Bullet lists
     if (line.startsWith('* ') || line.startsWith('- ')) {
       const bulletItems: string[] = []
       while (i < lines.length && (lines[i].startsWith('* ') || lines[i].startsWith('- '))) {
@@ -114,7 +233,7 @@ function renderContent(content: string) {
           {bulletItems.map((item, idx) => (
             <li key={idx} style={{ display: 'flex', gap: '10px', alignItems: 'flex-start', listStyle: 'none' }}>
               <span style={{ color: 'var(--accent)', flexShrink: 0, fontFamily: 'JetBrains Mono, monospace', marginTop: '3px' }}>→</span>
-              <span style={{ color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.7 }}>{item}</span>
+              <span style={{ color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.7 }}>{parseMdInline(item)}</span>
             </li>
           ))}
         </ul>
@@ -122,6 +241,7 @@ function renderContent(content: string) {
       continue
     }
 
+    // Horizontal rule
     if (line.startsWith('---')) {
       elements.push(<hr key={i} style={{ border: 'none', borderTop: '1px solid var(--border)', margin: '40px 0' }} />)
       i++
@@ -130,9 +250,10 @@ function renderContent(content: string) {
 
     if (line.trim() === '') { i++; continue }
 
+    // Paragraph
     elements.push(
       <p key={i} style={{ color: 'var(--text-muted)', fontSize: '16px', lineHeight: 1.9, marginBottom: '20px' }}>
-        {line}
+        {parseMdInline(line)}
       </p>
     )
     i++
@@ -197,7 +318,15 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         {post.tags.length > 0 && (
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
             {post.tags.map((tag: string) => (
-              <span key={tag} style={{ fontSize: '11px', color: 'var(--text-dim)', fontFamily: 'JetBrains Mono, monospace', background: 'var(--bg-secondary)', border: '1px solid var(--border)', padding: '3px 10px', borderRadius: '4px' }}>
+              <span key={tag} style={{
+                fontSize: '11px',
+                color: 'var(--accent)',
+                fontFamily: 'JetBrains Mono, monospace',
+                background: 'var(--accent-dim)',
+                border: '1px solid var(--accent)',
+                padding: '3px 10px',
+                borderRadius: '4px',
+              }}>
                 #{tag}
               </span>
             ))}
@@ -218,7 +347,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           // This article was researched and edited by the IconSearch team.
           Content may be AI-assisted and is reviewed for accuracy.
         </div>
-        
+
       </section>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 280px', gap: '48px', alignItems: 'flex-start' }}>

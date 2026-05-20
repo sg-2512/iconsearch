@@ -18,6 +18,7 @@
   --yellow: #fbbf24;
   --cyan: #22d3ee;
   --code-bg: #0d0d14;
+  --accent-accessible: #4338ca;
 }
 
 * {
@@ -84,3 +85,4 @@ code, pre, .mono {
     display: none !important;
   }
 }
+
