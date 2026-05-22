@@ -5,18 +5,6 @@ import HomeSearch from './components/HomeSearch'
 
 export const metadata = {
   title: 'IconSearch — Find & Compare Free SVG Icon Libraries (2026)',
-  other: {
-    'application/ld+json': JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      "mainEntity": [
-        { "@type": "Question", "name": "What is the best free icon library for React?", "acceptedAnswer": { "@type": "Answer", "text": "Lucide Icons and Heroicons are the most popular choices for React." } },
-        { "@type": "Question", "name": "Are these icon libraries free to use commercially?", "acceptedAnswer": { "@type": "Answer", "text": "Yes — all libraries use MIT or ISC licenses which allow free commercial use." } },
-        { "@type": "Question", "name": "Which icon library has the most icons?", "acceptedAnswer": { "@type": "Answer", "text": "Tabler Icons has the largest collection with 5,000+ icons." } },
-        { "@type": "Question", "name": "Can I use these icons with Next.js?", "acceptedAnswer": { "@type": "Answer", "text": "Yes — all listed libraries ship as React components and work with Next.js App Router." } },
-      ]
-    })
-  },
   description: 'Search 11,000+ icons across Lucide, Heroicons, Tabler, Phosphor and more. Compare React icon libraries by size, license, and style. Free, open source.',
   keywords: 'free svg icons, react icons, icon library comparison, lucide icons, heroicons, tabler icons, phosphor icons, open source icons',
   openGraph: {
@@ -39,7 +27,23 @@ export const metadata = {
 export default function HomePage() {
   const posts = getAllPosts()
   return (
-    <main style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 24px' }}>
+      <main style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 24px' }}>
+
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [
+              { "@type": "Question", "name": "What is the best free icon library for React?", "acceptedAnswer": { "@type": "Answer", "text": "Lucide Icons and Heroicons are the most popular choices for React." }},
+              { "@type": "Question", "name": "Are these icon libraries free to use commercially?", "acceptedAnswer": { "@type": "Answer", "text": "Yes — all libraries use MIT or ISC licenses which allow free commercial use." }},
+              { "@type": "Question", "name": "Which icon library has the most icons?", "acceptedAnswer": { "@type": "Answer", "text": "Tabler Icons has the largest collection with 5,000+ icons." }},
+              { "@type": "Question", "name": "Can I use these icons with Next.js?", "acceptedAnswer": { "@type": "Answer", "text": "Yes — all listed libraries ship as React components and work with Next.js App Router." }},
+            ]
+          })}}
+        />
+
+      {/* Hero */}
 
       {/* Hero */}
       <section style={{ padding: '80px 0 60px', borderBottom: '1px solid var(--border)' }}>
