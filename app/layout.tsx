@@ -3,6 +3,7 @@ import './globals.css'
 import Navbar from './components/Navbar'
 import { JetBrains_Mono, Syne } from 'next/font/google'
 import Script from 'next/script'
+import { Analytics } from "@vercel/analytics/next"
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
@@ -178,6 +179,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
           </div>
         </footer>
+        <Analytics />
       </body>
     </html>
   )
