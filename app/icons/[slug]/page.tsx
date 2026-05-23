@@ -9,6 +9,7 @@ import { bootstrapIconsData } from '../../../data/libraries/bootstrap-icons'
 import { radixIconsData } from '../../../data/libraries/radix-icons'
 import { fontAwesomeIconsData } from '../../../data/libraries/fontawesome-icons'
 import { reactIconsData } from '../../../data/libraries/react-icons'
+import { materialIconsData } from '../../../data/libraries/material-icons'
 
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -24,6 +25,7 @@ const libraryData: Record<string, any> = {
   'bootstrap-icons': bootstrapIconsData,
   'radix-icons': radixIconsData,
   'react-icons': reactIconsData,
+  'material-icons': materialIconsData,
 }
 
 export async function generateStaticParams() {

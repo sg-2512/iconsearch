@@ -230,6 +230,42 @@ export const icons: IconLibrary[] = [
     installCommand: 'npm install react-icons',
     usageExample: "import { FaHome } from 'react-icons/fa'\nimport { MdSettings } from 'react-icons/md'\nimport { HiUser } from 'react-icons/hi'\n\nexport default function App() {\n  return (\n    <div>\n      <FaHome size={24} />\n      <MdSettings size={24} />\n      <HiUser size={24} />\n    </div>\n  )\n}",
   },
+
+  {
+    name: 'Material Icons',
+    slug: 'material-icons',
+    description: "Google's official Material Design icon library for React. 2,100+ icons across 5 styles — Filled, Outlined, Rounded, Sharp, and TwoTone. The most downloaded React icon package with 5.1M weekly npm installs. Requires @mui/material as a peer dependency.",
+    website: 'https://mui.com/material-ui/material-icons/',
+    github: 'https://github.com/mui/material-ui/tree/master/packages/mui-icons-material',
+    npm: '@mui/icons-material',
+    stars: 98300,
+    iconCount: 2100,
+    license: 'MIT',
+    frameworks: ['react', 'nextjs'],
+    style: ['filled', 'outlined', 'rounded', 'sharp', 'twotone'],
+    figmaPlugin: true,
+    typescript: true,
+    treeshakable: true,
+    pros: [
+      '5 style variants per icon — Filled, Outlined, Rounded, Sharp, TwoTone from one package',
+      'Most downloaded React icon package — 5.1M weekly npm installs, 98K GitHub stars',
+      'Native MUI integration — sx prop, theme color tokens, fontSize scale all work out of the box',
+      "Google's official Material Design visual language — recognized by billions of Android and web users",
+      'Works in Next.js Server Components — renders static SVG HTML with no use client required',
+      'Full TypeScript support — SvgIconProps type covers sx, color, fontSize, and className',
+    ],
+    cons: [
+      'Requires 3 peer dependencies — @mui/material, @emotion/styled, @emotion/react (~300KB gzip if not on MUI)',
+      'Named barrel imports are up to 6x slower in Vite/webpack dev mode — path imports required',
+      'React only — no official Vue, Svelte, or vanilla JS packages',
+      'Material Design aesthetic reads as Google/Android — not ideal for minimal modern SaaS UIs',
+      'No stroke width customization — must switch variants to change visual weight',
+      'Material Symbols (the successor) is not yet supported by @mui/icons-material',
+    ],
+    installCommand: 'npm install @mui/icons-material @mui/material @emotion/styled @emotion/react',
+    usageExample: "import HomeIcon from '@mui/icons-material/Home'\nimport HomeOutlinedIcon from '@mui/icons-material/HomeOutlined'\nimport SearchIcon from '@mui/icons-material/Search'\nimport DeleteIcon from '@mui/icons-material/Delete'\n\n// ✅ Path imports — up to 6x faster in dev than barrel imports\n// ❌ Avoid: import { HomeIcon } from '@mui/icons-material'\n\nexport default function App() {\n  return (\n    <div>\n      {/* Filled — bold, solid, for primary actions */}\n      <HomeIcon />\n\n      {/* Outlined — minimal stroke-style, for supporting UI */}\n      <HomeOutlinedIcon />\n\n      {/* Sizing via fontSize prop */}\n      <SearchIcon fontSize=\"small\" />   {/* 20px */}\n      <SearchIcon fontSize=\"medium\" />  {/* 24px default */}\n      <SearchIcon fontSize=\"large\" />   {/* 35px */}\n      <SearchIcon sx={{ fontSize: 48 }} />\n\n      {/* Color via MUI theme tokens or custom hex */}\n      <DeleteIcon color=\"error\" />\n      <DeleteIcon sx={{ color: '#6366f1' }} />\n    </div>\n  )\n}",
+  },
+
 ]
 
 export function getIconBySlug(slug: string) {
