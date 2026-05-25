@@ -5,11 +5,11 @@ import HomeSearch from './components/HomeSearch'
 
 export const metadata = {
   title: 'IconSearch — Find & Compare Free SVG Icon Libraries (2026)',
-  description: 'Search 11,000+ icons across Lucide, Heroicons, Tabler, Phosphor and more. Compare React icon libraries by size, license, and style. Free, open source.',
-  keywords: 'free svg icons, react icons, icon library comparison, lucide icons, heroicons, tabler icons, phosphor icons, open source icons',
+  description: 'Search 15,000+ free SVG icons across Lucide, Heroicons, Tabler, Phosphor, Bootstrap, Remix, Feather, and Radix. Compare 13+ React icon libraries by size, stars, and license.',
+  keywords: 'free svg icons, react icons, icon library comparison, lucide icons, heroicons, tabler icons, phosphor icons, open source icons, bootstrap icons, remix icons, feather icons',
   openGraph: {
     title: 'IconSearch — Find & Compare Free SVG Icon Libraries',
-    description: 'Search 11,000+ icons across Lucide, Heroicons, Tabler, Phosphor and more.',
+    description: 'Search 15,000+ free SVG icons across Lucide, Heroicons, Tabler, Phosphor, Bootstrap, Remix, Feather, and Radix.',
     url: 'https://iconsearch.info',
     siteName: 'IconSearch',
     type: 'website',
@@ -17,7 +17,7 @@ export const metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'IconSearch — Find & Compare Free SVG Icon Libraries',
-    description: 'Search 11,000+ icons across Lucide, Heroicons, Tabler, Phosphor and more.',
+    description: 'Search 15,000+ free SVG icons across Lucide, Heroicons, Tabler, Phosphor, Bootstrap, Remix, Feather, and Radix.',
   },
   alternates: {
     canonical: 'https://iconsearch.info',
@@ -73,7 +73,7 @@ export default function HomePage() {
           maxWidth: '500px',
           marginBottom: '32px',
         }}>
-          Search 11,700+ free open source SVG icons across Lucide, Heroicons, Tabler, Phosphor and more — for React, Next.js, Vue and Svelte.
+          Search 15,000+ free open source SVG icons across Lucide, Heroicons, Tabler, Phosphor, Bootstrap, Remix, Feather, and Radix — for React, Next.js, Vue and Svelte.
         </p>
         <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
           {['React', 'Next.js', 'Vue', 'Svelte', 'TypeScript', 'MIT License'].map(tag => (
@@ -105,7 +105,7 @@ export default function HomePage() {
             fontFamily: 'JetBrains Mono, monospace',
             fontWeight: 600,
           }}>
-            Search 11,700+ Icons →
+            Search 15,000+ Icons →
           </Link>
           <Link href="/compare" style={{
             background: 'var(--bg-card)',
@@ -125,7 +125,7 @@ export default function HomePage() {
       {/* Stats Bar */}
       <section style={{ padding: '40px 0', borderBottom: '1px solid var(--border)', display: 'flex', gap: '48px', flexWrap: 'wrap' }}>
         {[
-          { value: '11,700+', label: 'Total Icons' },
+          { value: '15,000+', label: 'Total Icons' },
           { value: `${icons.length}+`, label: 'Icon Libraries' },
           { value: 'MIT', label: 'License' },
           { value: '100%', label: 'Free & Open Source' },

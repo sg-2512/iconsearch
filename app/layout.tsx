@@ -19,8 +19,8 @@ const syne = Syne({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://iconsearch.info'),
-  title: 'IconSearch — Compare Lucide, Heroicons & Tabler Icons for React (2026)',
-  description: 'Find and compare the best free SVG icon libraries for React and Next.js. Side-by-side comparisons, installation guides, and a search tool for 11,000+ icons across Lucide, Heroicons, Tabler, Phosphor and more.',
+  title: 'IconSearch — Find & Compare 13+ Free SVG Icon Libraries (2026)',
+  description: 'Search 15,000+ free SVG icons across Lucide, Heroicons, Tabler, Phosphor, Bootstrap, Remix, Feather, and Radix. Compare 13+ React icon libraries by size, stars, and license.',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

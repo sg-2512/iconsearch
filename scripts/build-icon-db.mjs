@@ -319,6 +319,109 @@ try {
   console.log('Radix error:', e.message)
 }
 
+// ─── 6. BOOTSTRAP ICONS ───────────────────────────────────────
+console.log('Processing Bootstrap Icons...')
+try {
+  const bsDir = findDir(['node_modules/bootstrap-icons/icons'])
+  if (bsDir) {
+    const files = readdirSync(bsDir).filter(f => f.endsWith('.svg'))
+    for (const file of files) {
+      const name = file.replace(/\.svg$/, '')
+      const componentName = name.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join('')
+      output.push({
+        id: `bootstrap-${name}`,
+        name,
+        displayName: componentName,
+        library: 'bootstrap-icons',
+        libraryName: 'Bootstrap Icons',
+        npmPackage: 'bootstrap-icons',
+        license: 'MIT',
+        tags: toTags(name),
+        reactImport: `import 'bootstrap-icons/font/bootstrap-icons.css'`,
+        reactUsage: `<i className="bi bi-${name}"></i>`,
+        svgUrl: `https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/${name}.svg`,
+      })
+    }
+    console.log(`✓ Bootstrap: ${files.length} icons`)
+  } else {
+    console.log('  Bootstrap not found')
+  }
+} catch (e) {
+  console.log('Bootstrap error:', e.message)
+}
+
+// ─── 7. FEATHER ICONS ─────────────────────────────────────────
+console.log('Processing Feather Icons...')
+try {
+  const featherDir = findDir(['node_modules/react-feather/dist/icons'])
+  if (featherDir) {
+    const files = readdirSync(featherDir).filter(f => f.endsWith('.js') && f !== 'index.js')
+    for (const file of files) {
+      const componentNameName = file.replace(/\.js$/, '')
+      const componentName = componentNameName.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join('')
+      const name = componentNameName
+      output.push({
+        id: `feather-${name}`,
+        name,
+        displayName: componentName,
+        library: 'feather-icons',
+        libraryName: 'Feather Icons',
+        npmPackage: 'react-feather',
+        license: 'MIT',
+        tags: toTags(name),
+        reactImport: `import { ${componentName} } from 'react-feather'`,
+        reactUsage: `<${componentName} size={24} />`,
+        svgUrl: `https://unpkg.com/feather-icons@latest/dist/icons/${name}.svg`,
+      })
+    }
+    console.log(`✓ Feather: ${files.length} icons`)
+  } else {
+    console.log('  Feather not found')
+  }
+} catch (e) {
+  console.log('Feather error:', e.message)
+}
+
+// ─── 8. REMIX ICON ────────────────────────────────────────────
+console.log('Processing Remix Icons...')
+try {
+  const remixDir = findDir(['node_modules/remixicon/icons'])
+  if (remixDir) {
+    let remixCount = 0
+    const categories = readdirSync(remixDir).filter(f => {
+      const p = join(remixDir, f)
+      return existsSync(p) && readdirSync(p).length > 0
+    })
+    for (const cat of categories) {
+      const catDir = join(remixDir, cat)
+      const files = readdirSync(catDir).filter(f => f.endsWith('.svg'))
+      for (const file of files) {
+        const name = file.replace(/\.svg$/, '')
+        const componentName = name.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join('')
+        output.push({
+          id: `remix-${name}`,
+          name,
+          displayName: componentName,
+          library: 'remix-icon',
+          libraryName: 'Remix Icon',
+          npmPackage: 'remixicon',
+          license: 'Apache 2.0',
+          tags: toTags(name),
+          reactImport: `import 'remixicon/fonts/remixicon.css'`,
+          reactUsage: `<i className="ri ri-${name}"></i>`,
+          svgUrl: `https://cdn.jsdelivr.net/npm/remixicon@4.2.0/icons/${cat}/${name}.svg`,
+        })
+        remixCount++
+      }
+    }
+    console.log(`✓ Remix Icon: ${remixCount} icons`)
+  } else {
+    console.log('  Remix Icon not found')
+  }
+} catch (e) {
+  console.log('Remix Icon error:', e.message)
+}
+
 // ─── WRITE OUTPUT ─────────────────────────────────────────────
 const outputPath = join(root, 'data/icon-search.json')
 const publicPath = join(root, 'public/icon-search.json')

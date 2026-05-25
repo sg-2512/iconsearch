@@ -23,6 +23,9 @@ const LIBRARIES = [
   { slug: 'tabler-icons', name: 'Tabler' },
   { slug: 'phosphor-icons', name: 'Phosphor' },
   { slug: 'radix-icons', name: 'Radix' },
+  { slug: 'bootstrap-icons', name: 'Bootstrap' },
+  { slug: 'feather-icons', name: 'Feather' },
+  { slug: 'remix-icon', name: 'Remix' },
 ]
 
 const LIBRARY_COLORS: Record<string, string> = {
@@ -31,6 +34,9 @@ const LIBRARY_COLORS: Record<string, string> = {
   'tabler-icons': '#10b981',
   'phosphor-icons': '#f59e0b',
   'radix-icons': '#ec4899',
+  'bootstrap-icons': '#7952b3', // Bootstrap purple
+  'feather-icons': '#3b82f6', // Feather blue
+  'remix-icon': '#ff4c4c', // Remix red
 }
 
 function CopyButton({ text, label }: { text: string; label: string }) {
@@ -230,7 +236,7 @@ export default function IconSearchPage() {
           <span style={{ color: 'var(--accent)' }}>All Libraries</span>
         </h1>
         <p style={{ color: 'var(--text-muted)', fontSize: '16px', maxWidth: '500px' }}>
-          Find the same icon across Lucide, Heroicons, Tabler, Phosphor and more. Copy the React import instantly.
+          Find the same icon across Lucide, Heroicons, Tabler, Phosphor, Bootstrap, Remix, Feather, and Radix. Copy the React import instantly.
         </p>
       </section>
 
@@ -239,7 +245,7 @@ export default function IconSearchPage() {
       <section style={{ marginBottom: '32px' }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '12px', marginBottom: '24px' }}>
           {[
-            { number: '11,000+', label: 'Searchable Icons' },
+            { number: '15,000+', label: 'Searchable Icons' },
             { number: '8', label: 'Icon Libraries' },
             { number: '5', label: 'Frameworks Covered' },
             { number: '100%', label: 'Free & Open Source' },
