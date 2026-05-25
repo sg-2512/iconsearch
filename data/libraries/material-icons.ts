@@ -14,7 +14,7 @@ export const materialIconsData = {
     weeklyDownloads: 5174834,
     license: 'MIT',
     firstRelease: '2014',
-    latestVersion: '7.3.11',
+    latestVersion: "5.16.14",
     bundleSize: '~1KB per icon (tree-shaken) + ~300KB peer deps if not on MUI',
     openIssues: 1700,
   },

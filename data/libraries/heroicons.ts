@@ -6,15 +6,15 @@ export const heroiconsData = {
     intro: "Heroicons is a premium open-source icon library created and maintained by the team behind Tailwind CSS. Every icon is hand-crafted by professional designers, resulting in a level of visual polish that is difficult to match in the open-source space.",
     detail: "The library offers icons in three distinct styles — outline (24x24), solid (24x24), and mini (20x20). This gives you the flexibility to use lighter outline icons for general UI and solid/filled icons for emphasis or active states, all within the same consistent visual system.",
     technical: "Heroicons ships as a React and Vue package with full TypeScript support. Every icon is tree-shakable, so your bundle only includes what you use. The library is tightly integrated with Tailwind CSS — icons accept className props and work perfectly with Tailwind utility classes for sizing and coloring.",
-    verdict: "Heroicons is the best choice if you are already using Tailwind CSS. The design language matches Tailwind UI components perfectly. The only significant limitation is the icon count — at 292 icons it is one of the smaller libraries, so complex applications may find gaps."
+    verdict: "Heroicons is the best choice if you are already using Tailwind CSS. The design language matches Tailwind UI components perfectly. The only significant limitation is the icon count — at 324 icons it is one of the smaller libraries, so complex applications may find gaps."
   },
   stats: {
-    iconCount: 292,
+    iconCount: 324,
     stars: 21000,
     weeklyDownloads: 1800000,
     license: "MIT",
     firstRelease: "2020",
-    latestVersion: "2.1.1",
+    latestVersion: "2.2.0",
     bundleSize: "~1kb per icon",
     openIssues: 45,
   },
@@ -84,7 +84,7 @@ export default function Badge() {
     { title: "Minimal and professional", detail: "The design language is clean and neutral — icons don't draw attention to themselves, they serve the UI." },
   ],
   cons: [
-    { title: "Only 292 icons", detail: "This is the biggest limitation. Complex applications often need niche icons that Heroicons simply does not have." },
+    { title: "Only 324 icons", detail: "This is the biggest limitation. Complex applications often need niche icons that Heroicons simply does not have." },
     { title: "No Vue 2 support", detail: "The Vue package only supports Vue 3. Older Vue projects cannot use Heroicons without workarounds." },
     { title: "No Svelte or Angular package", detail: "Official support is limited to React and Vue. Svelte and Angular developers need to use SVG directly." },
     { title: "No Figma plugin", detail: "Unlike Lucide, there is no official Figma plugin, making designer-developer handoff slightly harder." },

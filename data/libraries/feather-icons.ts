@@ -14,7 +14,7 @@ export const featherIconsData = {
     weeklyDownloads: 600000,
     license: "MIT",
     firstRelease: "2017",
-    latestVersion: "2.1.0",
+    latestVersion: "2.0.10",
     bundleSize: "~1kb per icon",
     openIssues: 180,
   },

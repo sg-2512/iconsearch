@@ -2,6 +2,7 @@ import { icons } from '../lib/icons'
 import Link from 'next/link'
 import { getAllPosts } from '../lib/blog'
 import HomeSearch from './components/HomeSearch'
+import { staticPages } from '../data/static-pages'
 
 export const metadata = {
   title: 'IconSearch — Find & Compare Free SVG Icon Libraries (2026)',
@@ -26,6 +27,14 @@ export const metadata = {
 
 export default function HomePage() {
   const posts = getAllPosts()
+  const blogItems = posts.map(post => ({
+    label: post.title,
+    href: `/blog/${post.slug}`,
+    date: post.date,
+  }))
+  const allRecentItems = [...blogItems, ...staticPages]
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .slice(0, 5)
   return (
       <main style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 24px' }}>
 
@@ -305,13 +314,7 @@ export default function HomePage() {
           RECENTLY ADDED
         </h2>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          {[
-            { label: 'Icon Library License Guide — MIT, Apache, ISC Explained', href: '/licenses' },
-            { label: 'SVG Icons vs Icon Fonts — Performance in 2026', href: '/blog/svg-icons-vs-icon-fonts-performance-2026' },
-            { label: 'How Icon Subsetting Cuts Next.js Bundle Size by 40%', href: '/blog/icon-subsetting-nextjs-bundle-size-optimization' },
-            { label: 'Animated SVG Icons in React — Complete Guide', href: '/blog/animated-svg-icons-react-2026' },
-            { label: 'Best Icons for shadcn/ui in 2026', href: '/blog/best-icons-for-shadcn-ui-2026' },
-          ].map(link => (
+          {allRecentItems.map(link => (
             <a key={link.href} href={link.href} style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', display: 'flex', justifyContent: 'space-between', padding: '10px 14px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '6px' }}>
               {link.label}
               <span style={{ color: 'var(--accent)' }}>→</span>

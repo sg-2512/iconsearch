@@ -1,20 +1,20 @@
 export const iconifyIconsData = {
   name: 'Iconify',
   slug: 'iconify',
-  tagline: 'One framework for 294,000+ open source icons across 211 icon sets — React, Vue, Svelte, and vanilla',
+  tagline: 'One framework for 350,000+ open source icons across 211 icon sets — React, Vue, Svelte, and vanilla',
   description: {
-    intro: 'Iconify is the most comprehensive open-source icon ecosystem available in 2026. Rather than a single icon set, it is a unified framework that provides access to 294,000+ icons from 211 different open-source icon sets — Lucide, Material Symbols, Font Awesome, Tabler, Heroicons, Phosphor, Bootstrap Icons, Remix, and hundreds more — all through one consistent API and one import syntax.',
-    detail: 'The defining architectural decision that separates Iconify from every other library is its on-demand loading model. Icons are not bundled into your application at build time. Instead, the @iconify/react component fetches icon data from Iconify\'s public API at runtime when it first encounters an icon name. This means you can use any of the 294,000+ icons with zero build-time cost — your bundle contains only the rendering engine, not the icon data. For production applications that need offline capability, Iconify also supports fully offline mode by pre-bundling specific icon sets as JSON data.',
+    intro: 'Iconify is the most comprehensive open-source icon ecosystem available in 2026. Rather than a single icon set, it is a unified framework that provides access to 350,000+ icons from 211 different open-source icon sets — Lucide, Material Symbols, Font Awesome, Tabler, Heroicons, Phosphor, Bootstrap Icons, Remix, and hundreds more — all through one consistent API and one import syntax.',
+    detail: 'The defining architectural decision that separates Iconify from every other library is its on-demand loading model. Icons are not bundled into your application at build time. Instead, the @iconify/react component fetches icon data from Iconify\'s public API at runtime when it first encounters an icon name. This means you can use any of the 350,000+ icons with zero build-time cost — your bundle contains only the rendering engine, not the icon data. For production applications that need offline capability, Iconify also supports fully offline mode by pre-bundling specific icon sets as JSON data.',
     technical: 'The React package (@iconify/react) receives 605,000+ weekly npm downloads and works in React, Next.js, Vue, Svelte, SolidJS, Angular, and vanilla HTML. Icon names follow a prefix:icon-name syntax — "lucide:home", "mdi:account", "heroicons:magnifying-glass". This unified naming system means you never need to look up library-specific naming conventions. TypeScript support is available. However, the runtime API-loading model means icons do not work in Next.js Server Components without switching to the offline/bundled mode, which requires additional setup.',
     verdict: 'Iconify is the right choice when icon variety is the top priority and you are comfortable with either the API-loading model or the offline setup. For projects that need access to hundreds of icon sets without installing multiple packages, it has no equal. For standard React/Next.js projects that need 50–200 icons from a consistent visual family, Lucide or Heroicons are more straightforward with better Server Component support out of the box.'
   },
   stats: {
-    iconCount: 294661,
+    iconCount: 350000,
     stars: 5162,
     weeklyDownloads: 605709,
     license: 'MIT (framework) — icon sets use their original licenses',
     firstRelease: '2020',
-    latestVersion: '6.0.2',
+    latestVersion: "4.1.2",
     bundleSize: '~15KB (renderer only) — icon data loaded on demand',
     openIssues: 420,
   },
@@ -48,7 +48,7 @@ export const iconifyIconsData = {
     basic: `import { Icon } from '@iconify/react'
 
 // Icon names follow prefix:icon-name syntax
-// Access 294,000+ icons from 211 sets with one component
+// Access 350,000+ icons from 211 sets with one component
 export default function App() {
   return (
     <div>
@@ -107,7 +107,7 @@ import { Icon } from '@iconify/react'
   },
   pros: [
     {
-      title: '294,000+ icons from one import',
+      title: '350,000+ icons from one import',
       detail: 'Access Lucide, Material Design Icons, Font Awesome, Tabler, Heroicons, Phosphor, Simple Icons, Bootstrap Icons, and 200+ more icon sets through a single <Icon> component with a unified prefix:name syntax. No switching packages or learning different APIs.',
     },
     {
@@ -124,7 +124,7 @@ import { Icon } from '@iconify/react'
     },
     {
       title: 'Unified search and browsing across all sets',
-      detail: 'The Iconify icon search at icon-sets.iconify.design lets you search across all 294,000+ icons at once by name, category, or visual similarity — no need to browse 211 different library websites separately.',
+      detail: 'The Iconify icon search at icon-sets.iconify.design lets you search across all 350,000+ icons at once by name, category, or visual similarity — no need to browse 211 different library websites separately.',
     },
     {
       title: 'Figma plugin for design handoff',
@@ -182,7 +182,7 @@ import { Icon } from '@iconify/react'
     },
     {
       q: 'How do I find icon names to use with Iconify?',
-      a: 'Browse icon-sets.iconify.design to search across all 294,000+ icons. Select an icon and the site shows the full prefix:name string to use in code (e.g. "lucide:home", "mdi:account"). The Iconify Figma plugin lets designers browse and copy icon names directly from Figma.'
+      a: 'Browse icon-sets.iconify.design to search across all 350,000+ icons. Select an icon and the site shows the full prefix:name string to use in code (e.g. "lucide:home", "mdi:account"). The Iconify Figma plugin lets designers browse and copy icon names directly from Figma.'
     },
     {
       q: 'Should I use Iconify or react-icons?',

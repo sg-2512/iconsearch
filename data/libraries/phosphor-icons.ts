@@ -3,18 +3,18 @@ export const phosphorIconsData = {
   slug: "phosphor-icons",
   tagline: "Flexible icon family with 6 weights for interfaces and more",
   description: {
-    intro: "Phosphor Icons is a flexible icon family designed for interfaces, diagrams, and presentations. With over 1,200 icons available in 6 different weights, it offers the most style variety of any major open-source icon library.",
+    intro: "Phosphor Icons is a flexible icon family designed for interfaces, diagrams, and presentations. With over 1,500 icons available in 6 different weights, it offers the most style variety of any major open-source icon library.",
     detail: "The 6 weights — thin, light, regular, bold, fill, and duotone — give designers and developers extraordinary control over visual hierarchy and tone. You can use thin icons for elegant, minimal UIs, bold icons for high-contrast accessibility needs, and duotone icons for a modern two-color effect.",
     technical: "Phosphor ships as a React package with full TypeScript support. Icons are tree-shakable and accept size, color, weight, and mirrored props. The weight prop makes it trivial to switch between all 6 variants without changing your import. A Figma plugin is available with all weights.",
     verdict: "Phosphor is the best choice when your design requires multiple icon styles within the same library. The duotone weight in particular is unique among free icon libraries and gives applications a premium, modern feel that is difficult to achieve otherwise."
   },
   stats: {
-    iconCount: 1248,
+    iconCount: 1533,
     stars: 8000,
     weeklyDownloads: 400000,
     license: "MIT",
     firstRelease: "2020",
-    latestVersion: "2.1.1",
+    latestVersion: "2.1.10",
     bundleSize: "~1.5kb per icon",
     openIssues: 34,
   },

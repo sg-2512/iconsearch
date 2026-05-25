@@ -1,20 +1,20 @@
 export const simpleIconsData = {
   name: 'Simple Icons',
   slug: 'simple-icons',
-  tagline: '3,109 free SVG brand icons — GitHub, Stripe, Vercel, AWS, and every major brand in one CC0 library',
+  tagline: '3,200 free SVG brand icons — GitHub, Stripe, Vercel, AWS, and every major brand in one CC0 library',
   description: {
-    intro: 'Simple Icons is the definitive free library for SVG brand and company logos. With 3,109+ icons covering every major technology brand, social media platform, company, and developer tool, it is the go-to solution for anyone who needs to display brand logos in a web project. The library has 25,047 GitHub stars, an active maintenance community, and ships entirely under the CC0 license — making it public domain.',
+    intro: 'Simple Icons is the definitive free library for SVG brand and company logos. With 3,200+ icons covering every major technology brand, social media platform, company, and developer tool, it is the go-to solution for anyone who needs to display brand logos in a web project. The library has 25,047 GitHub stars, an active maintenance community, and ships entirely under the CC0 license — making it public domain.',
     detail: 'Every icon in Simple Icons is monochromatic — a single-fill SVG in the brand\'s official primary color or black when no color is defined. Each icon entry in the library ships with the brand\'s official hex color code, the brand\'s name, the website URL, and licensing metadata. This makes it uniquely useful for building "Powered by" sections, technology stacks, social media link rows, sponsor grids, and any UI that needs to represent real-world brands visually.',
     technical: 'The core library (simple-icons npm package) ships the raw SVG data and can be used in any environment. The React wrapper (@icons-pack/react-simple-icons) provides typed React components for each icon with 364,000+ weekly downloads. Each component accepts color, size, and className props. TypeScript definitions are included. Tree-shaking works correctly since each icon is a separate named export. The library is actively maintained with new brand icons added regularly as companies request inclusion.',
-    verdict: 'Simple Icons is the only correct answer when you need free brand SVG logos. There is no meaningful competition in this category at zero cost — Font Awesome Brands covers 465 brands vs Simple Icons\' 3,109, and Font Awesome requires payment for full coverage. If your project needs to display GitHub, Vercel, Stripe, AWS, Figma, Linear, or any of 3,100+ other brands, Simple Icons is the library. The only limitation worth noting is that all icons are monochromatic — brand colors are available as data but icons cannot render multi-color logos.'
+    verdict: 'Simple Icons is the only correct answer when you need free brand SVG logos. There is no meaningful competition in this category at zero cost — Font Awesome Brands covers 465 brands vs Simple Icons\' 3,200, and Font Awesome requires payment for full coverage. If your project needs to display GitHub, Vercel, Stripe, AWS, Figma, Linear, or any of 3,100+ other brands, Simple Icons is the library. The only limitation worth noting is that all icons are monochromatic — brand colors are available as data but icons cannot render multi-color logos.'
   },
   stats: {
-    iconCount: 3109,
+    iconCount: 3200,
     stars: 25047,
     weeklyDownloads: 364028,
     license: 'CC0 1.0 (public domain) — note: brand names and logos remain trademarks of their owners',
     firstRelease: '2014',
-    latestVersion: '13.13.0',
+    latestVersion: "14.2.0",
     bundleSize: '~1KB per icon (tree-shaken)',
     openIssues: 767,
   },
@@ -145,8 +145,8 @@ export function SocialLinks() {
   },
   pros: [
     {
-      title: '3,109 brand icons — the largest free brand library',
-      detail: 'Font Awesome Free covers 465 brand icons. Simple Icons covers 3,109. For any project needing brand logos — technology stacks, integrations pages, sponsor grids, social links — Simple Icons has the icon Font Awesome does not, for free.',
+      title: '3,200 brand icons — the largest free brand library',
+      detail: 'Font Awesome Free covers 465 brand icons. Simple Icons covers 3,200. For any project needing brand logos — technology stacks, integrations pages, sponsor grids, social links — Simple Icons has the icon Font Awesome does not, for free.',
     },
     {
       title: 'CC0 public domain — zero restrictions',
@@ -202,15 +202,15 @@ export function SocialLinks() {
     },
     {
       q: 'How do I find the component name for a specific brand?',
-      a: 'All React components use the Si prefix plus PascalCase brand name. GitHub → SiGithub. Next.js → SiNextdotjs. AWS → SiAws. Tailwind CSS → SiTailwindcss. For brands with special characters or numbers, check the official listing at simpleicons.org or the npm package exports. The package\'s TypeScript definitions provide autocomplete for all 3,109 names in VS Code.'
+      a: 'All React components use the Si prefix plus PascalCase brand name. GitHub → SiGithub. Next.js → SiNextdotjs. AWS → SiAws. Tailwind CSS → SiTailwindcss. For brands with special characters or numbers, check the official listing at simpleicons.org or the npm package exports. The package\'s TypeScript definitions provide autocomplete for all 3,200 names in VS Code.'
     },
     {
       q: 'Does Simple Icons have the brand icon I need?',
-      a: 'With 3,109 icons covering virtually every major technology, social media, company, and developer tool, coverage is extensive. Search at simpleicons.org. If a brand is missing, you can open a GitHub issue to request it — the maintainers actively process requests. Major companies and well-known tools are typically added quickly.'
+      a: 'With 3,200 icons covering virtually every major technology, social media, company, and developer tool, coverage is extensive. Search at simpleicons.org. If a brand is missing, you can open a GitHub issue to request it — the maintainers actively process requests. Major companies and well-known tools are typically added quickly.'
     },
     {
       q: 'Should I use Simple Icons or Font Awesome Brands?',
-      a: 'Simple Icons for almost all use cases. It has 3,109 icons vs Font Awesome Brands\' 465, is CC0 (vs Font Awesome\'s CC BY 4.0 which technically requires attribution), and is free with no paid tier. Font Awesome Brands makes sense only if you are already using Font Awesome Pro and want everything in one library with consistent rendering infrastructure.'
+      a: 'Simple Icons for almost all use cases. It has 3,200 icons vs Font Awesome Brands\' 465, is CC0 (vs Font Awesome\'s CC BY 4.0 which technically requires attribution), and is free with no paid tier. Font Awesome Brands makes sense only if you are already using Font Awesome Pro and want everything in one library with consistent rendering infrastructure.'
     },
   ],
   alternatives: ['font-awesome', 'iconify', 'react-icons'],

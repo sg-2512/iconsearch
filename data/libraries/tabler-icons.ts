@@ -1,20 +1,20 @@
 export const tablerIconsData = {
   name: "Tabler Icons",
   slug: "tabler-icons",
-  tagline: "5500+ free MIT-licensed high-quality SVG icons",
+  tagline: "6100+ free MIT-licensed high-quality SVG icons",
   description: {
-    intro: "Tabler Icons is the largest free open-source icon library available today, offering over 5,500 carefully crafted SVG icons. It was created by Paweł Kuna as part of the Tabler admin dashboard project and has since grown into one of the most comprehensive icon sets in the developer ecosystem.",
+    intro: "Tabler Icons is the largest free open-source icon library available today, offering over 6,100 carefully crafted SVG icons. It was created by Paweł Kuna as part of the Tabler admin dashboard project and has since grown into one of the most comprehensive icon sets in the developer ecosystem.",
     detail: "What makes Tabler stand out is sheer volume combined with consistency. Every icon follows the same design grid, stroke width, and visual language. Whether you need common UI icons or highly specific symbols for finance, medicine, sports, or technology — Tabler almost certainly has what you need.",
     technical: "Tabler Icons ships with full React, Vue, and Svelte support via separate packages. All packages are fully tree-shakable and include complete TypeScript definitions. Icons accept size, color, strokeWidth, and className props. A Figma plugin is available for design teams.",
     verdict: "If you need the largest possible icon selection without paying, Tabler Icons is the clear winner. The only caution is bundle size — make sure you import icons individually rather than the entire library, or your bundle will bloat significantly."
   },
   stats: {
-    iconCount: 5500,
+    iconCount: 6146,
     stars: 18000,
     weeklyDownloads: 900000,
     license: "MIT",
     firstRelease: "2020",
-    latestVersion: "3.11.0",
+    latestVersion: "3.44.0",
     bundleSize: "~1kb per icon",
     openIssues: 89,
   },
@@ -78,14 +78,14 @@ export default function App() {
 }`,
   },
   pros: [
-    { title: "Largest free icon set", detail: "5,500+ icons covering virtually every use case — from common UI to highly specific symbols for medicine, finance, sports, and more." },
+    { title: "Largest free icon set", detail: "6,100+ icons covering virtually every use case — from common UI to highly specific symbols for medicine, finance, sports, and more." },
     { title: "Both outline and filled styles", detail: "Unlike Lucide which is outline-only, Tabler offers filled variants for most icons giving you more design flexibility." },
     { title: "Fully tree-shakable", detail: "Import only what you use. Each icon adds roughly 1kb to your bundle, keeping performance optimal." },
     { title: "Multi-framework support", detail: "Official packages for React, Vue, Svelte, and vanilla JS cover virtually every modern frontend stack." },
     { title: "Figma plugin available", detail: "The official Figma plugin lets designers use the same icons as developers, keeping the design system in sync." },
   ],
   cons: [
-    { title: "Large bundle if not careful", detail: "With 5,500 icons the full package is massive. Always import icons individually — never import the entire library at once." },
+    { title: "Large bundle if not careful", detail: "With 6,100 icons the full package is massive. Always import icons individually — never import the entire library at once." },
     { title: "All icons prefixed with Icon", detail: "Every component is named IconHome, IconUser etc. This adds verbosity compared to libraries like Lucide where you just write Home." },
     { title: "Less recognizable brand", detail: "Tabler is less well-known than Lucide or Heroicons in the React community, which can matter for team familiarity." },
   ],
@@ -116,7 +116,7 @@ export default function App() {
     },
     {
       q: "How is Tabler Icons different from Lucide Icons?",
-      a: "The main differences are icon count (5,500 vs 1,400) and style options. Tabler has far more icons and offers filled variants. Lucide has a slightly more polished and consistent design language and is more popular in the React community."
+      a: "The main differences are icon count (6,100 vs 1,400) and style options. Tabler has far more icons and offers filled variants. Lucide has a slightly more polished and consistent design language and is more popular in the React community."
     },
     {
       q: "Will Tabler Icons slow down my app?",

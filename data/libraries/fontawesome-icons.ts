@@ -19,7 +19,7 @@ export const fontAwesomeIconsData = {
     weeklyDownloads: 1874785,
     license: 'Mixed (CC BY 4.0 / MIT)',
     firstRelease: '2012',
-    latestVersion: '6.x LTS / 7.x',
+    latestVersion: "6.7.2",
     bundleSize: '~7kb per icon',
     openIssues: 890,
   },

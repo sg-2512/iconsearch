@@ -199,6 +199,86 @@ export default async function LibraryPage({ params }: { params: Promise<{ slug: 
         ))}
       </section>
 
+      {/* Dynamic Lucide v1.x Migration Banner */}
+      {slug === 'lucide-icons' && (
+        <section style={{ marginBottom: '48px' }}>
+          <div style={{
+            background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%)',
+            border: '1px solid var(--accent)',
+            borderRadius: '12px',
+            padding: '24px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '12px',
+          }}>
+            <h3 style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text)' }}>
+              ⚠️ Upgrading to Lucide React v1.0.0+?
+            </h3>
+            <p style={{ fontSize: '14px', color: 'var(--text-muted)', lineHeight: 1.6, margin: 0 }}>
+              The Lucide React 1.0 release introduced major breaking changes and renamed several key icons (for example, <code>BarChart2</code> is now <code>ChartBar</code>, <code>PlusCircle</code> is <code>BadgePlus</code> or <code>CirclePlus</code>, and <code>Instagram</code> or <code>Linkedin</code> exports might be missing/modified).
+            </p>
+            <p style={{ fontSize: '14px', color: 'var(--text-muted)', lineHeight: 1.6, margin: 0 }}>
+              Avoid Next.js compilation issues by reading our comprehensive step-by-step upgrade guide.
+            </p>
+            <div>
+              <Link href="/blog/lucide-react-1-migration-guide" style={{
+                color: 'var(--accent)',
+                fontSize: '14px',
+                fontWeight: 700,
+                textDecoration: 'none',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px'
+              }}>
+                Read the Lucide-React v1.0 Migration & Renamed Icons Guide →
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* License Overview */}
+      <section style={{ marginBottom: '48px', paddingBottom: '48px', borderBottom: '1px solid var(--border)' }}>
+        <h2 style={{ fontSize: '13px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '2px', marginBottom: '20px' }}>
+          OFFICIAL LICENSE & COMMERCIAL USE
+        </h2>
+        <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', padding: '24px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: '12px', marginBottom: '16px', alignItems: 'center' }}>
+            <span style={{ fontSize: '15px', fontWeight: 700 }}>License Type</span>
+            <span style={{ fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', color: 'var(--green)', background: '#4ade8015', padding: '4px 10px', borderRadius: '4px' }}>{data.stats.license} License</span>
+          </div>
+          <p style={{ fontSize: '14px', color: 'var(--text-muted)', lineHeight: 1.8, marginBottom: '16px' }}>
+            {data.stats.license === 'MIT' && `The MIT License is a highly popular, extremely permissive open-source license. Under the MIT License, you are officially allowed to use ${data.name} in any personal, commercial, or corporate software projects completely free of charge. You can modify the icons, distribute them, sell software containing them, and even sublicense them. The only requirement is that you must preserve the original copyright notice and permission notice in all copies of the software.`}
+            {data.stats.license === 'ISC' && `The ISC License is a highly permissive open-source license, functionally equivalent to the MIT and BSD 2-Clause licenses but written in simpler language. You are completely free to use ${data.name} for any commercial or private projects without royalties or fees. You can redistribute the original or modified icons without restrictions. The only condition is preserving the copyright notice and this permission notice in all copies.`}
+            {data.stats.license === 'Apache 2.0' && `The Apache 2.0 License is a permissive license that allows free commercial use, modification, and distribution of the ${data.name} icons. It also grants you an express, perpetual, worldwide, non-exclusive patent license. You can package and distribute the icons in commercial products. Note that you must provide a copy of the license and clear attribution if you redistribute the original files.`}
+            {data.stats.license === 'CC0 1.0 (Public Domain)' && `CC0 1.0 is a Universal Public Domain Dedication. The creators of ${data.name} have waived all copyrights and related rights worldwide. You are officially allowed to copy, modify, distribute, and perform the work, even for commercial purposes, without asking permission or providing attribution. It is the most open license available.`}
+            {!['MIT', 'ISC', 'Apache 2.0', 'CC0 1.0 (Public Domain)'].includes(data.stats.license) && `${data.name} is licensed under the ${data.stats.license} license, which is a developer-friendly permissive open-source license. You are permitted to use it free of charge in your web and mobile applications, including commercial and SaaS products, without strict attribution requirements.`}
+          </p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px', borderTop: '1px solid var(--border)', paddingTop: '16px' }}>
+            <div>
+              <div style={{ fontSize: '11px', color: 'var(--green)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '8px' }}>✓ Permissions</div>
+              <ul style={{ paddingLeft: '16px', margin: 0, fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.6 }}>
+                <li>Commercial Use Allowed</li>
+                <li>Modification Allowed</li>
+                <li>Redistribution Allowed</li>
+                <li>Sublicensing Allowed</li>
+              </ul>
+            </div>
+            <div>
+              <div style={{ fontSize: '11px', color: 'var(--accent)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '8px' }}>⚠️ Requirements</div>
+              <ul style={{ paddingLeft: '16px', margin: 0, fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.6 }}>
+                {data.stats.license === 'CC0 1.0 (Public Domain)' ? (
+                  <li>No attribution required (Public Domain)</li>
+                ) : (
+                  <li>Must keep copyright notice in source files</li>
+                )}
+                <li>License remains active on copy/use</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Installation */}
       <section style={{ marginBottom: '48px', paddingBottom: '48px', borderBottom: '1px solid var(--border)' }}>
         <h2 style={{ fontSize: '13px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '2px', marginBottom: '20px' }}>

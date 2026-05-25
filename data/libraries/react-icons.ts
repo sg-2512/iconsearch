@@ -1,7 +1,7 @@
 export const reactIconsData = {
   name: 'React Icons',
   slug: 'react-icons',
-  tagline: 'One package, 40,000+ icons — aggregates Font Awesome, Material Design, Heroicons, and 25+ more',
+  tagline: 'One package, 52,000+ icons — aggregates Font Awesome, Material Design, Heroicons, and 25+ more',
   description: {
     intro:
       'React Icons is the Swiss Army knife of icon libraries. Rather than being a standalone icon set, it bundles 25+ of the most popular icon libraries — Font Awesome, Material Design, Heroicons, Bootstrap Icons, Feather, Ionicons, and more — into a single npm package with one unified API.',
@@ -14,12 +14,12 @@ export const reactIconsData = {
   },
 
   stats: {
-    iconCount: 40000,
+    iconCount: 52000,
     stars: 11500,
     weeklyDownloads: 3200000,
     license: 'MIT',
     firstRelease: '2018',
-    latestVersion: '5.x',
+    latestVersion: "5.2.0",
     bundleSize: '~1kb per icon',
     openIssues: 340,
   },
@@ -141,7 +141,7 @@ export function TechStack() {
       detail: 'Install a single npm package and get Font Awesome, Material Design, Heroicons, Bootstrap Icons, Feather, Ionicons, Tabler, Phosphor, Lucide, and 15+ more. No juggling multiple dependencies.',
     },
     {
-      title: '40,000+ icons — you will always find what you need',
+      title: '52,000+ icons — you will always find what you need',
       detail: 'The largest icon vocabulary of any single package. If an icon exists anywhere in the open-source icon world, it is almost certainly in React Icons.',
     },
     {
@@ -154,7 +154,7 @@ export function TechStack() {
     },
     {
       title: 'Full TypeScript support',
-      detail: 'Complete type definitions for all 40,000+ icons across all included sets. Full autocomplete and type checking in VS Code and other IDEs.',
+      detail: 'Complete type definitions for all 52,000+ icons across all included sets. Full autocomplete and type checking in VS Code and other IDEs.',
     },
     {
       title: 'Brand and tech logo icons via Simple Icons',

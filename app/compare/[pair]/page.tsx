@@ -18,9 +18,18 @@ export async function generateMetadata({ params }: { params: Promise<{ pair: str
   const libB = icons.find(i => i.slug === slugB)
   if (!libA || !libB) return {}
   return {
-    title: `${libA.name} vs ${libB.name} — Which is Better for React in 2026?`,
-    description: `Detailed comparison of ${libA.name} and ${libB.name}. Icon count, GitHub stars, TypeScript support, bundle size, and which library to choose for your React or Next.js project.`,
+    title: `${libA.name} vs ${libB.name} — Side-by-Side Comparison for React & Next.js (2026)`,
+    description: `${libA.name} (${libA.iconCount.toLocaleString()} icons, ${libA.license}) vs ${libB.name} (${libB.iconCount.toLocaleString()} icons, ${libB.license}). Compare icon count, license, TypeScript support, React import syntax, bundle size, and which to use in your project.`,
   }
+}
+
+// Helper: get a license explanation string
+function getLicenseInfo(license: string, name: string): string {
+  if (license === 'MIT') return `${name} uses the MIT License — one of the most permissive open-source licenses. You can use it in any commercial project, modify the icons, and redistribute them freely. The only requirement is preserving the copyright notice in copies of the software.`
+  if (license === 'ISC') return `${name} uses the ISC License, which is functionally equivalent to the MIT License but written in simpler language. You are free to use it in commercial projects, modify icons, and redistribute without restriction. The only condition is preserving the copyright notice.`
+  if (license.includes('Apache')) return `${name} uses the Apache 2.0 License, which allows free commercial use, modification, and distribution. It also includes an express patent grant. You must include a copy of the license and provide attribution when redistributing original files.`
+  if (license.includes('CC0')) return `${name} uses CC0 1.0 (Public Domain). All copyrights have been waived. You can copy, modify, distribute, and use the icons for any purpose — including commercial — without attribution.`
+  return `${name} uses the ${license} license, a permissive open-source license that allows free commercial use in web and mobile applications.`
 }
 
 export default async function ComparisonPage({ params }: { params: Promise<{ pair: string }> }) {
@@ -38,55 +47,94 @@ export default async function ComparisonPage({ params }: { params: Promise<{ pai
     )
   }
 
+  const hasLucide = a.slug === 'lucide-icons' || b.slug === 'lucide-icons'
+
   const rows = [
-    { label: 'Total Icons', a: a.iconCount.toLocaleString(), b: b.iconCount.toLocaleString(), winner: a.iconCount > b.iconCount ? 'a' : 'b' },
-    { label: 'GitHub Stars', a: a.stars.toLocaleString(), b: b.stars.toLocaleString(), winner: a.stars > b.stars ? 'a' : 'b' },
+    { label: 'Total Icons', a: a.iconCount.toLocaleString(), b: b.iconCount.toLocaleString(), winner: a.iconCount > b.iconCount ? 'a' : a.iconCount < b.iconCount ? 'b' : 'none' },
+    { label: 'GitHub Stars', a: a.stars.toLocaleString(), b: b.stars.toLocaleString(), winner: a.stars > b.stars ? 'a' : a.stars < b.stars ? 'b' : 'none' },
     { label: 'License', a: a.license, b: b.license, winner: 'none' },
     { label: 'TypeScript', a: a.typescript ? '✓ Yes' : '✗ No', b: b.typescript ? '✓ Yes' : '✗ No', winner: a.typescript && !b.typescript ? 'a' : !a.typescript && b.typescript ? 'b' : 'none' },
     { label: 'Tree Shakable', a: a.treeshakable ? '✓ Yes' : '✗ No', b: b.treeshakable ? '✓ Yes' : '✗ No', winner: a.treeshakable && !b.treeshakable ? 'a' : !a.treeshakable && b.treeshakable ? 'b' : 'none' },
     { label: 'Figma Plugin', a: a.figmaPlugin ? '✓ Yes' : '✗ No', b: b.figmaPlugin ? '✓ Yes' : '✗ No', winner: a.figmaPlugin && !b.figmaPlugin ? 'a' : !a.figmaPlugin && b.figmaPlugin ? 'b' : 'none' },
-    { label: 'Styles', a: a.style.join(', '), b: b.style.join(', '), winner: 'none' },
-    { label: 'Frameworks', a: a.frameworks.join(', '), b: b.frameworks.join(', '), winner: a.frameworks.length > b.frameworks.length ? 'a' : 'b' },
+    { label: 'Styles', a: a.style.join(', '), b: b.style.join(', '), winner: a.style.length > b.style.length ? 'a' : a.style.length < b.style.length ? 'b' : 'none' },
+    { label: 'Frameworks', a: a.frameworks.join(', '), b: b.frameworks.join(', '), winner: a.frameworks.length > b.frameworks.length ? 'a' : a.frameworks.length < b.frameworks.length ? 'b' : 'none' },
   ]
 
   return (
     <main style={{ maxWidth: '1200px', margin: '0 auto', padding: '40px 48px' }}>
 
       {/* Breadcrumb */}
-      <Link href="/" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '13px', fontFamily: 'JetBrains Mono, monospace' }}>
-        ← back to all libraries
-      </Link>
+      <nav style={{ display: 'flex', gap: '8px', fontSize: '13px', fontFamily: 'JetBrains Mono, monospace', marginBottom: '24px' }}>
+        <Link href="/" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>Home</Link>
+        <span style={{ color: 'var(--text-dim)' }}>/</span>
+        <Link href="/compare" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>Compare</Link>
+        <span style={{ color: 'var(--text-dim)' }}>/</span>
+        <span style={{ color: 'var(--accent)' }}>{a.name} vs {b.name}</span>
+      </nav>
 
       {/* Hero */}
-      <section style={{ margin: '24px 0 48px', paddingBottom: '48px', borderBottom: '1px solid var(--border)' }}>
+      <section style={{ margin: '0 0 48px', paddingBottom: '48px', borderBottom: '1px solid var(--border)' }}>
         <div style={{ fontSize: '12px', color: 'var(--accent)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '2px', marginBottom: '12px' }}>
-          // COMPARISON
+          // SIDE-BY-SIDE COMPARISON
         </div>
         <h1 style={{ fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 800, lineHeight: 1.1, marginBottom: '16px' }}>
-          {a.name} <span style={{ color: 'var(--text-muted)' }}>vs</span> {b.name}
+          <Link href={`/icons/${a.slug}`} style={{ color: 'var(--text)', textDecoration: 'none' }}>{a.name}</Link>
+          {' '}<span style={{ color: 'var(--text-muted)' }}>vs</span>{' '}
+          <Link href={`/icons/${b.slug}`} style={{ color: 'var(--text)', textDecoration: 'none' }}>{b.name}</Link>
           <span style={{ color: 'var(--text-muted)', fontSize: '20px', fontWeight: 400 }}> (2026)</span>
         </h1>
-        <p style={{ color: 'var(--text-muted)', fontSize: '16px', maxWidth: '600px' }}>
-          A detailed comparison of {a.name} and {b.name} covering icon count, TypeScript support, bundle size, framework compatibility and more.
+        <p style={{ color: 'var(--text-muted)', fontSize: '16px', maxWidth: '750px', lineHeight: 1.7 }}>
+          A comprehensive, developer-focused comparison of {a.name} ({a.iconCount.toLocaleString()} icons, {a.license} license) and {b.name} ({b.iconCount.toLocaleString()} icons, {b.license} license) covering icon count, TypeScript support, bundle size, framework compatibility, licensing for commercial use, and real-world React import syntax.
         </p>
       </section>
 
-      {/* Quick Stats */}
+      {/* Lucide Migration Banner */}
+      {hasLucide && (
+        <section style={{ marginBottom: '48px' }}>
+          <div style={{
+            background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%)',
+            border: '1px solid var(--accent)',
+            borderRadius: '12px',
+            padding: '24px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '10px',
+          }}>
+            <h3 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text)', margin: 0 }}>
+              ⚠️ Upgrading to Lucide React v1.0?
+            </h3>
+            <p style={{ fontSize: '14px', color: 'var(--text-muted)', lineHeight: 1.6, margin: 0 }}>
+              The lucide-react 1.0 release introduced breaking changes — many icons were renamed (e.g. <code style={{ background: 'var(--code-bg)', padding: '2px 6px', borderRadius: '4px', fontSize: '12px' }}>BarChart2</code> → <code style={{ background: 'var(--code-bg)', padding: '2px 6px', borderRadius: '4px', fontSize: '12px' }}>ChartBar</code>, <code style={{ background: 'var(--code-bg)', padding: '2px 6px', borderRadius: '4px', fontSize: '12px' }}>PlusCircle</code> → <code style={{ background: 'var(--code-bg)', padding: '2px 6px', borderRadius: '4px', fontSize: '12px' }}>CirclePlus</code>). If your build fails with <code style={{ background: 'var(--code-bg)', padding: '2px 6px', borderRadius: '4px', fontSize: '12px' }}>{`module '"lucide-react"' has no exported member`}</code>, read our migration guide.
+            </p>
+            <Link href="/blog/lucide-react-1-migration-guide" style={{ color: 'var(--accent)', fontSize: '14px', fontWeight: 700, textDecoration: 'none' }}>
+              Read the Lucide-React v1.0 Migration Guide →
+            </Link>
+          </div>
+        </section>
+      )}
+
+      {/* Quick Stats — Clickable */}
       <section style={{ marginBottom: '48px' }}>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', gap: '24px', alignItems: 'center' }}>
-          <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', padding: '28px', textAlign: 'center' }}>
-            <div style={{ fontSize: '13px', color: 'var(--accent)', fontFamily: 'JetBrains Mono, monospace', marginBottom: '12px' }}>{a.name}</div>
-            <div style={{ fontSize: '36px', fontWeight: 800, fontFamily: 'JetBrains Mono, monospace', color: 'var(--text)', marginBottom: '4px' }}>{a.iconCount.toLocaleString()}</div>
-            <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>icons</div>
-            <div style={{ marginTop: '16px', fontSize: '13px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace' }}>⭐ {a.stars.toLocaleString()} stars</div>
-          </div>
+          <Link href={`/icons/${a.slug}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+            <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', padding: '28px', textAlign: 'center', transition: 'border-color 0.2s' }}>
+              <div style={{ fontSize: '13px', color: 'var(--accent)', fontFamily: 'JetBrains Mono, monospace', marginBottom: '12px' }}>{a.name}</div>
+              <div style={{ fontSize: '36px', fontWeight: 800, fontFamily: 'JetBrains Mono, monospace', color: 'var(--text)', marginBottom: '4px' }}>{a.iconCount.toLocaleString()}</div>
+              <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>icons</div>
+              <div style={{ marginTop: '16px', fontSize: '13px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace' }}>⭐ {a.stars.toLocaleString()} stars · {a.license}</div>
+              <div style={{ marginTop: '8px', fontSize: '11px', color: 'var(--accent)' }}>View full guide →</div>
+            </div>
+          </Link>
           <div style={{ fontSize: '24px', fontWeight: 800, color: 'var(--text-dim)', fontFamily: 'JetBrains Mono, monospace', textAlign: 'center' }}>VS</div>
-          <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', padding: '28px', textAlign: 'center' }}>
-            <div style={{ fontSize: '13px', color: 'var(--accent)', fontFamily: 'JetBrains Mono, monospace', marginBottom: '12px' }}>{b.name}</div>
-            <div style={{ fontSize: '36px', fontWeight: 800, fontFamily: 'JetBrains Mono, monospace', color: 'var(--text)', marginBottom: '4px' }}>{b.iconCount.toLocaleString()}</div>
-            <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>icons</div>
-            <div style={{ marginTop: '16px', fontSize: '13px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace' }}>⭐ {b.stars.toLocaleString()} stars</div>
-          </div>
+          <Link href={`/icons/${b.slug}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+            <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', padding: '28px', textAlign: 'center', transition: 'border-color 0.2s' }}>
+              <div style={{ fontSize: '13px', color: 'var(--accent)', fontFamily: 'JetBrains Mono, monospace', marginBottom: '12px' }}>{b.name}</div>
+              <div style={{ fontSize: '36px', fontWeight: 800, fontFamily: 'JetBrains Mono, monospace', color: 'var(--text)', marginBottom: '4px' }}>{b.iconCount.toLocaleString()}</div>
+              <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>icons</div>
+              <div style={{ marginTop: '16px', fontSize: '13px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace' }}>⭐ {b.stars.toLocaleString()} stars · {b.license}</div>
+              <div style={{ marginTop: '8px', fontSize: '11px', color: 'var(--accent)' }}>View full guide →</div>
+            </div>
+          </Link>
         </div>
       </section>
 
@@ -117,6 +165,70 @@ export default async function ComparisonPage({ params }: { params: Promise<{ pai
         </div>
       </section>
 
+      {/* Licensing & Commercial Use Deep-Dive */}
+      <section style={{ marginBottom: '48px', paddingBottom: '48px', borderBottom: '1px solid var(--border)' }}>
+        <h2 style={{ fontSize: '13px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '2px', marginBottom: '20px' }}>
+          LICENSE & COMMERCIAL USE
+        </h2>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+          <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', padding: '24px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+              <span style={{ fontSize: '14px', fontWeight: 700 }}>{a.name}</span>
+              <span style={{ fontSize: '12px', fontFamily: 'JetBrains Mono, monospace', color: 'var(--green)', background: '#4ade8015', padding: '4px 10px', borderRadius: '4px' }}>{a.license}</span>
+            </div>
+            <p style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.7, marginBottom: '16px' }}>
+              {getLicenseInfo(a.license, a.name)}
+            </p>
+            <div style={{ borderTop: '1px solid var(--border)', paddingTop: '12px' }}>
+              <div style={{ fontSize: '11px', color: 'var(--green)', fontFamily: 'JetBrains Mono, monospace', marginBottom: '6px' }}>✓ COMMERCIAL USE</div>
+              <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Free for personal, commercial, and SaaS projects</div>
+            </div>
+          </div>
+          <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', padding: '24px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+              <span style={{ fontSize: '14px', fontWeight: 700 }}>{b.name}</span>
+              <span style={{ fontSize: '12px', fontFamily: 'JetBrains Mono, monospace', color: 'var(--green)', background: '#4ade8015', padding: '4px 10px', borderRadius: '4px' }}>{b.license}</span>
+            </div>
+            <p style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.7, marginBottom: '16px' }}>
+              {getLicenseInfo(b.license, b.name)}
+            </p>
+            <div style={{ borderTop: '1px solid var(--border)', paddingTop: '12px' }}>
+              <div style={{ fontSize: '11px', color: 'var(--green)', fontFamily: 'JetBrains Mono, monospace', marginBottom: '6px' }}>✓ COMMERCIAL USE</div>
+              <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Free for personal, commercial, and SaaS projects</div>
+            </div>
+          </div>
+        </div>
+        <div style={{ marginTop: '16px', textAlign: 'center' }}>
+          <Link href="/licenses" style={{ color: 'var(--accent)', fontSize: '13px', fontFamily: 'JetBrains Mono, monospace', textDecoration: 'none' }}>
+            Read our complete Icon Library License Guide (MIT vs ISC vs Apache) →
+          </Link>
+        </div>
+      </section>
+
+      {/* React Import Syntax */}
+      <section style={{ marginBottom: '48px', paddingBottom: '48px', borderBottom: '1px solid var(--border)' }}>
+        <h2 style={{ fontSize: '13px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '2px', marginBottom: '20px' }}>
+          REACT IMPORT SYNTAX
+        </h2>
+        <p style={{ color: 'var(--text-muted)', fontSize: '14px', lineHeight: 1.7, marginBottom: '20px' }}>
+          Here is how you import and use each library in a React or Next.js component. Copy-paste ready.
+        </p>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+          <div>
+            <div style={{ fontSize: '12px', color: 'var(--accent)', fontFamily: 'JetBrains Mono, monospace', marginBottom: '8px' }}>{a.name}</div>
+            <pre style={{ background: 'var(--code-bg)', border: '1px solid var(--border)', borderRadius: '8px', padding: '20px', fontFamily: 'JetBrains Mono, monospace', fontSize: '12px', color: 'var(--text)', overflowX: 'auto', lineHeight: 1.7 }}>
+              {a.usageExample}
+            </pre>
+          </div>
+          <div>
+            <div style={{ fontSize: '12px', color: 'var(--accent)', fontFamily: 'JetBrains Mono, monospace', marginBottom: '8px' }}>{b.name}</div>
+            <pre style={{ background: 'var(--code-bg)', border: '1px solid var(--border)', borderRadius: '8px', padding: '20px', fontFamily: 'JetBrains Mono, monospace', fontSize: '12px', color: 'var(--text)', overflowX: 'auto', lineHeight: 1.7 }}>
+              {b.usageExample}
+            </pre>
+          </div>
+        </div>
+      </section>
+
       {/* Which to Choose */}
       <section style={{ marginBottom: '48px', paddingBottom: '48px', borderBottom: '1px solid var(--border)' }}>
         <h2 style={{ fontSize: '13px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '2px', marginBottom: '20px' }}>
@@ -131,6 +243,11 @@ export default async function ComparisonPage({ params }: { params: Promise<{ pai
                 <span style={{ fontSize: '14px', color: 'var(--text-muted)', lineHeight: 1.6 }}>{p}</span>
               </div>
             ))}
+            <div style={{ borderTop: '1px solid var(--border)', paddingTop: '12px', marginTop: '12px' }}>
+              <Link href={`/icons/${a.slug}`} style={{ color: 'var(--accent)', fontSize: '13px', fontFamily: 'JetBrains Mono, monospace', textDecoration: 'none' }}>
+                Read the full {a.name} guide →
+              </Link>
+            </div>
           </div>
           <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', padding: '24px' }}>
             <div style={{ fontSize: '12px', color: 'var(--green)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '2px', marginBottom: '16px' }}>CHOOSE {b.name.toUpperCase()} IF...</div>
@@ -140,6 +257,11 @@ export default async function ComparisonPage({ params }: { params: Promise<{ pai
                 <span style={{ fontSize: '14px', color: 'var(--text-muted)', lineHeight: 1.6 }}>{p}</span>
               </div>
             ))}
+            <div style={{ borderTop: '1px solid var(--border)', paddingTop: '12px', marginTop: '12px' }}>
+              <Link href={`/icons/${b.slug}`} style={{ color: 'var(--accent)', fontSize: '13px', fontFamily: 'JetBrains Mono, monospace', textDecoration: 'none' }}>
+                Read the full {b.name} guide →
+              </Link>
+            </div>
           </div>
         </div>
       </section>
@@ -162,6 +284,35 @@ export default async function ComparisonPage({ params }: { params: Promise<{ pai
               {b.installCommand}
             </pre>
           </div>
+        </div>
+      </section>
+
+      {/* Quick Internal Links */}
+      <section style={{ marginBottom: '48px', paddingBottom: '48px', borderBottom: '1px solid var(--border)' }}>
+        <h2 style={{ fontSize: '13px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '2px', marginBottom: '20px' }}>
+          RELATED PAGES
+        </h2>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <Link href={`/icons/${a.slug}`} style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', display: 'flex', justifyContent: 'space-between', padding: '10px 14px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '6px' }}>
+            {a.name} — License, Installation & React Guide
+            <span style={{ color: 'var(--accent)' }}>→</span>
+          </Link>
+          <Link href={`/icons/${b.slug}`} style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', display: 'flex', justifyContent: 'space-between', padding: '10px 14px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '6px' }}>
+            {b.name} — License, Installation & React Guide
+            <span style={{ color: 'var(--accent)' }}>→</span>
+          </Link>
+          <Link href="/icon-search" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', display: 'flex', justifyContent: 'space-between', padding: '10px 14px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '6px' }}>
+            Search 15,000+ Icons Across All Libraries
+            <span style={{ color: 'var(--accent)' }}>→</span>
+          </Link>
+          <Link href="/licenses" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', display: 'flex', justifyContent: 'space-between', padding: '10px 14px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '6px' }}>
+            Icon Library License Guide — MIT, Apache, ISC Explained
+            <span style={{ color: 'var(--accent)' }}>→</span>
+          </Link>
+          <Link href="/best-for-you" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '14px', fontFamily: 'JetBrains Mono, monospace', display: 'flex', justifyContent: 'space-between', padding: '10px 14px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '6px' }}>
+            Best Icons For You — Interactive Recommendation Wizard
+            <span style={{ color: 'var(--accent)' }}>→</span>
+          </Link>
         </div>
       </section>
 

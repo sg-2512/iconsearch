@@ -3,18 +3,18 @@ export const lucideIconsData = {
   slug: "lucide-icons",
   tagline: "Beautiful & consistent open-source icons",
   description: {
-    intro: "Lucide is one of the most popular open-source icon libraries in the developer ecosystem today. It was forked from Feather Icons in 2020 to address the lack of active maintenance, and has since grown into a thriving community-driven project with over 1,400 carefully crafted icons.",
+    intro: "Lucide is one of the most popular open-source icon libraries in the developer ecosystem today. It was forked from Feather Icons in 2020 to address the lack of active maintenance, and has since grown into a thriving community-driven project with over 1,900 carefully crafted icons.",
     detail: "Every icon in Lucide is designed on a strict 24x24 grid with a 2px stroke width, ensuring perfect visual consistency across your entire application. Whether you use 5 icons or 500, they will all look like they belong together — something that cannot be said for many competing libraries.",
     technical: "Lucide is built from the ground up with modern development workflows in mind. It is fully tree-shakable, meaning your production bundle only includes the icons you actually import. It ships with complete TypeScript definitions, so you get full autocomplete and type safety in VS Code. The library supports React, Vue, Svelte, Angular, and vanilla JavaScript through separate packages.",
     verdict: "For most projects starting in 2026, Lucide Icons is the default recommendation. It hits the sweet spot between icon variety, visual quality, bundle size, and developer experience. The only reason to look elsewhere is if you need filled/duotone variants or a significantly larger icon set."
   },
   stats: {
-    iconCount: 1400,
+    iconCount: 1959,
     stars: 12000,
     weeklyDownloads: 3200000,
     license: "ISC",
     firstRelease: "2020",
-    latestVersion: "0.330.0",
+    latestVersion: "1.16.0",
     bundleSize: "~1kb per icon",
     openIssues: 120,
   },
@@ -90,7 +90,7 @@ export default function Page() {
   cons: [
     { title: "Outline style only", detail: "Lucide only offers outline/stroke icons. If your design needs filled or duotone variants, you will need a different library or a workaround." },
     { title: "No animated icons", detail: "Icons are static SVGs. For animated icons you would need to use a separate solution like Lordicon or custom CSS animations." },
-    { title: "Smaller set than Tabler", detail: "At 1,400 icons, Lucide is large but not exhaustive. Very niche icons (specific logos, industry symbols) may be missing." },
+    { title: "Smaller set than Tabler", detail: "At 1,900 icons, Lucide is large but not exhaustive. Very niche icons (specific logos, industry symbols) may be missing." },
   ],
   whoShouldUse: [
     "React and Next.js developers who want a reliable, well-maintained icon library",
@@ -119,7 +119,7 @@ export default function Page() {
     },
     {
       q: "Is Lucide Icons the same as Feather Icons?",
-      a: "Lucide started as a fork of Feather Icons but has since diverged significantly. Feather has 287 icons and is no longer actively maintained. Lucide has 1,400+ icons with active development and a large community."
+      a: "Lucide started as a fork of Feather Icons but has since diverged significantly. Feather has 287 icons and is no longer actively maintained. Lucide has 1,900+ icons with active development and a large community."
     },
     {
       q: "How big is Lucide in my bundle?",

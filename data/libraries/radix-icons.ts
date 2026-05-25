@@ -14,7 +14,7 @@ export const radixIconsData = {
     weeklyDownloads: 1200000,
     license: "MIT",
     firstRelease: "2021",
-    latestVersion: "1.3.0",
+    latestVersion: "1.3.2",
     bundleSize: "~0.5kb per icon",
     openIssues: 23,
   },

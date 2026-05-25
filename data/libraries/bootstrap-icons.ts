@@ -3,18 +3,18 @@ export const bootstrapIconsData = {
   slug: "bootstrap-icons",
   tagline: "Free, high quality icons from the Bootstrap team",
   description: {
-    intro: "Bootstrap Icons is the official icon library from the Bootstrap team, offering over 1,800 free SVG icons. While designed to work perfectly with Bootstrap CSS, the library is completely framework-agnostic and works well in any web project.",
+    intro: "Bootstrap Icons is the official icon library from the Bootstrap team, offering over 2,000 free SVG icons. While designed to work perfectly with Bootstrap CSS, the library is completely framework-agnostic and works well in any web project.",
     detail: "The library covers an impressive range of categories and is particularly strong in UI-specific icons — form controls, navigation patterns, media controls, and system symbols are all well represented. Both outline and filled variants are available for most icons.",
     technical: "Bootstrap Icons can be used as SVG sprites, individual SVGs, or an icon font. For React projects there are community packages available. The library does not ship with official TypeScript definitions or a dedicated React package, which puts it behind modern alternatives in developer experience.",
     verdict: "Bootstrap Icons is excellent if you are already in the Bootstrap ecosystem or need a large, reliable icon set for a traditional web project. For modern React or Next.js applications, Lucide or Heroicons provide a better developer experience with TypeScript and tree-shaking built in."
   },
   stats: {
-    iconCount: 1800,
+    iconCount: 2078,
     stars: 7000,
     weeklyDownloads: 500000,
     license: "MIT",
     firstRelease: "2019",
-    latestVersion: "1.11.3",
+    latestVersion: "1.13.1",
     bundleSize: "~150kb (font) or ~1kb per SVG",
     openIssues: 67,
   },
@@ -76,7 +76,7 @@ export default function App() {
 }`,
   },
   pros: [
-    { title: "1800+ icons", detail: "A large and comprehensive icon set with excellent coverage of common UI patterns." },
+    { title: "2078+ icons", detail: "A large and comprehensive icon set with excellent coverage of common UI patterns." },
     { title: "Both outline and filled", detail: "Most icons have both outline and fill variants, accessible by adding -fill to the icon name." },
     { title: "Backed by Bootstrap team", detail: "Long-term maintenance is likely given Bootstrap's massive user base and commercial backing." },
     { title: "Works everywhere", detail: "Framework-agnostic — works in any HTML project, not just Bootstrap applications." },
@@ -114,7 +114,7 @@ export default function App() {
     },
     {
       q: "How many Bootstrap Icons are there?",
-      a: "Bootstrap Icons has over 1,800 icons as of version 1.11. New icons are added with each release."
+      a: "Bootstrap Icons has over 2,000 icons as of version 1.11. New icons are added with each release."
     },
     {
       q: "Can I use Bootstrap Icons with Tailwind CSS?",
