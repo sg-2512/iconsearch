@@ -266,6 +266,77 @@ export const icons: IconLibrary[] = [
     usageExample: "import HomeIcon from '@mui/icons-material/Home'\nimport HomeOutlinedIcon from '@mui/icons-material/HomeOutlined'\nimport SearchIcon from '@mui/icons-material/Search'\nimport DeleteIcon from '@mui/icons-material/Delete'\n\n// ✅ Path imports — up to 6x faster in dev than barrel imports\n// ❌ Avoid: import { HomeIcon } from '@mui/icons-material'\n\nexport default function App() {\n  return (\n    <div>\n      {/* Filled — bold, solid, for primary actions */}\n      <HomeIcon />\n\n      {/* Outlined — minimal stroke-style, for supporting UI */}\n      <HomeOutlinedIcon />\n\n      {/* Sizing via fontSize prop */}\n      <SearchIcon fontSize=\"small\" />   {/* 20px */}\n      <SearchIcon fontSize=\"medium\" />  {/* 24px default */}\n      <SearchIcon fontSize=\"large\" />   {/* 35px */}\n      <SearchIcon sx={{ fontSize: 48 }} />\n\n      {/* Color via MUI theme tokens or custom hex */}\n      <DeleteIcon color=\"error\" />\n      <DeleteIcon sx={{ color: '#6366f1' }} />\n    </div>\n  )\n}",
   },
 
+  // ── Iconify ───────────────────────────────────────────────────────────────────
+  {
+    name: 'Iconify',
+    slug: 'iconify',
+    description: 'One framework, 294,000+ icons across 211 open source icon sets. Access Lucide, Material Design, Font Awesome, Tabler, Heroicons, Phosphor, Bootstrap Icons, Simple Icons, and 200+ more through one unified <Icon> component with a prefix:name syntax. Official packages for React, Vue, Svelte, SolidJS, and vanilla HTML.',
+    website: 'https://iconify.design',
+    github: 'https://github.com/iconify/iconify',
+    npm: '@iconify/react',
+    stars: 5162,
+    iconCount: 294661,
+    license: 'MIT (framework) — icon sets retain their original licenses',
+    frameworks: ['react', 'nextjs', 'vue', 'svelte'],
+    style: ['outline', 'filled', 'duotone', 'brands', 'any'],
+    figmaPlugin: true,
+    typescript: true,
+    treeshakable: true,
+    pros: [
+      '294,000+ icons from 211 sets through one component — Lucide, MDI, Font Awesome, Tabler and more',
+      'Zero bundle cost in API mode — only the 15KB renderer ships, icon data loads on demand',
+      'Official packages for React, Vue, Svelte, SolidJS, Angular, and vanilla HTML web component',
+      'Unified prefix:name syntax — "lucide:home", "mdi:account", "fa6-solid:house" — one API for all sets',
+      'All 211 icon sets automatically kept up to date without npm package updates',
+      'Iconify Figma plugin lets designers browse all sets and export icon names for developers',
+    ],
+    cons: [
+      'API mode does not work in Next.js Server Components — offline mode with addCollection() setup required',
+      'API dependency in default mode — icons fail silently if Iconify CDN is unavailable',
+      'Mixed icon licenses across 211 sets — each set must be verified individually for commercial use',
+      'No single visual identity — mixing sets creates inconsistency without strict design discipline',
+      'Lower GitHub stars (5K) relative to download count — thinner community resources than Lucide or Font Awesome',
+      'Offline mode setup adds friction — requires @iconify-json/* packages and addCollection() calls',
+    ],
+    installCommand: 'npm install @iconify/react',
+    usageExample: "import { Icon } from '@iconify/react'\n\n// Access 294,000+ icons with one component\n// Format: prefix:icon-name\nexport default function App() {\n  return (\n    <div>\n      {/* Lucide Icons */}\n      <Icon icon=\"lucide:home\" width={24} height={24} />\n\n      {/* Material Design Icons */}\n      <Icon icon=\"mdi:account-circle\" width={24} />\n\n      {/* Font Awesome Solid */}\n      <Icon icon=\"fa6-solid:house\" width={20} />\n\n      {/* Simple Icons (brand logos) */}\n      <Icon icon=\"simple-icons:github\" width={24} />\n\n      {/* With color and className */}\n      <Icon icon=\"lucide:bell\" className=\"h-5 w-5 text-gray-500\" />\n      <Icon icon=\"mdi:check-circle\" color=\"#4ade80\" width={20} />\n    </div>\n  )\n}",
+  },
+
+// ── Simple Icons ──────────────────────────────────────────────────────────────
+  {
+    name: 'Simple Icons',
+    slug: 'simple-icons',
+    description: '3,109 free SVG brand icons for every major technology company, social platform, and developer tool. GitHub, Stripe, Vercel, AWS, Figma, Linear, and thousands more. CC0 public domain — no attribution required. The largest free brand icon library available, with 25K GitHub stars and official brand colors included for every icon.',
+    website: 'https://simpleicons.org',
+    github: 'https://github.com/simple-icons/simple-icons',
+    npm: '@icons-pack/react-simple-icons',
+    stars: 25047,
+    iconCount: 3109,
+    license: 'CC0 1.0 (Public Domain)',
+    frameworks: ['react', 'nextjs'],
+    style: ['filled'],
+    figmaPlugin: false,
+    typescript: true,
+    treeshakable: true,
+    pros: [
+      '3,109 brand icons — 6x more than Font Awesome Brands (465) at zero cost',
+      'CC0 public domain — no attribution required, no license notices, use in any commercial project',
+      'Official brand hex colors included — render SiStripe in #635BFF, SiGithub in #181717 with one prop',
+      'Works in Next.js Server Components — renders static SVG HTML with no use client required',
+      'Full TypeScript support — all 3,109 Si-prefixed components are typed with full VS Code autocomplete',
+      'Actively maintained — new brand icons added regularly, existing icons updated on rebrands',
+    ],
+    cons: [
+      'Brand icons only — no UI icons whatsoever, must pair with Lucide or Heroicons for product UI',
+      'Monochromatic only — all icons are single-fill SVG, no multi-color logos (Google, Mastercard)',
+      'React package (@icons-pack/react-simple-icons) is community-maintained, not by Simple Icons org',
+      'CC0 covers the SVG file, not trademark rights — brand logos remain trademarks of their owners',
+      'No Vue, Svelte or vanilla package — use core simple-icons package with manual SVG rendering',
+    ],
+    installCommand: 'npm install @icons-pack/react-simple-icons',
+    usageExample: "import {\n  SiGithub,\n  SiVercel,\n  SiStripe,\n  SiReact,\n  SiNextdotjs,\n  SiTailwindcss,\n} from '@icons-pack/react-simple-icons'\n// All components use 'Si' prefix + PascalCase brand name\n\nexport function TechStack() {\n  return (\n    <div className=\"flex items-center gap-4\">\n      {/* Use currentColor — inherits from parent */}\n      <SiGithub size={24} />\n      <SiVercel size={24} />\n\n      {/* Use official brand color */}\n      <SiStripe size={24} color=\"#635BFF\" />\n      <SiReact size={24} color=\"#61DAFB\" />\n\n      {/* Social links row */}\n      <a href=\"https://github.com\" aria-label=\"GitHub\">\n        <SiGithub size={20} className=\"text-gray-600 hover:text-gray-900\" />\n      </a>\n    </div>\n  )\n}",
+  },
+
 ]
 
 export function getIconBySlug(slug: string) {

@@ -10,6 +10,8 @@ import { radixIconsData } from '../../../data/libraries/radix-icons'
 import { fontAwesomeIconsData } from '../../../data/libraries/fontawesome-icons'
 import { reactIconsData } from '../../../data/libraries/react-icons'
 import { materialIconsData } from '../../../data/libraries/material-icons'
+import { iconifyIconsData } from '../../../data/libraries/iconify-icons'
+import { simpleIconsData } from '../../../data/libraries/simple-icons'
 
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -26,6 +28,8 @@ const libraryData: Record<string, any> = {
   'radix-icons': radixIconsData,
   'react-icons': reactIconsData,
   'material-icons': materialIconsData,
+  'iconify': iconifyIconsData,
+  'simple-icons': simpleIconsData,
 }
 
 export async function generateStaticParams() {
