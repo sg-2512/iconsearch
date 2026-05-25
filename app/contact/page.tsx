@@ -27,10 +27,10 @@ export default function ContactPage() {
             CONTACT DETAILS
           </h2>
           {[
-            { label: 'General Enquiries', value: 'hello@iconsearch.dev', icon: '✉' },
-            { label: 'Privacy & Legal', value: 'privacy@iconsearch.dev', icon: '⚖' },
-            { label: 'Partnerships', value: 'partners@iconsearch.dev', icon: '🤝' },
-            { label: 'Report an Error', value: 'errors@iconsearch.dev', icon: '🐛' },
+            { label: 'General Enquiries', value: 'iconsearchinfo@gmail.com', icon: '✉' },
+            { label: 'Privacy & Legal', value: 'iconsearchinfo@gmail.com', icon: '⚖' },
+            { label: 'Partnerships', value: 'iconsearchinfo@gmail.com', icon: '🤝' },
+            { label: 'Report an Error', value: 'iconsearchinfo@gmail.com', icon: '🐛' },
           ].map(item => (
             <div key={item.label} style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '8px', padding: '16px 20px' }}>
               <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace', marginBottom: '6px', letterSpacing: '1px' }}>
