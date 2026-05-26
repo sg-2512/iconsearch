@@ -267,6 +267,29 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
         </div>
       </section>
 
+      {/* Internal Interlinking Module */}
+      <section style={{ marginTop: '48px', paddingTop: '48px', borderTop: '1px solid var(--border)' }}>
+        <h2 style={{ fontSize: '13px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '2px', marginBottom: '20px' }}>
+          EXPLORE MORE
+        </h2>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+          <div>
+            <h3 style={{ fontSize: '12px', color: 'var(--text)', fontFamily: 'JetBrains Mono, monospace', marginBottom: '12px' }}>Framework Integration</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <Link href="/react-icons" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '14px' }}>Using SVG Icons in React</Link>
+              <Link href="/nextjs-icons" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '14px' }}>Next.js Icons Guide</Link>
+            </div>
+          </div>
+          <div>
+            <h3 style={{ fontSize: '12px', color: 'var(--text)', fontFamily: 'JetBrains Mono, monospace', marginBottom: '12px' }}>Directory & Guides</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <Link href="/best-for-you" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '14px' }}>Interactive Recommendation Quiz</Link>
+              <Link href="/compare" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '14px' }}>Compare Icon Libraries</Link>
+              <Link href="/directory" style={{ color: 'var(--accent)', textDecoration: 'none', fontSize: '14px', marginTop: '4px' }}>View Full Site Directory →</Link>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
   )
 }

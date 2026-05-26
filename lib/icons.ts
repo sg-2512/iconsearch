@@ -336,6 +336,36 @@ export const icons: IconLibrary[] = [
     installCommand: 'npm install @icons-pack/react-simple-icons',
     usageExample: "import {\n  SiGithub,\n  SiVercel,\n  SiStripe,\n  SiReact,\n  SiNextdotjs,\n  SiTailwindcss,\n} from '@icons-pack/react-simple-icons'\n// All components use 'Si' prefix + PascalCase brand name\n\nexport function TechStack() {\n  return (\n    <div className=\"flex items-center gap-4\">\n      {/* Use currentColor — inherits from parent */}\n      <SiGithub size={24} />\n      <SiVercel size={24} />\n\n      {/* Use official brand color */}\n      <SiStripe size={24} color=\"#635BFF\" />\n      <SiReact size={24} color=\"#61DAFB\" />\n\n      {/* Social links row */}\n      <a href=\"https://github.com\" aria-label=\"GitHub\">\n        <SiGithub size={20} className=\"text-gray-600 hover:text-gray-900\" />\n      </a>\n    </div>\n  )\n}",
   },
+  
+  // ── Iconoir ──────────────────────────────────────────────────────────────────
+  {
+    name: 'Iconoir',
+    slug: 'iconoir',
+    description: 'A high-quality, open-source icon library featuring over 1,500 meticulously crafted line icons. Highly consistent, premium aesthetic perfect for modern UIs.',
+    website: 'https://iconoir.com',
+    github: 'https://github.com/iconoir-icons/iconoir',
+    npm: 'iconoir-react',
+    stars: 5200,
+    iconCount: 1530,
+    license: 'MIT',
+    frameworks: ['react', 'nextjs', 'vue', 'solid'],
+    style: ['outline'],
+    figmaPlugin: true,
+    typescript: true,
+    treeshakable: true,
+    pros: [
+      'Incredibly consistent, premium aesthetic that rivals paid libraries.',
+      'Wide framework support including React Native and Flutter.',
+      'Highly customizable stroke widths.',
+      'Excellent Figma plugin synchronization.'
+    ],
+    cons: [
+      'Line style only — no filled or duotone variants.',
+      'Does not include brand/social media icons.'
+    ],
+    installCommand: 'npm install iconoir-react',
+    usageExample: "import { Camera, Search } from 'iconoir-react'\n\nexport default function App() {\n  return (\n    <div className=\"flex gap-4 text-blue-500\">\n      <Camera color=\"currentColor\" strokeWidth={1.5} />\n      <Search />\n    </div>\n  )\n}",
+  },
 
 ]
 

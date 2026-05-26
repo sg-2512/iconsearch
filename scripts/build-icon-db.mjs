@@ -422,6 +422,47 @@ try {
   console.log('Remix Icon error:', e.message)
 }
 
+// ─── 9. ICONOIR ───────────────────────────────────────────────
+console.log('Processing Iconoir...')
+try {
+  const iconoirDir = findDir([
+    'node_modules/iconoir-react/dist/esm/regular',
+    'node_modules/iconoir-react/dist/regular',
+  ])
+
+  if (iconoirDir) {
+    console.log('  Found at:', iconoirDir)
+    const files = readdirSync(iconoirDir).filter(f => f.endsWith('.mjs') && !f.endsWith('.map'))
+    for (const file of files) {
+      const componentName = file.replace(/\.mjs$/, '')
+      if (componentName === 'index') continue
+      // Convert PascalCase to kebab-case for name
+      const name = componentName
+        .replace(/([A-Z])/g, s => `-${s.toLowerCase()}`)
+        .replace(/^-/, '')
+        .replace(/--+/g, '-')
+      output.push({
+        id: `iconoir-${name}`,
+        name,
+        displayName: componentName,
+        library: 'iconoir',
+        libraryName: 'Iconoir',
+        npmPackage: 'iconoir-react',
+        license: 'MIT',
+        tags: toTags(name),
+        reactImport: `import { ${componentName} } from 'iconoir-react'`,
+        reactUsage: `<${componentName} width={24} height={24} />`,
+        svgUrl: `https://cdn.jsdelivr.net/npm/iconoir@latest/icons/regular/${name}.svg`,
+      })
+    }
+    console.log(`✓ Iconoir: ${files.length} icons`)
+  } else {
+    console.log('  Iconoir not found')
+  }
+} catch (e) {
+  console.log('Iconoir error:', e.message)
+}
+
 // ─── WRITE OUTPUT ─────────────────────────────────────────────
 const outputPath = join(root, 'data/icon-search.json')
 const publicPath = join(root, 'public/icon-search.json')

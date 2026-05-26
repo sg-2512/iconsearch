@@ -12,6 +12,7 @@ import { reactIconsData } from '../../../data/libraries/react-icons'
 import { materialIconsData } from '../../../data/libraries/material-icons'
 import { iconifyIconsData } from '../../../data/libraries/iconify-icons'
 import { simpleIconsData } from '../../../data/libraries/simple-icons'
+import { iconoirData } from '../../../data/libraries/iconoir'
 
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -30,6 +31,7 @@ const libraryData: Record<string, any> = {
   'material-icons': materialIconsData,
   'iconify': iconifyIconsData,
   'simple-icons': simpleIconsData,
+  'iconoir': iconoirData,
 }
 
 export async function generateStaticParams() {
@@ -441,6 +443,30 @@ export default async function LibraryPage({ params }: { params: Promise<{ slug: 
               <span style={{ color: 'var(--accent)' }}>→</span>
             </Link>
           ))}
+        </div>
+      </section>
+      {/* Internal Interlinking Module */}
+      <section style={{ marginBottom: '48px', paddingTop: '48px', borderTop: '1px solid var(--border)' }}>
+        <h2 style={{ fontSize: '13px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '2px', marginBottom: '20px' }}>
+          EXPLORE MORE
+        </h2>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+          <div>
+            <h3 style={{ fontSize: '12px', color: 'var(--text)', fontFamily: 'JetBrains Mono, monospace', marginBottom: '12px' }}>Framework Integration</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <Link href="/react-icons" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '14px' }}>Using SVG Icons in React</Link>
+              <Link href="/nextjs-icons" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '14px' }}>Next.js Icons Guide</Link>
+              <Link href="/typescript-icons" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '14px' }}>Strictly Typed Icons</Link>
+            </div>
+          </div>
+          <div>
+            <h3 style={{ fontSize: '12px', color: 'var(--text)', fontFamily: 'JetBrains Mono, monospace', marginBottom: '12px' }}>Browse By Category</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <Link href="/use-cases/icons-for-saas" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '14px' }}>Best Icons for SaaS</Link>
+              <Link href="/icons/category/ui-icons" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '14px' }}>General UI Icons</Link>
+              <Link href="/directory" style={{ color: 'var(--accent)', textDecoration: 'none', fontSize: '14px', marginTop: '4px' }}>View Full Site Directory →</Link>
+            </div>
+          </div>
         </div>
       </section>
     </main>

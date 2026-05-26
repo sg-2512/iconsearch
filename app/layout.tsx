@@ -53,6 +53,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </Script>
       </head>
       <body>
+        {/* Global Affiliate Banner */}
+        <div style={{ background: 'linear-gradient(90deg, var(--accent) 0%, #8b5cf6 100%)', color: 'white', padding: '10px', textAlign: 'center', fontSize: '13px', fontFamily: 'JetBrains Mono, monospace' }}>
+          ✨ Need a premium icon library? <a href="https://hugeicons.com?via=IconSearch" target="_blank" rel="noopener noreferrer" style={{ color: 'white', textDecoration: 'underline', fontWeight: 700 }}>Check out Hugeicons Pro →</a>
+        </div>
         <Navbar />
         <div style={{ minHeight: 'calc(100vh - 60px - 80px)' }}>
           {children}
@@ -140,6 +144,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 {[
                   { label: 'Browse', href: '/free-svg-icons' },
                   { label: 'Compare', href: '/compare' },
+                  { label: 'Site Directory', href: '/directory' },
                   { label: 'Best For You', href: '/best-for-you' },
                   { label: 'Categories', href: '/icons/category' },
                   { label: 'License Guide', href: '/licenses' },

@@ -150,6 +150,11 @@ function getResult(answers: Answers): Result {
         name: 'Radix Icons',
         reason: 'Radix Icons are the companion icons used in Radix UI primitives — 15x15px, designed specifically for dense component UIs. Use them alongside Lucide for Radix-specific UI components only.',
       },
+      tertiary: {
+        slug: 'iconoir',
+        name: 'Iconoir',
+        reason: 'If you want a premium line-art alternative to Lucide with a slightly more polished aesthetic, Iconoir offers 1,500+ icons with the same outline focus and MIT license.',
+      },
       summary: 'shadcn/ui ships with Lucide Icons. Staying on Lucide keeps your project coherent and avoids a parallel icon system.',
       warning: 'Do not add @mui/icons-material or react-icons to a shadcn project — the bundle cost and visual inconsistency outweigh the benefits.',
     }
@@ -304,6 +309,11 @@ function getResult(answers: Answers): Result {
         name: 'Phosphor Icons',
         reason: 'If your mobile app is consumer-facing and needs a warmer, more expressive visual style, Phosphor\'s fill and duotone variants add personality that Lucide\'s minimal strokes do not provide. Higher bundle cost (~34KB for 50 icons) but justified for consumer apps.',
       },
+      tertiary: {
+        slug: 'iconoir',
+        name: 'Iconoir',
+        reason: 'Iconoir is another lightweight line-icon option with React Native support — great if your team also builds native mobile apps alongside the PWA.',
+      },
       summary: 'For mobile web and PWAs, Lucide\'s minimal bundle footprint and clean aesthetic is the performance-safe choice.',
     }
   }
@@ -341,6 +351,11 @@ function getResult(answers: Answers): Result {
         slug: 'radix-icons',
         name: 'Radix Icons',
         reason: 'For dense technical UIs like code editors, toolbars, and IDE-style panels, Radix Icons at 15x15px are specifically designed for high-density developer interfaces. Use alongside Lucide — Radix for tight UI components, Lucide for everything else.',
+      },
+      tertiary: {
+        slug: 'iconoir',
+        name: 'Iconoir',
+        reason: 'Iconoir\'s premium line-art aesthetic works beautifully in developer tools and docs. Consider it if you find Lucide too ubiquitous and want a more distinctive visual identity.',
       },
       summary: 'Lucide Icons is the default for developer tools in the React ecosystem.',
     }
@@ -416,6 +431,13 @@ function getResult(answers: Answers): Result {
         tags: [priority === 'dx' ? 'Best TypeScript DX' : 'Single design system', 'Tree-shakable', '1,500+ icons', 'ISC License'],
       },
       secondary: {
+        slug: 'iconoir',
+        name: 'Iconoir',
+        reason: priority === 'dx'
+          ? 'Iconoir also has excellent TypeScript definitions and a clean API. Its premium line-art aesthetic is slightly more refined than Lucide — consider it if visual polish matters alongside DX.'
+          : 'Iconoir rivals Lucide for visual consistency — every icon shares a unified stroke weight and grid. Its premium line-art aesthetic is arguably more polished, though the icon count (1,500) is comparable.',
+      },
+      tertiary: {
         slug: 'heroicons',
         name: 'Heroicons',
         reason: 'If you are on Tailwind CSS, Heroicons offers the same TypeScript and design consistency quality with tighter Tailwind integration — at 292 icons.',
@@ -423,6 +445,30 @@ function getResult(answers: Answers): Result {
       summary: priority === 'dx'
         ? 'For TypeScript-first projects with standard icon needs, Lucide Icons has the best developer experience available.'
         : 'For visual consistency above all else, Lucide\'s single-system design approach is unmatched in the free tier.',
+    }
+  }
+
+  // ─── SaaS / Dashboard with outline style → Iconoir as strong candidate ───
+  if (project === 'saas' && (style === 'outline' || style === 'any') && volume === 'medium') {
+    return {
+      primary: {
+        slug: 'lucide-icons',
+        name: 'Lucide Icons',
+        reason: 'Based on your answers, Lucide Icons is the best all-around choice for SaaS dashboards. It is the most popular free icon library for React and Next.js in 2026 — 1,500+ icons, full TypeScript support, ~5KB for 50 icons, works in Server Components, ISC license with zero attribution required, and active maintenance.',
+        installCommand: 'npm install lucide-react',
+        tags: ['Most popular in 2026', 'TypeScript', 'Tree-shakable', 'ISC License'],
+      },
+      secondary: {
+        slug: 'iconoir',
+        name: 'Iconoir',
+        reason: 'Iconoir is one of the best Lucide alternatives for SaaS dashboards. It offers 1,500+ premium line icons with an incredibly consistent, polished aesthetic that rivals paid libraries. Excellent TypeScript support and customizable stroke widths via props.',
+      },
+      tertiary: {
+        slug: 'tabler-icons',
+        name: 'Tabler Icons',
+        reason: 'If your dashboard needs niche or specialized icons beyond 1,500, Tabler Icons has 5,900+ icons covering medicine, finance, weather, and more.',
+      },
+      summary: 'For SaaS dashboards, Lucide or Iconoir deliver the cleanest modern aesthetic. Both are premium-quality and MIT licensed.',
     }
   }
 
@@ -439,6 +485,11 @@ function getResult(answers: Answers): Result {
       slug: 'tabler-icons',
       name: 'Tabler Icons',
       reason: 'If you find Lucide\'s 1,500 icons don\'t cover your niche — Tabler Icons extends the same stroke-based aesthetic to 5,900+ MIT-licensed icons. Bundle size scales linearly with the same ESM tree-shaking.',
+    },
+    tertiary: {
+      slug: 'iconoir',
+      name: 'Iconoir',
+      reason: 'Iconoir is a premium-quality Lucide alternative with 1,500+ line icons, customizable stroke widths, and wide framework support including React Native and Flutter.',
     },
     summary: 'For most React and Next.js projects in 2026, Lucide Icons is the safe default recommendation.',
   }
@@ -818,6 +869,37 @@ export default function BestForYouPage() {
                 style={{ color: 'var(--accent)', textDecoration: 'none', fontSize: '13px', fontFamily: 'JetBrains Mono, monospace' }}
               >
                 View {result.secondary.name} guide →
+              </Link>
+            </div>
+          )}
+
+          {/* Tertiary recommendation */}
+          {result.tertiary && (
+            <div style={{
+              background: 'var(--bg-card)',
+              border: '1px solid var(--border)',
+              borderRadius: '12px',
+              padding: '24px',
+              marginBottom: '32px',
+            }}>
+              <div style={{
+                fontSize: '11px',
+                color: 'var(--text-muted)',
+                fontFamily: 'JetBrains Mono, monospace',
+                letterSpacing: '2px',
+                marginBottom: '10px',
+              }}>
+                ALSO CONSIDER
+              </div>
+              <h3 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '10px' }}>{result.tertiary.name}</h3>
+              <p style={{ color: 'var(--text-muted)', fontSize: '14px', lineHeight: 1.7, marginBottom: '14px' }}>
+                {result.tertiary.reason}
+              </p>
+              <Link
+                href={`/icons/${result.tertiary.slug}`}
+                style={{ color: 'var(--accent)', textDecoration: 'none', fontSize: '13px', fontFamily: 'JetBrains Mono, monospace' }}
+              >
+                View {result.tertiary.name} guide →
               </Link>
             </div>
           )}

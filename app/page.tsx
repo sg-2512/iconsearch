@@ -128,6 +128,21 @@ export default function HomePage() {
           }}>
             Compare Libraries
           </Link>
+          <a href="https://hugeicons.com?via=IconSearch" target="_blank" rel="noopener noreferrer" style={{
+            background: 'var(--bg-card)',
+            border: '1px solid var(--accent)',
+            color: 'var(--text)',
+            padding: '12px 24px',
+            borderRadius: '8px',
+            textDecoration: 'none',
+            fontSize: '14px',
+            fontFamily: 'JetBrains Mono, monospace',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}>
+            <span style={{ color: 'var(--accent)' }}>✨</span> Premium: Hugeicons Pro
+          </a>
         </div>
       </section>
 

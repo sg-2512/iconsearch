@@ -26,6 +26,7 @@ const LIBRARIES = [
   { slug: 'bootstrap-icons', name: 'Bootstrap' },
   { slug: 'feather-icons', name: 'Feather' },
   { slug: 'remix-icon', name: 'Remix' },
+  { slug: 'iconoir', name: 'Iconoir' },
 ]
 
 const LIBRARY_COLORS: Record<string, string> = {
@@ -37,6 +38,7 @@ const LIBRARY_COLORS: Record<string, string> = {
   'bootstrap-icons': '#7952b3', // Bootstrap purple
   'feather-icons': '#3b82f6', // Feather blue
   'remix-icon': '#ff4c4c', // Remix red
+  'iconoir': '#e88c30', // Iconoir amber
 }
 
 function CopyButton({ text, label }: { text: string; label: string }) {
@@ -236,7 +238,7 @@ export default function IconSearchPage() {
           <span style={{ color: 'var(--accent)' }}>All Libraries</span>
         </h1>
         <p style={{ color: 'var(--text-muted)', fontSize: '16px', maxWidth: '500px' }}>
-          Find the same icon across Lucide, Heroicons, Tabler, Phosphor, Bootstrap, Remix, Feather, and Radix. Copy the React import instantly.
+          Find the same icon across Lucide, Heroicons, Tabler, Phosphor, Bootstrap, Remix, Feather, Iconoir, and Radix. Copy the React import instantly.
         </p>
       </section>
 
@@ -245,8 +247,8 @@ export default function IconSearchPage() {
       <section style={{ marginBottom: '32px' }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '12px', marginBottom: '24px' }}>
           {[
-            { number: '15,000+', label: 'Searchable Icons' },
-            { number: '8', label: 'Icon Libraries' },
+            { number: '16,000+', label: 'Searchable Icons' },
+            { number: '9', label: 'Icon Libraries' },
             { number: '5', label: 'Frameworks Covered' },
             { number: '100%', label: 'Free & Open Source' },
           ].map(stat => (
@@ -257,7 +259,7 @@ export default function IconSearchPage() {
           ))}
         </div>
         <p style={{ color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.8, marginBottom: '12px' }}>
-          Search across Lucide Icons, Heroicons, Tabler Icons, Phosphor Icons, Radix Icons, Bootstrap Icons, Remix Icon, and Feather Icons simultaneously. Find the same icon name across multiple libraries and compare styles instantly. Copy the React import code with one click.
+          Search across Lucide Icons, Heroicons, Tabler Icons, Phosphor Icons, Radix Icons, Bootstrap Icons, Remix Icon, Iconoir, and Feather Icons simultaneously. Find the same icon name across multiple libraries and compare styles instantly. Copy the React import code with one click.
         </p>
         <p style={{ color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.8 }}>
           Every icon includes the exact npm install command, React import statement, and JSX usage example. Works with React, Next.js App Router, Vue 3, and Svelte.

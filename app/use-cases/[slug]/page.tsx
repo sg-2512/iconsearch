@@ -185,6 +185,30 @@ export default async function UseCasePage({ params }: { params: Promise<{ slug: 
         </div>
       </section>
 
+      {/* Internal Interlinking Module */}
+      <section style={{ marginBottom: '48px', paddingTop: '48px', borderTop: '1px solid var(--border)' }}>
+        <h2 style={{ fontSize: '13px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '2px', marginBottom: '20px' }}>
+          EXPLORE MORE
+        </h2>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+          <div>
+            <h3 style={{ fontSize: '12px', color: 'var(--text)', fontFamily: 'JetBrains Mono, monospace', marginBottom: '12px' }}>Framework Guides</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <Link href="/react-icons" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '14px' }}>Using SVG Icons in React</Link>
+              <Link href="/nextjs-icons" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '14px' }}>Next.js Icons Guide</Link>
+              <Link href="/tailwind-icons" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '14px' }}>Tailwind CSS Integration</Link>
+            </div>
+          </div>
+          <div>
+            <h3 style={{ fontSize: '12px', color: 'var(--text)', fontFamily: 'JetBrains Mono, monospace', marginBottom: '12px' }}>Resources</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <Link href="/icon-search" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '14px' }}>Search All 15,000+ Icons</Link>
+              <Link href="/licenses" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '14px' }}>Icon Library License Guide</Link>
+              <Link href="/directory" style={{ color: 'var(--accent)', textDecoration: 'none', fontSize: '14px', marginTop: '4px' }}>View Full Site Directory →</Link>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
   )
 }
