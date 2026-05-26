@@ -1,325 +1,433 @@
-# IconSearch - Find & Compare Free SVG Icon Libraries
+# IconSearch — Find & Compare Free SVG Icon Libraries
 
-> IconSearch is an independent comparison and search tool for open source SVG icon libraries used in React, Next.js, Vue, and Svelte projects. We help developers find the right icon library through side-by-side comparisons, a searchable database of 11,700+ icons, license guides, performance benchmarks, and pricing analysis.
-
-## What IconSearch Does
-
-IconSearch provides:
-- Side-by-side comparison of 13 major icon libraries with real benchmark data
-- A search tool covering 11,700+ icons across Lucide, Heroicons, Tabler, Phosphor, Radix, Bootstrap, Remix, Feather, Font Awesome, React Icons, and Material Icons
-- Complete license guide for all major icon libraries
-- Installation guides for React, Next.js, Vue, and Svelte
-- Performance guides on SVG vs icon fonts, bundle size optimization, and tree-shaking
-- Pricing comparison of free vs paid icon libraries
-- A "Best For You" quiz that recommends the right library based on framework, style, project type, budget, and icon count needs
+> IconSearch is an independent comparison and search tool for open source SVG icon libraries used in React, Next.js, Vue, and Svelte projects. We help developers find the right icon library through side-by-side comparisons, a searchable database of 11,700+ icons, license guides, performance benchmarks, and pricing analysis. The site covers 14 icon libraries across 91 side-by-side comparisons, 7 use case guides, 6 framework guides, and 16+ in-depth blog posts.
 
 ---
 
-## Icon Libraries Covered
+## What IconSearch Does
+
+- Side-by-side comparison of 14 major icon libraries with real benchmark data (91 total comparisons)
+- Icon search tool covering 11,700+ icons across all 14 libraries
+- Complete license guide — MIT, ISC, Apache 2.0, CC0, CC BY 4.0 explained
+- Installation guides for React, Next.js, Vue, and Svelte
+- Performance guides: bundle size benchmarks, tree-shaking, SVG vs icon fonts
+- Pricing comparison: free vs paid icon libraries
+- Use case guides for SaaS, dashboards, mobile, ecommerce, developer tools, dark mode, and more
+- "Best For You" quiz — 7-question tool recommending the right library for your stack, style, and project type
+- Stats dashboard — ranked by GitHub stars, weekly downloads, icon count, and feature matrix
+- 16+ in-depth blog posts on performance, accessibility, animation, and migration
+
+---
+
+## Ecosystem Overview
+
+14 total libraries | 426,762+ total icons | 318,000+ total GitHub stars | 10/14 with TypeScript | 11/14 tree-shakable | 9/14 with Figma plugin
+
+---
+
+## Icon Libraries Covered (14 total)
 
 ### Lucide Icons
-- License: ISC (functionally identical to MIT — no attribution required)
-- Icons: 1,500+
-- Frameworks: React, Next.js, Vue, Svelte
-- TypeScript: Yes (LucideIcon type exported)
-- Bundle size: ~0.5KB per icon (gzip, tree-shaken)
-- Works in Next.js Server Components: Yes (no use client required)
-- Best for: Most React and Next.js projects, SaaS dashboards, developer tools, shadcn/ui projects
-- Install: npm install lucide-react
 - URL: https://iconsearch.info/icons/lucide-icons
+- License: ISC (no attribution required)
+- Icons: 1,400+
+- Package: lucide-react
+- Install: npm install lucide-react
+- Frameworks: React, Next.js, Vue, Svelte
+- TypeScript: Yes — LucideIcon type exported
+- Tree-shakable: Yes — ~0.5KB per icon gzip
+- Works in Next.js Server Components: Yes
+- Figma plugin: Yes
+- Best for: Most React/Next.js projects, SaaS dashboards, developer tools, shadcn/ui
+- Weekly downloads: ~5M+
+- GitHub stars: 12,000+
 
 ### Heroicons
-- License: MIT (by Tailwind Labs — same team as Tailwind CSS and Tailwind UI)
-- Icons: 292 across outline and solid variants at 16px, 20px, and 24px
-- Frameworks: React, Vue
-- TypeScript: Yes
-- Works in Next.js Server Components: Yes
-- Best for: Tailwind CSS projects, Tailwind UI customers
+- URL: https://iconsearch.info/icons/heroicons
+- License: MIT (by Tailwind Labs)
+- Icons: 292–324 (outline, solid, mini at 16/20/24px)
+- Package: @heroicons/react
 - Install: npm install @heroicons/react
 - Import pattern: import { HomeIcon } from '@heroicons/react/24/outline'
-- URL: https://iconsearch.info/icons/heroicons
+- Frameworks: React, Vue, Next.js
+- TypeScript: Yes
+- Tree-shakable: Yes — ~0.7KB per icon gzip
+- Works in Server Components: Yes
+- Figma plugin: Yes
+- Best for: Tailwind CSS projects, Tailwind UI customers
+- GitHub stars: 21,000+
 
 ### Tabler Icons
+- URL: https://iconsearch.info/icons/tabler-icons
 - License: MIT
-- Icons: 5,900+
+- Icons: 5,500+ (outline and filled variants)
+- Package: @tabler/icons-react
+- Install: npm install @tabler/icons-react
 - Frameworks: React, Vue, Svelte
 - TypeScript: Yes
-- Best for: Projects needing large icon collections, dashboards, technical and medical applications
-- Install: npm install @tabler/icons-react
-- URL: https://iconsearch.info/icons/tabler-icons
+- Tree-shakable: Yes
+- Figma plugin: Yes
+- Best for: Projects needing 5,000+ icons, dashboards, technical/medical applications
+- GitHub stars: 18,000+
 
 ### Phosphor Icons
+- URL: https://iconsearch.info/icons/phosphor-icons
 - License: MIT
-- Icons: 9,000+ across 6 weight variants (thin, light, regular, bold, fill, duotone)
+- Icons: 1,248+ across 6 weights (thin, light, regular, bold, fill, duotone)
+- Package: @phosphor-icons/react
+- Install: npm install @phosphor-icons/react
 - Frameworks: React, Vue
 - TypeScript: Yes
-- Bundle note: Higher baseline bundle than Lucide due to weight system (~34KB gzip for 50 icons)
-- Best for: Multiple weight variants, duotone style, design-forward consumer apps, marketing pages
-- Install: npm install @phosphor-icons/react
-- URL: https://iconsearch.info/icons/phosphor-icons
+- Tree-shakable: Yes (~34KB gzip for 50 icons — weight system adds overhead)
+- Figma plugin: Yes
+- Best for: Duotone/multi-weight icons, consumer apps, marketing pages
+- GitHub stars: 8,000+
 
 ### Material Icons
-- Package: @mui/icons-material
-- License: MIT
-- Icons: 2,100+ across 5 style variants (Filled, Outlined, Rounded, Sharp, TwoTone)
-- Frameworks: React, Next.js (React only — no official Vue or Svelte package)
-- TypeScript: Yes (SvgIconProps type)
-- Weekly downloads: 5,174,834 (most downloaded React icon package)
-- GitHub stars: 98,300
-- Latest version: 7.3.11
-- Works in Next.js Server Components: Yes (no use client required)
-- Peer dependencies required: @mui/material, @emotion/styled, @emotion/react
-- Bundle note: ~1KB per icon when MUI already installed. Adding to a non-MUI project costs ~300KB gzip in peer deps — use Lucide instead
-- Dev performance warning: Named barrel imports are up to 6x slower in dev. Use path imports: import Home from '@mui/icons-material/Home' not import { Home } from '@mui/icons-material'
-- Best for: Projects already using MUI, enterprise apps, Android-style UIs, design systems needing 5 icon weight variants
-- Avoid when: Not on MUI (peer dep overhead too high), Vue/Svelte projects, minimal modern SaaS aesthetic
-- Install: npm install @mui/icons-material @mui/material @emotion/styled @emotion/react
 - URL: https://iconsearch.info/icons/material-icons
+- License: MIT
+- Icons: 2,100+ across 5 styles (Filled, Outlined, Rounded, Sharp, TwoTone)
+- Package: @mui/icons-material
+- Install: npm install @mui/icons-material @mui/material @emotion/styled @emotion/react
+- Frameworks: React, Next.js (React only — no Vue/Svelte)
+- TypeScript: Yes — SvgIconProps type
+- Tree-shakable: Yes (path imports recommended — barrel imports 6x slower in dev)
+- Works in Server Components: Yes
+- Figma plugin: Yes
+- Weekly downloads: 5.1M (most downloaded React icon package)
+- GitHub stars: 98,300
+- Best for: MUI projects — peer deps already installed, native sx prop integration
+- Avoid when: Not on MUI — ~300KB gzip peer dependency overhead
+- Critical note: Named barrel imports (import { Home } from '@mui/icons-material') are up to 6x slower in dev. Use path imports: import Home from '@mui/icons-material/Home'
 
 ### Radix Icons
+- URL: https://iconsearch.info/icons/radix-icons
 - License: MIT
 - Icons: 318 (15x15px grid — designed for dense UIs)
+- Package: @radix-ui/react-icons
+- Install: npm install @radix-ui/react-icons
 - Frameworks: React only
 - TypeScript: Yes
-- Bundle note: ~63KB regardless of how many icons imported (single barrel file — limited tree-shaking)
-- Best for: Dense UIs, shadcn/ui component libraries, Radix UI primitives
-- Install: npm install @radix-ui/react-icons
-- URL: https://iconsearch.info/icons/radix-icons
+- Tree-shakable: Limited (~63KB regardless of import count — barrel file)
+- Figma plugin: Yes
+- Best for: Dense UIs, shadcn/ui components, Radix UI primitives
+- GitHub stars: 5,000+
 
 ### Bootstrap Icons
-- License: MIT
-- Icons: 2,000+
-- Frameworks: React, Vue, vanilla HTML
-- TypeScript: Community types available
-- Best for: Bootstrap projects, vanilla HTML, projects needing both outline and fill variants
-- Install: npm install bootstrap-icons
 - URL: https://iconsearch.info/icons/bootstrap-icons
-
-### Remix Icon
-- License: Apache 2.0 (attribution required — only major free library with this requirement)
-- Icons: 2,800+
+- License: MIT
+- Icons: 1,800+ (outline and filled)
+- Package: bootstrap-icons
+- Install: npm install bootstrap-icons
 - Frameworks: React, Vue, vanilla HTML
 - TypeScript: No
-- Best for: Projects where Apache 2.0 license is acceptable
-- Install: npm install remixicon
+- Tree-shakable: No
+- Figma plugin: Yes
+- Best for: Bootstrap projects, vanilla HTML, projects needing outline + fill from one library
+- GitHub stars: 7,000+
+
+### Remix Icon
 - URL: https://iconsearch.info/icons/remix-icon
+- License: Apache 2.0 — ATTRIBUTION REQUIRED (only major free library with this requirement)
+- Icons: 2,800+ (line and fill)
+- Package: remixicon
+- Install: npm install remixicon
+- Frameworks: React, Vue, vanilla HTML
+- TypeScript: No
+- Tree-shakable: No
+- Best for: Projects where Apache 2.0 is acceptable
+- GitHub stars: 6,000+
 
 ### Feather Icons
+- URL: https://iconsearch.info/icons/feather-icons
 - License: MIT
 - Icons: 287
-- Status: Unmaintained since 2020 — use Lucide Icons instead (Lucide is the maintained fork with 5x more icons)
+- Status: UNMAINTAINED since 2020 — migrate to Lucide Icons
+- Package: react-feather
 - Install: npm install react-feather
+- TypeScript: No
+- Tree-shakable: Yes
 - Migration guide: https://iconsearch.info/blog/migrate-feather-icons-to-lucide
-- URL: https://iconsearch.info/icons/feather-icons
+- GitHub stars: 24,000+
 
 ### Font Awesome
-- License: Mixed — CC BY 4.0 for icon SVG assets, MIT for code, SIL OFL for fonts
-- Icons (free): ~2,089 icons across solid, regular, and brands styles
-- Icons (pro): 30,000+ icons across 10 styles including duotone, sharp, thin, light
-- Pro pricing: $120/year individual, $150/year Pro+
+- URL: https://iconsearch.info/icons/font-awesome
+- License: Mixed — CC BY 4.0 for icons (attribution technically required), MIT for code
+- Icons free: ~2,058 (solid, regular, brands)
+- Icons pro: 30,000+ ($120/yr individual, $150/yr Pro+)
+- Package: @fortawesome/react-fontawesome + @fortawesome/fontawesome-svg-core + icon packs
+- Install: npm install @fortawesome/fontawesome-svg-core @fortawesome/free-solid-svg-icons @fortawesome/free-brands-svg-icons @fortawesome/react-fontawesome
 - Frameworks: React, Vue, Angular, Svelte, vanilla HTML
 - TypeScript: Yes
 - Bundle note: ~81KB gzip regardless of import count (CommonJS — poor tree-shaking)
-- Key differentiator: 400+ brand logos (GitHub, Twitter, LinkedIn, etc.) included free
-- Best for: Projects needing brand icons, enterprise applications, legacy Font Awesome codebases
-- Install: npm install @fortawesome/fontawesome-svg-core @fortawesome/free-solid-svg-icons @fortawesome/react-fontawesome
-- URL: https://iconsearch.info/icons/font-awesome
+- Key differentiator: 400+ brand logos in free brands set
+- Best for: Projects needing brand/social icons, legacy FA codebases
+- GitHub stars: 76,500+
 
 ### React Icons
-- License: MIT for package; individual icon sets retain original licenses
-- Icons: 50,000+ icons across 20+ icon sets
-- Included sets: Font Awesome, Material Design, Heroicons, Feather, Bootstrap, Phosphor, Ionicons, Tabler, Ant Design, Remix, and more
-- Frameworks: React, Next.js
-- TypeScript: Yes (IconType exported)
-- Bundle note: ~81KB gzip regardless of import count (CommonJS). Use @react-icons/all-files for ESM tree-shaking
-- Best for: Projects needing icons from multiple design systems, prototypes, legacy codebases
-- Install: npm install react-icons
-- ESM alternative: npm install @react-icons/all-files
 - URL: https://iconsearch.info/icons/react-icons
+- License: MIT (package) — individual sets keep their original licenses
+- Icons: 40,000+ across 20+ sets (Font Awesome, Material Design, Heroicons, Tabler, Feather, Bootstrap, Phosphor, Ionicons, Ant Design, Remix, and more)
+- Package: react-icons
+- Install: npm install react-icons
+- ESM version: npm install @react-icons/all-files
+- Frameworks: React, Next.js
+- TypeScript: Yes — IconType exported
+- Tree-shakable: Yes (with @react-icons/all-files for ESM)
+- Bundle note: ~81KB gzip regardless of import count (CommonJS). Use @react-icons/all-files for proper ESM tree-shaking
+- Best for: Prototypes, personal projects, legacy codebases, projects needing icons from multiple design families
+- GitHub stars: 11,500+
+
+### Iconify
+- URL: https://iconsearch.info/icons/iconify
+- License: MIT (framework) — icon sets retain original licenses (MIT, Apache 2.0, CC BY 4.0, etc.)
+- Icons: 294,661+ across 211 icon sets
+- Package: @iconify/react
+- Install: npm install @iconify/react
+- Offline mode: npm install @iconify-json/[prefix] (e.g. @iconify-json/lucide)
+- Icon naming: prefix:icon-name syntax (lucide:home, mdi:account, fa6-solid:house, simple-icons:github)
+- Frameworks: React, Vue, Svelte, SolidJS, Angular, vanilla HTML (web component)
+- TypeScript: Yes
+- Tree-shakable: Yes in offline mode; API mode loads on demand
+- Figma plugin: Yes
+- Bundle: ~15KB renderer only in API mode — icon data loaded from CDN on demand
+- Works in Server Components: Only in offline mode with addCollection() setup
+- Best for: Projects needing icons from many families, monorepos across multiple frameworks, rapid prototyping
+- Avoid when: Server Components are heavily used (offline mode setup required), strict licensing requirements
+- GitHub stars: 5,162
+
+### Simple Icons
+- URL: https://iconsearch.info/icons/simple-icons
+- License: CC0 1.0 — Public Domain (no attribution required; brand trademarks still apply)
+- Icons: 3,109+ brand/company logos
+- Package: @icons-pack/react-simple-icons
+- Install: npm install @icons-pack/react-simple-icons
+- Component naming: Si prefix + PascalCase (SiGithub, SiVercel, SiStripe, SiAws)
+- Frameworks: React, Next.js
+- TypeScript: Yes — all 3,100+ components typed
+- Tree-shakable: Yes
+- Works in Server Components: Yes
+- Brand colors: Each icon ships with official hex color via simple-icons package
+- Best for: Brand logos, social links, tech stacks, "integrates with" sections, sponsor grids
+- Note: Monochromatic only — no multi-color logos. Brand icons only — no UI icons.
+- GitHub stars: 25,047
+
+### Iconoir
+- URL: https://iconsearch.info/icons/iconoir
+- License: MIT
+- Icons: 1,530 (line style only)
+- Package: iconoir-react (React), iconoir-vue (Vue)
+- Install: npm install iconoir-react
+- Frameworks: React, Next.js, Vue, SolidJS, React Native, Flutter
+- TypeScript: Yes
+- Tree-shakable: Yes — ~1.2KB per icon gzip
+- Works in Next.js Server Components: Yes
+- Figma plugin: Yes
+- Customizable: strokeWidth, color, and size via props (default strokeWidth: 1.5)
+- Best for: SaaS developers wanting a premium line-art aesthetic, cross-platform projects (web + React Native + Flutter), consistent stroke-weight design systems
+- Avoid when: Filled, solid, or duotone variants are required; brand/social icons needed
+- Weekly downloads: ~0.2M
+- GitHub stars: 5,200+
 
 ---
 
 ## Bundle Size Benchmarks (Next.js 15, Turbopack, gzip)
 
-| Library            | 10 icons  | 50 icons  | 100 icons | Notes                                  |
-|--------------------|-----------|-----------|-----------|----------------------------------------|
-| Lucide React       | ~1.7 KB   | ~5.2 KB   | ~8.6 KB   | Scales linearly — full ESM             |
-| Heroicons          | ~0.7 KB   | ~3.5 KB   | ~9.2 KB   | Scales linearly — full ESM             |
-| Tabler Icons       | ~1.1 KB   | ~4.8 KB   | ~9.1 KB   | Scales linearly — full ESM             |
-| Material Icons     | ~1 KB     | ~5 KB     | ~10 KB    | +~300KB peer deps if not on MUI        |
-| Phosphor Icons     | ~20 KB    | ~34 KB    | ~49 KB    | Weight system adds overhead            |
-| Radix Icons        | ~63 KB    | ~63 KB    | ~64 KB    | Barrel file — flat curve               |
-| Font Awesome       | ~81 KB    | ~81 KB    | ~81 KB    | CJS — entire pack loads                |
-| react-icons        | ~81 KB    | ~81 KB    | ~82 KB    | CJS — entire sub-pack loads            |
+| Library          | 10 icons | 50 icons | 100 icons | Notes                               |
+|------------------|----------|----------|-----------|-------------------------------------|
+| Heroicons        | ~0.7 KB  | ~3.5 KB  | ~9.2 KB   | Smallest per-icon, full ESM         |
+| Lucide React     | ~1.7 KB  | ~5.2 KB  | ~8.6 KB   | Scales linearly, full ESM           |
+| Tabler Icons     | ~1.1 KB  | ~4.8 KB  | ~9.1 KB   | Scales linearly, full ESM           |
+| Iconoir          | ~1.2 KB  | ~6.0 KB  | ~12.0 KB  | Scales linearly, full ESM           |
+| Material Icons   | ~1 KB    | ~5 KB    | ~10 KB    | +~300KB peer deps if NOT on MUI     |
+| Phosphor Icons   | ~20 KB   | ~34 KB   | ~49 KB    | Weight system adds baseline         |
+| Radix Icons      | ~63 KB   | ~63 KB   | ~64 KB    | Barrel file — flat curve            |
+| Font Awesome     | ~81 KB   | ~81 KB   | ~81 KB    | CJS — entire sub-pack included      |
+| react-icons      | ~81 KB   | ~81 KB   | ~82 KB    | CJS — entire sub-pack included      |
+| Iconify (API)    | ~15 KB   | ~15 KB   | ~15 KB    | Renderer only — data fetched at runtime |
 
 Full benchmark guide: https://iconsearch.info/blog/icon-bundle-size-react-2026
 
 ---
 
-## Pricing Overview
+## Feature Matrix
 
-Completely free (MIT/ISC/CC0 — no paid tier, no attribution required):
-Lucide ($0), Heroicons ($0), Tabler ($0), Phosphor ($0), Bootstrap Icons ($0), Simple Icons ($0), Radix Icons ($0), Material Icons ($0), Feather ($0)
-
-Free tier with paid upgrade:
-- Font Awesome Free: $0 (2,089 icons) → Pro: $120/year individual, $150/year Pro+
-- Hugeicons: $0 (4,600 stroke icons) → Pro: ~$99/year (46,000 icons, 10 styles)
-
-Subscription platforms (design assets):
-- IconScout: $144/year individual (9M+ assets — icons, illustrations, Lottie, 3D)
-- Streamline: ~$192/year individual (100,000+ icons across multiple families)
-- Lordicon: ~$192/year individual (1,000+ animated Lottie icons)
-
-Full pricing comparison: https://iconsearch.info/blog/icon-library-pricing-comparison-2026
-
----
-
-## Key Comparisons
-
-Lucide vs Heroicons: https://iconsearch.info/compare/lucide-icons-vs-heroicons
-Lucide vs Tabler: https://iconsearch.info/compare/lucide-icons-vs-tabler-icons
-Lucide vs Phosphor: https://iconsearch.info/compare/lucide-icons-vs-phosphor-icons
-Lucide vs Material Icons: https://iconsearch.info/compare/lucide-icons-vs-material-icons
-Lucide vs React Icons: https://iconsearch.info/compare/lucide-icons-vs-react-icons
-Lucide vs Font Awesome: https://iconsearch.info/compare/lucide-icons-vs-font-awesome
-Lucide vs Bootstrap Icons: https://iconsearch.info/compare/lucide-icons-vs-bootstrap-icons
-Lucide vs Radix Icons: https://iconsearch.info/compare/lucide-icons-vs-radix-icons
-Material Icons vs Lucide: https://iconsearch.info/compare/material-icons-vs-lucide-icons
-Material Icons vs Heroicons: https://iconsearch.info/compare/material-icons-vs-heroicons
-Material Icons vs Phosphor: https://iconsearch.info/compare/material-icons-vs-phosphor-icons
-Material Icons vs Tabler: https://iconsearch.info/compare/material-icons-vs-tabler-icons
-Material Icons vs Font Awesome: https://iconsearch.info/compare/material-icons-vs-font-awesome
-Material Icons vs React Icons: https://iconsearch.info/compare/material-icons-vs-react-icons
-Heroicons vs Tabler: https://iconsearch.info/compare/heroicons-vs-tabler-icons
-Heroicons vs Font Awesome: https://iconsearch.info/compare/heroicons-vs-font-awesome
-React Icons vs Lucide: https://iconsearch.info/compare/react-icons-vs-lucide-icons
-React Icons vs Font Awesome: https://iconsearch.info/compare/react-icons-vs-font-awesome
-All 36 comparisons: https://iconsearch.info/compare
+| Library          | TypeScript | Tree-Shake | Figma | React | Vue | Svelte | License                              |
+|------------------|------------|------------|-------|-------|-----|--------|--------------------------------------|
+| Lucide Icons     | ✓          | ✓          | ✓     | ✓     | ✓   | ✓      | ISC                                  |
+| Heroicons        | ✓          | ✓          | ✓     | ✓     | ✓   | ✗      | MIT                                  |
+| Tabler Icons     | ✓          | ✓          | ✓     | ✓     | ✓   | ✓      | MIT                                  |
+| Phosphor Icons   | ✓          | ✓          | ✓     | ✓     | ✓   | ✗      | MIT                                  |
+| Remix Icon       | ✗          | ✗          | ✗     | ✓     | ✓   | ✗      | Apache 2.0                           |
+| Feather Icons    | ✗          | ✓          | ✗     | ✓     | ✗   | ✗      | MIT                                  |
+| Bootstrap Icons  | ✗          | ✗          | ✓     | ✓     | ✓   | ✗      | MIT                                  |
+| Radix Icons      | ✓          | ✓          | ✓     | ✓     | ✗   | ✗      | MIT                                  |
+| Font Awesome     | ✓          | ✓          | ✓     | ✓     | ✓   | ✓      | Mixed (CC BY 4.0 icons, MIT code)    |
+| React Icons      | ✓          | ✓          | ✗     | ✓     | ✗   | ✗      | MIT                                  |
+| Material Icons   | ✓          | ✓          | ✓     | ✓     | ✗   | ✗      | MIT                                  |
+| Iconify          | ✓          | ✓          | ✓     | ✓     | ✓   | ✓      | MIT (framework; sets vary)           |
+| Simple Icons     | ✓          | ✓          | ✗     | ✓     | ✗   | ✗      | CC0 1.0 (Public Domain)              |
+| Iconoir          | ✓          | ✓          | ✓     | ✓     | ✓   | ✗      | MIT                                  |
 
 ---
 
-## Quick Answers for Common Developer Questions
+## Comparisons (91 total)
 
-What is the best icon library for React in 2026?
-Lucide Icons for most projects. Single package install, ~5KB for 50 icons, full TypeScript, ISC license, works in Server Components. Use Heroicons for Tailwind CSS projects. Use Tabler if you need 5,900+ icons. Use Material Icons if already on MUI. Use React Icons only if you need icons from 20+ design systems in one package.
+All comparisons at: https://iconsearch.info/compare
 
-What is the most downloaded React icon library?
-@mui/icons-material (Material Icons) at 5.1 million weekly downloads is the most downloaded React-specific icon package. lucide-react is the fastest growing in Next.js and shadcn/ui projects. See live stats: https://iconsearch.info/stats
-
-Material Icons vs Lucide React — which should I use?
-If already on MUI: Material Icons — zero additional peer dep cost, native sx prop, five style variants. If not on MUI: Lucide React — single install, no peer deps, ~5KB for 50 icons vs ~300KB for Material's peer dep overhead. Full comparison: https://iconsearch.info/compare/material-icons-vs-lucide-icons
-
-Do Material Icons work in Next.js App Router Server Components?
-Yes. Material Icons render as static SVG HTML on the server with no client JavaScript required. No use client directive needed.
-
-Why is my dev server slow after installing @mui/icons-material?
-Named barrel imports are up to 6x slower in Vite and webpack dev mode. Switch to path imports: import Home from '@mui/icons-material/Home' instead of import { Home } from '@mui/icons-material'. Production bundle is unaffected.
-
-What are the 5 Material Icons style variants?
-Filled (default) — bold, solid for primary actions. Outlined — stroke-style for supporting UI. Rounded — softer for consumer apps. Sharp — geometric for data tools. TwoTone — two-color for marketing. Suffix examples: HomeIcon, HomeOutlinedIcon, HomeRoundedIcon, HomeSharpIcon, HomeTwoToneIcon.
-
-What is the difference between Material Icons and Material Symbols?
-Material Icons is the original set with 5 pre-built SVG variants per icon. Material Symbols is Google's newer replacement using a variable font with adjustable weight, fill, grade, and optical size via CSS. @mui/icons-material supports Material Icons only — Material Symbols support is in development.
-
-react-icons vs lucide-react — which should I use?
-Lucide for new projects. react-icons costs ~81KB regardless of import count (CommonJS, no tree-shaking). Lucide is ~5KB for 50 icons. Full comparison: https://iconsearch.info/blog/react-icons-vs-lucide-react-2026
-
-Which icon libraries work in Next.js App Router Server Components?
-Lucide, Heroicons, Tabler, Phosphor, Radix, Bootstrap Icons, and Material Icons all work in Server Components without use client.
-
-Does Remix Icon require attribution?
-Yes. Remix Icon uses Apache 2.0 which requires attribution. All other major free libraries (Lucide, Heroicons, Tabler, Phosphor, Bootstrap, Radix, Material Icons, Simple Icons) are MIT, ISC, or CC0 — no attribution required.
-
-Is Font Awesome free for commercial use?
-Partially. Code is MIT (free). Icon SVG assets are CC BY 4.0 (technically requires attribution). Lucide, Material Icons, Heroicons, and Tabler are cleaner choices for teams with strict IP requirements.
-
-What replaced Feather Icons?
-Lucide Icons is the maintained fork with 1,500+ icons vs Feather's 287. Migration takes under 10 minutes. Guide: https://iconsearch.info/blog/migrate-feather-icons-to-lucide
-
-Which icon library should I use with shadcn/ui?
-Lucide Icons is the shadcn/ui default — every generated component uses lucide-react. Use Radix Icons only for specific dense UI components. Use Material Icons only if you are also committing to MUI.
-
-How do I make icons accessible in React?
-Decorative icons: aria-hidden="true" and focusable="false". Icon-only buttons: aria-label on the button. Standalone informative icons: role="img" and aria-label on the icon. Full guide: https://iconsearch.info/blog/icon-accessibility-react-2026
-
-How do I fix slow Vite dev server with lucide-react or @mui/icons-material?
-For lucide-react: add a Vite alias to individual icon files. For @mui/icons-material: switch to path imports. Both fixes explained: https://iconsearch.info/blog/icon-bundle-size-react-2026
-
-What is the best animated icon library for React?
-CSS animations on Lucide for zero overhead. Framer Motion for state-driven. Lordicon or LottieFiles for complex pre-built animations. Full guide: https://iconsearch.info/blog/animated-svg-icons-react-2026
-
-SVG icons vs icon fonts — which is better?
-SVG icons win on rendering, accessibility, performance, bundle size, and Server Component compatibility. Full comparison: https://iconsearch.info/blog/svg-icons-vs-icon-fonts-performance-2026
-
-lucide-react 1.0 breaking changes — what changed?
-Version 1.0 renamed several icons (MoreVertical to EllipsisVertical), removed default export, and tightened TypeScript types. Full list: https://iconsearch.info/blog/lucide-react-1-migration-guide
+Most popular:
+- Lucide Icons vs Heroicons: https://iconsearch.info/compare/lucide-icons-vs-heroicons
+- Lucide Icons vs Tabler Icons: https://iconsearch.info/compare/lucide-icons-vs-tabler-icons
+- Lucide Icons vs Material Icons: https://iconsearch.info/compare/lucide-icons-vs-material-icons
+- Lucide Icons vs React Icons: https://iconsearch.info/compare/lucide-icons-vs-react-icons
+- Lucide Icons vs Font Awesome: https://iconsearch.info/compare/lucide-icons-vs-font-awesome
+- Lucide Icons vs Iconify: https://iconsearch.info/compare/lucide-icons-vs-iconify
+- Lucide Icons vs Simple Icons: https://iconsearch.info/compare/lucide-icons-vs-simple-icons
+- Lucide Icons vs Iconoir: https://iconsearch.info/compare/lucide-icons-vs-iconoir
+- Heroicons vs Tabler Icons: https://iconsearch.info/compare/heroicons-vs-tabler-icons
+- Phosphor Icons vs Lucide: https://iconsearch.info/compare/phosphor-icons-vs-lucide-icons
+- Font Awesome vs Heroicons: https://iconsearch.info/compare/font-awesome-vs-heroicons
+- Iconoir vs Lucide Icons: https://iconsearch.info/compare/iconoir-vs-lucide-icons
+- Iconoir vs Heroicons: https://iconsearch.info/compare/iconoir-vs-heroicons
+- Iconoir vs Tabler Icons: https://iconsearch.info/compare/iconoir-vs-tabler-icons
 
 ---
 
-## Blog Posts
+## Stats Dashboard
 
-Performance:
-- Icon Bundle Size in React — Why Your Icons Are Bloating Your App: https://iconsearch.info/blog/icon-bundle-size-react-2026
-- How Subsetting Icons Cuts Next.js Bundle Size by 40%: https://iconsearch.info/blog/icon-subsetting-nextjs-bundle-size-optimization
-- SVG Icons vs Icon Fonts: Performance, Rendering & Bundle Size in 2026: https://iconsearch.info/blog/svg-icons-vs-icon-fonts-performance-2026
+Live rankings at: https://iconsearch.info/stats
 
-Comparisons:
-- react-icons vs lucide-react — The Complete 2026 Comparison: https://iconsearch.info/blog/react-icons-vs-lucide-react-2026
-- Free vs Paid Icon Libraries — Pricing Compared for Every Use Case: https://iconsearch.info/blog/icon-library-pricing-comparison-2026
-- Best Icon Libraries for shadcn/ui in 2026: https://iconsearch.info/blog/best-icons-for-shadcn-ui-2026
+By GitHub stars: Material Icons (98,300) → Font Awesome (76,500) → Simple Icons (25,047) → Feather (24,000) → Heroicons (21,000) → Tabler (18,000) → Lucide (12,000) → React Icons (11,500) → Phosphor (8,000) → Bootstrap (7,000) → Remix (6,000) → Iconify (5,162) → Radix (5,000) → Iconoir (5,200+)
 
-Tutorials:
-- Icon Accessibility in React — Screen Reader Friendly SVG Icons: https://iconsearch.info/blog/icon-accessibility-react-2026
-- Animated SVG Icons in React — The Complete Guide for 2026: https://iconsearch.info/blog/animated-svg-icons-react-2026
-- lucide-react 1.0 Migration Guide — Breaking Changes & Fixes: https://iconsearch.info/blog/lucide-react-1-migration-guide
+By icon count: Iconify (294,661) → React Icons (40,000+) → Tabler (5,500+) → Simple Icons (3,109) → Remix (2,800+) → Material Icons (2,100) → Font Awesome (2,058) → Bootstrap (1,800+) → Phosphor (1,248+) → Iconoir (1,530) → Lucide (1,400+) → Radix (318) → Heroicons (292+) → Feather (287)
 
-Guides:
-- Lucide Icons Complete Guide 2026: https://iconsearch.info/blog/lucide-icons-complete-guide-2026
-- How to Migrate from Feather Icons to Lucide Icons: https://iconsearch.info/blog/migrate-feather-icons-to-lucide
-- How to Build a Consistent Icon System for Your UI: https://iconsearch.info/blog/how-to-build-consistent-icon-system-ui-2026
-- How to Choose the Right Icons for Your UI: https://iconsearch.info/blog/how-to-choose-right-icons-ui-2026
-- How to Use SVG Icons in React (Step-by-Step): https://iconsearch.info/blog/how-to-use-svg-icons-react-2026
-
----
-
-## Tools
-
-- Icon Search (11,700+ icons): https://iconsearch.info/icon-search
-- Best For You Quiz: https://iconsearch.info/best-for-you
-- Stats Dashboard: https://iconsearch.info/stats
-- License Guide: https://iconsearch.info/licenses
-
----
-
-## Framework Guides
-
-- React: https://iconsearch.info/react-icons
-- Next.js: https://iconsearch.info/nextjs-icons
-- Vue: https://iconsearch.info/vue-icons
-- Svelte: https://iconsearch.info/svelte-icons
-- Tailwind CSS: https://iconsearch.info/tailwind-icons
-- TypeScript: https://iconsearch.info/typescript-icons
+By weekly npm downloads: Material Icons (~5.1M) → Lucide (~5M) → Font Awesome (~1.8M) → Iconify (~606K) → Simple Icons (~364K) → Iconoir (~200K)
 
 ---
 
 ## Use Cases
 
-- Icons for SaaS: https://iconsearch.info/use-cases/icons-for-saas
+- Icons for SaaS products: https://iconsearch.info/use-cases/icons-for-saas
 - Icons for dashboards: https://iconsearch.info/use-cases/icons-for-dashboards
 - Icons for mobile apps: https://iconsearch.info/use-cases/icons-for-mobile-apps
+- Icons for landing pages: https://iconsearch.info/use-cases/icons-for-landing-pages
+- Icons for ecommerce: https://iconsearch.info/use-cases/icons-for-ecommerce
 - Icons for dark mode: https://iconsearch.info/use-cases/icons-for-dark-mode
+- Icons for developer tools: https://iconsearch.info/use-cases/icons-for-developer-tools
 - Icons for Next.js App Router: https://iconsearch.info/use-cases/icons-for-nextjs-app-router
 - Icons for forms: https://iconsearch.info/use-cases/icons-for-forms
 - Icons for notifications: https://iconsearch.info/use-cases/icons-for-notifications
 
 ---
 
+## Framework Guides
+
+- React icon libraries: https://iconsearch.info/react-icons
+- Next.js App Router icons: https://iconsearch.info/nextjs-icons
+- Vue icon libraries: https://iconsearch.info/vue-icons
+- Svelte icon libraries: https://iconsearch.info/svelte-icons
+- Tailwind CSS icons: https://iconsearch.info/tailwind-icons
+- TypeScript icon libraries: https://iconsearch.info/typescript-icons
+
+---
+
+## Blog Posts (16+)
+
+Performance:
+- Icon Bundle Size in React: https://iconsearch.info/blog/icon-bundle-size-react-2026
+- How Subsetting Icons Cuts Next.js Bundle Size by 40%: https://iconsearch.info/blog/icon-subsetting-nextjs-bundle-size-optimization
+- SVG Icons vs Icon Fonts in 2026: https://iconsearch.info/blog/svg-icons-vs-icon-fonts-performance-2026
+
+Comparisons:
+- react-icons vs lucide-react (2026): https://iconsearch.info/blog/react-icons-vs-lucide-react-2026
+- Free vs Paid Icon Libraries — Pricing (2026): https://iconsearch.info/blog/icon-library-pricing-comparison-2026
+- Best Icons for shadcn/ui (2026): https://iconsearch.info/blog/best-icons-for-shadcn-ui-2026
+
+Tutorials:
+- SVG Icons in Dark Mode — React/Next.js (2026): https://iconsearch.info/blog/svg-icons-dark-mode-react-nextjs-2026
+- Icon Accessibility in React (2026): https://iconsearch.info/blog/icon-accessibility-react-2026
+- Animated SVG Icons in React (2026): https://iconsearch.info/blog/animated-svg-icons-react-2026
+- lucide-react 1.0 Migration Guide: https://iconsearch.info/blog/lucide-react-1-migration-guide
+- Iconify React Complete Guide (2026): https://iconsearch.info/blog/iconify-react-complete-guide-2026
+
+Guides:
+- Lucide Icons Complete Guide 2026: https://iconsearch.info/blog/lucide-icons-complete-guide-2026
+- Migrate Feather Icons to Lucide: https://iconsearch.info/blog/migrate-feather-icons-to-lucide
+- How to Build a Consistent Icon System: https://iconsearch.info/blog/how-to-build-consistent-icon-system
+- How to Choose the Right Icons for Your UI: https://iconsearch.info/blog/how-to-choose-right-icons-for-ui
+- How to Use SVG Icons in React: https://iconsearch.info/blog/how-to-use-svg-icons-in-react
+
+---
+
+## Quick Answers
+
+What is the best icon library for React in 2026?
+Lucide Icons for most projects — single install, ~5KB for 50 icons, TypeScript, ISC license, Server Components compatible. Heroicons for Tailwind CSS projects. Tabler for 5,500+ icons. Material Icons if already using MUI. Iconoir for a premium line-art aesthetic. React Icons for prototypes or multi-family needs.
+
+What is the most downloaded React icon package?
+@mui/icons-material (Material Icons) at 5.1M weekly downloads. lucide-react is fastest growing, especially in Next.js and shadcn/ui.
+
+react-icons vs lucide-react?
+Lucide for new projects. react-icons costs ~81KB regardless of how many icons you import (CommonJS, no tree-shaking). Lucide is ~5KB for 50 icons with full ESM tree-shaking. Full comparison: https://iconsearch.info/blog/react-icons-vs-lucide-react-2026
+
+Which icon libraries work in Next.js Server Components without use client?
+Lucide, Heroicons, Tabler, Phosphor, Bootstrap Icons, Material Icons, Simple Icons, Iconoir — all render as static SVG HTML on the server.
+
+Does Iconify work in Next.js Server Components?
+Not in default API mode. Use offline mode: install @iconify-json/[prefix] packages and call addCollection() before rendering.
+
+What is the best free brand icon library?
+Simple Icons — 3,109 brand logos, CC0 public domain, zero attribution. 6x more brands than Font Awesome's free tier.
+
+Does Remix Icon require attribution?
+Yes — Apache 2.0 license requires attribution. All other major libraries (Lucide, Heroicons, Tabler, Phosphor, Bootstrap, Radix, Material Icons, Simple Icons, Iconoir) are MIT/ISC/CC0 with no attribution required.
+
+Why is react-icons so large in my bundle?
+CommonJS modules cannot be tree-shaken. The entire icon sub-pack loads regardless of import count. Fix: use @react-icons/all-files (ESM) or switch to Lucide.
+
+Why is my dev server slow with @mui/icons-material?
+Named barrel imports are up to 6x slower in dev. Switch to path imports: import Home from '@mui/icons-material/Home' instead of import { Home } from '@mui/icons-material'.
+
+What replaced Feather Icons?
+Lucide Icons — maintained fork, 1,400+ icons vs Feather's 287, same design philosophy. Migration guide: https://iconsearch.info/blog/migrate-feather-icons-to-lucide
+
+Which icon library for shadcn/ui?
+Lucide Icons — it is the shadcn/ui default. Every generated component uses lucide-react. Stay on Lucide for consistency.
+
+Material Icons vs Lucide React?
+If on MUI: Material Icons (zero additional peer dep cost). If not on MUI: Lucide React (Material adds ~300KB peer deps with no MUI benefit). Comparison: https://iconsearch.info/compare/lucide-icons-vs-material-icons
+
+What are Material Icons' 5 styles?
+Filled (default), Outlined (suffix: Outlined), Rounded (suffix: Rounded), Sharp (suffix: Sharp), TwoTone (suffix: TwoTone). Example: HomeIcon, HomeOutlinedIcon, HomeRoundedIcon, HomeSharpIcon, HomeTwoToneIcon.
+
+Is Iconify free?
+The framework is MIT. Individual icon sets retain their original licenses — most popular sets (Lucide, Tabler, Heroicons) are MIT. Check each set's license before commercial use. Browse at icon-sets.iconify.design.
+
+SVG icons vs icon fonts?
+SVG wins on every metric: rendering quality, accessibility, performance, bundle size, Server Component support.
+
+What is Iconoir?
+Iconoir is a free, MIT-licensed open-source icon library with 1,530 premium line icons. It supports React, Vue, SolidJS, React Native, and Flutter. Its consistent stroke-weight style makes it ideal for modern SaaS and dashboard UIs. Install with: npm install iconoir-react
+
+---
+
 ## License Summary
 
-No attribution required: Lucide (ISC), Heroicons (MIT), Tabler (MIT), Phosphor (MIT), Radix (MIT), Bootstrap Icons (MIT), Material Icons (MIT), Feather (MIT), Simple Icons (CC0)
+No attribution required (MIT/ISC/CC0): Lucide (ISC), Heroicons (MIT), Tabler (MIT), Phosphor (MIT), Radix (MIT), Bootstrap Icons (MIT), Material Icons (MIT), Feather (MIT), Simple Icons (CC0), React Icons (MIT), Iconoir (MIT)
 Attribution required: Remix Icon (Apache 2.0)
-Attribution technically required on icon assets: Font Awesome (CC BY 4.0 on SVGs)
-Subscription license — not perpetual: IconScout, Streamline, Lordicon
-Paid pro tier available: Font Awesome ($120/yr), Hugeicons (~$99/yr)
+Attribution technically required on icon assets: Font Awesome (CC BY 4.0 on SVGs, MIT on code)
+Note: Iconify framework is MIT but individual sets vary — verify each set's license
 
 Full license guide: https://iconsearch.info/licenses
+
+---
+
+## Tools
+
+- Icon Search (11,700+ icons): https://iconsearch.info/icon-search
+- Best For You Quiz (7 questions): https://iconsearch.info/best-for-you
+- Stats Dashboard: https://iconsearch.info/stats
+- License Guide: https://iconsearch.info/licenses
+- All Comparisons (91): https://iconsearch.info/compare
+- Site Directory: https://iconsearch.info/directory
+- About: https://iconsearch.info/about
