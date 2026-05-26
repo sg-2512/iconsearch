@@ -2,23 +2,23 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #0a0a0f;
-  --bg-secondary: #111118;
-  --bg-card: #13131a;
-  --border: #1e1e2e;
-  --border-hover: #2e2e4e;
-  --text: #e2e2f0;
-  --text-muted: #9ca3af;
-  --text-dim: #3a3a5c;
-  --accent: #7c6af7;
-  --accent-hover: #9b8cff;
-  --accent-dim: #7c6af715;
-  --green: #4ade80;
+  --bg: #09090b;
+  --bg-secondary: #121215;
+  --bg-card: #18181b;
+  --border: #27272a;
+  --border-hover: #3f3f46;
+  --text: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-dim: #475569;
+  --accent: #818cf8;
+  --accent-hover: #6366f1;
+  --accent-dim: rgba(129, 140, 248, 0.15);
+  --green: #34d399;
   --red: #f87171;
   --yellow: #fbbf24;
   --cyan: #22d3ee;
-  --code-bg: #0d0d14;
-  --accent-accessible: #4338ca;
+  --code-bg: #030303;
+  --accent-accessible: #6366f1;
 }
 
 * {
@@ -34,7 +34,7 @@ html {
 body {
   background-color: var(--bg);
   color: var(--text);
-  font-family: 'Syne', sans-serif;
+  font-family: 'Inter', sans-serif;
   line-height: 1.6;
   min-height: 100vh;
 }
@@ -85,4 +85,112 @@ code, pre, .mono {
     display: none !important;
   }
 }
+
+/* --- Dynamic Homepage Utilities --- */
+
+@keyframes scrollIconTicker {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.icon-ticker-container {
+  display: flex;
+  overflow: hidden;
+  user-select: none;
+  position: relative;
+  width: 100%;
+}
+
+.icon-ticker-container::before,
+.icon-ticker-container::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 120px;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.icon-ticker-container::before {
+  left: 0;
+  background: linear-gradient(to right, var(--bg) 0%, transparent 100%);
+}
+
+.icon-ticker-container::after {
+  right: 0;
+  background: linear-gradient(to left, var(--bg) 0%, transparent 100%);
+}
+
+.icon-ticker-track {
+  display: flex;
+  width: max-content;
+  animation: scrollIconTicker 35s linear infinite;
+  gap: 16px;
+}
+
+.icon-ticker-track:hover {
+  animation-play-state: paused;
+}
+
+/* Premium Glow Grid Background */
+.glow-grid-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 600px;
+  background-image: 
+    linear-gradient(rgba(129, 140, 248, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(129, 140, 248, 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+  background-position: center top;
+  mask-image: radial-gradient(ellipse 60% 50% at 50% 0%, #000 70%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 60% 50% at 50% 0%, #000 70%, transparent 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.glow-gradient-node {
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 500px;
+  height: 350px;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, rgba(139, 92, 246, 0.05) 50%, transparent 100%);
+  filter: blur(60px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Dynamic slider custom overrides */
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 6px;
+  background: var(--border);
+  border-radius: 5px;
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+  background: var(--accent-hover);
+}
+
 

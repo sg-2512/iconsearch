@@ -27,8 +27,9 @@ export default function Navbar() {
       position: 'sticky',
       top: 0,
       zIndex: 100,
-      background: 'rgba(10,10,15,0.95)',
-      backdropFilter: 'blur(12px)',
+      background: 'rgba(9, 9, 11, 0.7)',
+      backdropFilter: 'blur(16px)',
+      WebkitBackdropFilter: 'blur(16px)',
     }}>
 
       {/* Logo */}

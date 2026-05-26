@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import Navbar from './components/Navbar'
-import { JetBrains_Mono, Syne } from 'next/font/google'
+import { JetBrains_Mono, Inter } from 'next/font/google'
 import Script from 'next/script'
 import { Analytics } from "@vercel/analytics/next"
 
@@ -11,9 +11,9 @@ const jetbrainsMono = JetBrains_Mono({
   display: 'swap',
 })
 
-const syne = Syne({
+const inter = Inter({
   subsets: ['latin'],
-  variable: '--font-syne',
+  variable: '--font-inter',
   display: 'swap',
 })
 
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${jetbrainsMono.variable} ${syne.variable}`}>
+    <html lang="en" className={`${jetbrainsMono.variable} ${inter.variable}`}>
       <head>
         <script
           type="application/ld+json"
