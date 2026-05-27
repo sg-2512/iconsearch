@@ -1,13 +1,14 @@
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'About IconSearch — Free Icon Library Comparison Tool',
-  description: 'IconSearch is an independent resource helping developers find and compare the best free open source icon libraries for React, Next.js, Vue and Svelte.',
+  title: 'About IconSearch — Free SVG Icon Library Comparison Tool (2026)',
+  description: 'IconSearch is the most comprehensive independent resource for comparing and discovering free open source SVG icon libraries for React, Next.js, Vue, and Svelte. 17,000+ icons, 14 libraries, 91 comparisons.',
 }
 
 export default function AboutPage() {
   return (
     <main style={{ maxWidth: '800px', margin: '0 auto', padding: '40px 48px' }}>
+
       <section style={{ marginBottom: '48px', paddingBottom: '48px', borderBottom: '1px solid var(--border)' }}>
         <div style={{ fontSize: '12px', color: 'var(--accent)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '2px', marginBottom: '12px' }}>
           // ABOUT
@@ -15,42 +16,179 @@ export default function AboutPage() {
         <h1 style={{ fontSize: 'clamp(32px, 5vw, 48px)', fontWeight: 800, lineHeight: 1.1, marginBottom: '16px' }}>
           About <span style={{ color: 'var(--accent)' }}>IconSearch</span>
         </h1>
+        <p style={{ color: 'var(--text-muted)', fontSize: '18px', lineHeight: 1.7, maxWidth: '600px' }}>
+          The definitive independent comparison and discovery platform for free open-source SVG icon libraries — built for developers who want fast, data-driven decisions.
+        </p>
       </section>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
 
+        {/* What is IconSearch */}
         <div>
-          <h2 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '12px', color: 'var(--text)' }}>What is IconSearch?</h2>
+          <h2 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '12px', color: 'var(--text)', fontFamily: 'JetBrains Mono, monospace' }}>
+            What is IconSearch?
+          </h2>
+          <p style={{ color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.8, marginBottom: '12px' }}>
+            IconSearch is an independent comparison and search platform covering the 14 most widely used free SVG icon libraries in the web development ecosystem. We help React, Next.js, Vue, and Svelte developers find the right icon library through real benchmark data, side-by-side comparisons, and honest recommendations — all in one place.
+          </p>
           <p style={{ color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.8 }}>
-            IconSearch is an independent comparison and search tool for open source SVG icon libraries. We help React, Next.js, Vue, and Svelte developers find the right icon library for their projects — with real data, side-by-side comparisons, and honest recommendations.
+            The site covers every major open-source icon library: Lucide Icons, Heroicons, Tabler Icons, Phosphor Icons, Remix Icon, Feather Icons, Bootstrap Icons, Radix Icons, Font Awesome, React Icons, Material Icons, Iconify, Simple Icons, and Iconoir.
           </p>
         </div>
 
+        {/* By the Numbers */}
         <div>
-          <h2 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '12px', color: 'var(--text)' }}>Why We Built This</h2>
+          <h2 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '16px', color: 'var(--text)', fontFamily: 'JetBrains Mono, monospace' }}>
+            By the Numbers
+          </h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '12px' }}>
+            {[
+              { value: '17,000+', label: 'Searchable icons' },
+              { value: '14', label: 'Libraries indexed' },
+              { value: '91', label: 'Side-by-side comparisons' },
+              { value: '16+', label: 'In-depth blog posts' },
+              { value: '10', label: 'Icon category guides' },
+              { value: '10', label: 'Use case guides' },
+              { value: '6', label: 'Framework guides' },
+              { value: '355,573+', label: 'Total icons tracked' },
+            ].map(stat => (
+              <div key={stat.label} style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '8px', padding: '16px 20px' }}>
+                <div style={{ fontSize: '24px', fontWeight: 800, color: 'var(--accent)', fontFamily: 'JetBrains Mono, monospace', marginBottom: '4px' }}>
+                  {stat.value}
+                </div>
+                <div style={{ fontSize: '12px', color: 'var(--text-muted)', letterSpacing: '1px', textTransform: 'uppercase' }}>
+                  {stat.label}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Why We Built This */}
+        <div>
+          <h2 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '12px', color: 'var(--text)', fontFamily: 'JetBrains Mono, monospace' }}>
+            Why We Built This
+          </h2>
+          <p style={{ color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.8, marginBottom: '12px' }}>
+            Choosing an icon library should be a five-minute decision. In practice it often takes hours — reading GitHub READMEs, cross-checking npm download stats, opening a dozen tabs to compare visual styles, and hoping someone on Stack Overflow answered the same bundle-size question in 2023. We built IconSearch to eliminate that process entirely.
+          </p>
           <p style={{ color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.8 }}>
-            Choosing an icon library should be a 5-minute decision. In practice it takes hours — reading GitHub READMEs, checking npm stats, opening multiple tabs to compare styles. We built IconSearch to make that decision fast and data-driven. One site, all the information you need.
+            One site. All the data. Honest comparisons. No affiliation with any library project.
           </p>
         </div>
 
+        {/* What We Offer */}
         <div>
-          <h2 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '12px', color: 'var(--text)' }}>What We Cover</h2>
+          <h2 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '16px', color: 'var(--text)', fontFamily: 'JetBrains Mono, monospace' }}>
+            What We Offer
+          </h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            {[
+              {
+                title: 'Icon Search Tool',
+                desc: 'Search 17,000+ free SVG icons across all 14 libraries simultaneously. No npm install required.',
+              },
+              {
+                title: 'SVG Customizer Sandbox',
+                desc: 'Adjust icon size, stroke weight, and color palette in real-time. Copy output as a React JSX component or raw SVG markup instantly.',
+              },
+              {
+                title: 'Library Comparison Simulator',
+                desc: 'Select any two libraries and get a live side-by-side breakdown of GitHub stars, icon count, bundle size, license, and framework support.',
+              },
+              {
+                title: '91 Side-by-Side Comparisons',
+                desc: 'Every pair combination of the 14 libraries — with real Next.js 15 bundle size benchmarks, feature matrices, and install commands.',
+              },
+              {
+                title: 'Best For You Quiz',
+                desc: 'A 7-question guided quiz that recommends the exact right library for your framework, project type, design style, and license requirements.',
+              },
+              {
+                title: 'Stats Dashboard',
+                desc: 'Live rankings by GitHub stars, weekly npm downloads, and icon count. Full feature matrix for TypeScript, tree-shaking, Figma support, and framework compatibility.',
+              },
+              {
+                title: 'Bundle Size Benchmarks',
+                desc: 'Real gzip measurements for 10, 50, and 100 icons across all libraries in Next.js 15 with Turbopack.',
+              },
+              {
+                title: 'License Guide',
+                desc: 'Clear breakdown of MIT, ISC, Apache 2.0, CC0, and CC BY 4.0 licenses — with official GitHub source links for every library.',
+              },
+              {
+                title: 'Framework & Use Case Guides',
+                desc: 'Dedicated guides for React, Next.js App Router, Vue 3, Svelte, Tailwind CSS, and TypeScript. Plus 10 use-case guides covering SaaS, dashboards, mobile, dark mode, and more.',
+              },
+              {
+                title: 'Blog',
+                desc: '16+ in-depth posts on performance, accessibility, animation, migration, and design systems — written specifically for frontend developers.',
+              },
+            ].map(item => (
+              <div key={item.title} style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '8px', padding: '16px 20px', display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
+                <span style={{ color: 'var(--accent)', fontFamily: 'JetBrains Mono, monospace', fontSize: '13px', marginTop: '2px', flexShrink: 0 }}>→</span>
+                <div>
+                  <div style={{ fontWeight: 700, fontSize: '14px', color: 'var(--text)', marginBottom: '4px' }}>{item.title}</div>
+                  <div style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.7 }}>{item.desc}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Independence */}
+        <div>
+          <h2 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '12px', color: 'var(--text)', fontFamily: 'JetBrains Mono, monospace' }}>
+            Editorial Independence
+          </h2>
+          <p style={{ color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.8, marginBottom: '12px' }}>
+            IconSearch is not affiliated with any icon library project. We do not accept payment for rankings, recommendations, or comparison outcomes. All data — GitHub stars, npm download counts, bundle sizes, license types, TypeScript support, and framework compatibility — is sourced from publicly available information on GitHub, npm, and official documentation.
+          </p>
           <p style={{ color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.8 }}>
-            We cover 8 major open source icon libraries — Lucide Icons, Heroicons, Tabler Icons, Phosphor Icons, Remix Icon, Feather Icons, Bootstrap Icons, and Radix Icons. Every library gets a full guide covering installation, usage, TypeScript support, framework compatibility, and honest pros and cons.
+            If any data on the site is incorrect or outdated, we welcome corrections. Reach out at <a href="mailto:iconsearchinfo@gmail.com" style={{ color: 'var(--accent)', textDecoration: 'none' }}>iconsearchinfo@gmail.com</a> and we will update it promptly.
           </p>
         </div>
 
+        {/* Libraries Covered */}
         <div>
-          <h2 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '12px', color: 'var(--text)' }}>Independence</h2>
-          <p style={{ color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.8 }}>
-            IconSearch is not affiliated with any icon library project. We do not accept payment for rankings or recommendations. All comparisons are based on publicly available data from GitHub, npm, and official documentation.
-          </p>
+          <h2 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '16px', color: 'var(--text)', fontFamily: 'JetBrains Mono, monospace' }}>
+            Libraries Covered (14 Total)
+          </h2>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+            {[
+              { name: 'Lucide Icons', license: 'ISC' },
+              { name: 'Heroicons', license: 'MIT' },
+              { name: 'Tabler Icons', license: 'MIT' },
+              { name: 'Phosphor Icons', license: 'MIT' },
+              { name: 'Remix Icon', license: 'Apache 2.0' },
+              { name: 'Feather Icons', license: 'MIT' },
+              { name: 'Bootstrap Icons', license: 'MIT' },
+              { name: 'Radix Icons', license: 'MIT' },
+              { name: 'Font Awesome', license: 'Mixed' },
+              { name: 'React Icons', license: 'MIT' },
+              { name: 'Material Icons', license: 'MIT' },
+              { name: 'Iconify', license: 'MIT' },
+              { name: 'Simple Icons', license: 'CC0' },
+              { name: 'Iconoir', license: 'MIT' },
+            ].map(lib => (
+              <div key={lib.name} style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '6px', padding: '8px 14px', display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text)' }}>{lib.name}</span>
+                <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace' }}>{lib.license}</span>
+              </div>
+            ))}
+          </div>
         </div>
 
+        {/* Contact */}
         <div>
-          <h2 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '12px', color: 'var(--text)' }}>Contact</h2>
+          <h2 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '12px', color: 'var(--text)', fontFamily: 'JetBrains Mono, monospace' }}>
+            Get in Touch
+          </h2>
           <p style={{ color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.8 }}>
-            Have a suggestion, found an error, or want to report outdated information? Reach out through our <a href="/contact" style={{ color: 'var(--accent)', textDecoration: 'none' }}>contact page</a>.
+            Have a suggestion, found an error, or want to partner with us? Visit our{' '}
+            <a href="/contact" style={{ color: 'var(--accent)', textDecoration: 'none' }}>contact page</a> or email us directly at{' '}
+            <a href="mailto:iconsearchinfo@gmail.com" style={{ color: 'var(--accent)', textDecoration: 'none' }}>iconsearchinfo@gmail.com</a>.
+            We aim to respond within 48 business hours.
           </p>
         </div>
 
