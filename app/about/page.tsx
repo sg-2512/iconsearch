@@ -43,14 +43,14 @@ export default function AboutPage() {
           </h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '12px' }}>
             {[
-              { value: '17,000+', label: 'Searchable icons' },
+              { value: '16,000+', label: 'Searchable icons' },
               { value: '14', label: 'Libraries indexed' },
               { value: '91', label: 'Side-by-side comparisons' },
               { value: '16+', label: 'In-depth blog posts' },
               { value: '10', label: 'Icon category guides' },
               { value: '10', label: 'Use case guides' },
               { value: '6', label: 'Framework guides' },
-              { value: '355,573+', label: 'Total icons tracked' },
+              { value: '426,762+', label: 'Total icons tracked' },
             ].map(stat => (
               <div key={stat.label} style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '8px', padding: '16px 20px' }}>
                 <div style={{ fontSize: '24px', fontWeight: 800, color: 'var(--accent)', fontFamily: 'JetBrains Mono, monospace', marginBottom: '4px' }}>

@@ -65,7 +65,7 @@ export default function ContactPage() {
               📍 LOCATION
             </div>
             <p style={{ color: 'var(--text-muted)', fontSize: '14px', lineHeight: 1.8 }}>
-              Chandigarh, India<br />
+              United States <br />
               Operating globally · Remote team
             </p>
           </div>
@@ -76,7 +76,7 @@ export default function ContactPage() {
             </div>
             <p style={{ color: 'var(--text-muted)', fontSize: '14px', lineHeight: 1.8 }}>
               Monday – Friday<br />
-              9:00 AM – 6:00 PM IST<br />
+              9:00 AM – 6:00 PM <br />
               Typically within 48 hours
             </p>
           </div>
