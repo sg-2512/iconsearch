@@ -1,7 +1,6 @@
 {
-  "generatedAt": "2026-05-28T07:30:22.956Z",
-  "source": "@iconify/json + base-libraries",
-  "iconifyCollections": 227,
+  "generatedAt": "2026-05-29T05:44:37.391Z",
+  "source": "canonical-merge-pipeline",
   "totalIcons": 349269,
   "commercialSafeIcons": 252925,
   "licenseCounts": {
@@ -24,6 +23,5 @@
     "GPL-3.0": 55,
     "GPL-3.0-or-later": 591,
     "CC-BY-NC-4.0": 479
-  },
-  "sha256": "1235c83e90ed20fe951f88d2f11abf97dd38fd40aad0f9e7ccaba7e047fcc91c"
+  }
 }

@@ -42,4 +42,4 @@ next-env.d.ts
 
 # large files
 /data/iconify-icon-search.json
-
+/data/iconify-icon-search.json.gz

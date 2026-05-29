@@ -4,72 +4,27 @@ import { join } from 'path'
 import { gunzipSync } from 'zlib'
 
 let cachedIcons: any[] | null = null
-const LEGAL_SAFE_LICENSES = new Set([
-  'MIT',
-  'Apache-2.0',
-  'Apache 2.0',
-  'ISC',
-  'BSD-2-Clause',
-  'BSD-3-Clause',
-  'CC0-1.0',
-  'CC0 1.0 (Public Domain)',
-  'Unlicense',
-])
-
-function isLegalSafe(license: string) {
-  return LEGAL_SAFE_LICENSES.has(license)
-}
 
 function loadIcons() {
   if (cachedIcons) return cachedIcons
   const start = Date.now()
   console.log('Loading 360,000+ Icon database into server memory cache...')
   
-  let localList: any[] = []
-  const localPath = join(process.cwd(), 'data/icon-search.json')
-  if (existsSync(localPath)) {
+  const canonicalPathGz = join(process.cwd(), 'data/canonical-icon-search.json.gz')
+  if (existsSync(canonicalPathGz)) {
     try {
-      localList = JSON.parse(readFileSync(localPath, 'utf-8'))
-    } catch (e) {
-      console.error('Error parsing local icon search index:', e)
-    }
-  }
-  
-  let iconifyList: any[] = []
-  const iconifyPathGz = join(process.cwd(), 'data/iconify-icon-search.json.gz')
-  const iconifyPath = join(process.cwd(), 'data/iconify-icon-search.json')
-  
-  if (existsSync(iconifyPathGz)) {
-    try {
-      const compressedData = readFileSync(iconifyPathGz)
+      const compressedData = readFileSync(canonicalPathGz)
       const decompressedData = gunzipSync(compressedData).toString('utf-8')
-      iconifyList = JSON.parse(decompressedData)
+      const list = JSON.parse(decompressedData)
+      cachedIcons = Array.isArray(list) ? list : []
+      console.log(`Successfully compiled in-memory index: ${cachedIcons.length} icons in ${Date.now() - start}ms`)
+      return cachedIcons
     } catch (e) {
-      console.error('Error decompressing or parsing gzipped Iconify index file:', e)
-    }
-  } else if (existsSync(iconifyPath)) {
-    try {
-      iconifyList = JSON.parse(readFileSync(iconifyPath, 'utf-8'))
-    } catch (e) {
-      console.error('Error parsing Iconify index file:', e)
+      console.error('Error loading canonical database:', e)
     }
   }
   
-  const merged = [...localList, ...iconifyList]
-  const deduped = new Map<string, any>()
-  for (const icon of merged) {
-    const key = icon.id || `${icon.library}:${icon.name}`
-    if (!deduped.has(key)) {
-      deduped.set(key, {
-        ...icon,
-        legalSafe: typeof icon.legalSafe === 'boolean'
-          ? icon.legalSafe
-          : (typeof icon.commercialSafe === 'boolean' ? icon.commercialSafe : isLegalSafe(icon.license)),
-      })
-    }
-  }
-  cachedIcons = Array.from(deduped.values())
-  console.log(`Successfully compiled in-memory index: ${cachedIcons.length} icons in ${Date.now() - start}ms`)
+  cachedIcons = []
   return cachedIcons
 }
 

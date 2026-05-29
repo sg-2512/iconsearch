@@ -15,6 +15,7 @@ type Icon = {
   reactUsage: string
   svgUrl: string
   legalSafe?: boolean
+  licenseUrl?: string
 }
 
 type CartItem = {
@@ -624,10 +625,49 @@ import { Icon } from '@iconify/vue'
             <button onClick={() => setSelectedIcon(null)} className="icon-search-btn icon-search-btn-small icon-search-close-btn">✕</button>
             <h3 style={{ fontSize: '22px', marginBottom: '8px' }}>{selectedIcon.displayName || selectedIcon.name}</h3>
             <p style={{ color: 'var(--text-muted)', fontSize: '13px', marginBottom: '8px' }}>{selectedIcon.libraryName}</p>
-            <p style={{ color: 'var(--text-muted)', fontSize: '13px', marginBottom: '16px' }}>License: {selectedIcon.license}</p>
-            <p style={{ fontSize: '12px', marginBottom: '12px', color: selectedIcon.legalSafe ? '#34d399' : '#f87171' }}>
-              {selectedIcon.legalSafe ? 'Legal-safe for SaaS export' : 'Restricted set, use with caution'}
+            <p style={{ color: 'var(--text-muted)', fontSize: '13px', marginBottom: '8px' }}>
+              License: <span style={{ fontWeight: '600', color: 'var(--text)' }}>{selectedIcon.license}</span>{' '}
+              {selectedIcon.licenseUrl && (
+                <a
+                  href={selectedIcon.licenseUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: 'var(--accent)', textDecoration: 'underline', fontSize: '11px', marginLeft: '4px' }}
+                >
+                  (View source text)
+                </a>
+              )}
             </p>
+            {!selectedIcon.legalSafe && (
+              <div style={{
+                background: 'rgba(239, 68, 68, 0.08)',
+                border: '1px dashed #ef4444',
+                borderRadius: '8px',
+                padding: '12px',
+                marginBottom: '16px',
+                fontSize: '12px',
+                color: '#fca5a5',
+                lineHeight: '1.4'
+              }}>
+                <strong style={{ color: '#f87171', display: 'block', marginBottom: '4px' }}>⚠️ Restricted Set:</strong>
+                This icon falls under a restricted license. Commercial SaaS exports may require manual attribution, trademark agreements, or license fee validation.
+              </div>
+            )}
+            {selectedIcon.legalSafe && (
+              <div style={{
+                background: 'rgba(52, 211, 153, 0.06)',
+                border: '1px dashed #34d399',
+                borderRadius: '8px',
+                padding: '12px',
+                marginBottom: '16px',
+                fontSize: '12px',
+                color: '#a7f3d0',
+                lineHeight: '1.4'
+              }}>
+                <strong style={{ color: '#34d399', display: 'block', marginBottom: '4px' }}>✅ SaaS & Commercial Safe:</strong>
+                100% pre-vetted for production deployment, business sites, SaaS web apps, and premium exports under {selectedIcon.license}.
+              </div>
+            )}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '12px' }}>
               <div style={{ border: '1px solid var(--border)', borderRadius: '8px', padding: '10px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
