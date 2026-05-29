@@ -1,6 +1,8 @@
 'use client'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { generateZipPackage } from '../../lib/exporter'
+
 
 type Icon = {
   id: string
@@ -105,6 +107,49 @@ export default function IconSearchPage() {
   const [previewFallbackIndex, setPreviewFallbackIndex] = useState<Record<string, number>>({})
   const [previewFailed, setPreviewFailed] = useState<Record<string, boolean>>({})
   const searchRef = useRef<HTMLInputElement>(null)
+
+  // Exporter Upgrades (Phase 2)
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false)
+  const [exportPackageName, setExportPackageName] = useState('icon-hub-package')
+  const [exportFormats, setExportFormats] = useState({
+    svg: true,
+    png: true,
+    react: true,
+    vue: false,
+    tailwind: false,
+    sprite: true
+  })
+  const [exportPngScale, setExportPngScale] = useState(2)
+  const [exportUsePreset, setExportUsePreset] = useState(false)
+  const [exportPresetSize, setExportPresetSize] = useState(32)
+  const [exportPresetStroke, setExportPresetStroke] = useState(1.5)
+  const [exportPresetColor, setExportPresetColor] = useState('#818cf8')
+  const [exportStatus, setExportStatus] = useState('')
+  const [isExporting, setIsExporting] = useState(false)
+
+  async function handleStartExport() {
+    if (cart.length === 0) return
+    setIsExporting(true)
+    try {
+      await generateZipPackage({
+        packageName: exportPackageName,
+        items: cart,
+        formats: exportFormats,
+        pngScale: exportPngScale,
+        usePreset: exportUsePreset,
+        presetSize: exportPresetSize,
+        presetStroke: exportPresetStroke,
+        presetColor: exportPresetColor
+      }, setExportStatus)
+      setIsExportModalOpen(false)
+    } catch (e) {
+      console.error('Failed to generate package', e)
+      setExportStatus('Failed to generate package. Try again.')
+    } finally {
+      setIsExporting(false)
+    }
+  }
+
 
   useEffect(() => {
     function handleKey(e: KeyboardEvent) {
@@ -742,19 +787,45 @@ import { Icon } from '@iconify/vue'
         zIndex: 90,
         backdropFilter: 'blur(8px)',
       }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-          <h4 style={{ fontSize: '14px' }}>Cart ({cart.length})</h4>
-          <button onClick={copyCartExport} className="icon-search-btn icon-search-btn-small">{copied ? 'Copied' : 'Copy JSON'}</button>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+          <h4 style={{ fontSize: '14px', fontWeight: 800 }}>Workspace Cart ({cart.length})</h4>
+          {cart.length > 0 && (
+            <button onClick={copyCartExport} className="icon-search-btn icon-search-btn-small" style={{ fontSize: '10px' }}>
+              {copied ? 'Copied!' : 'Copy JSON'}
+            </button>
+          )}
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '6px', marginBottom: '10px' }}>
-          <button onClick={() => exportCart('json')} className="icon-search-btn icon-search-btn-small">JSON</button>
-          <button onClick={() => exportCart('react')} className="icon-search-btn icon-search-btn-small">React</button>
-          <button onClick={() => exportCart('vue')} className="icon-search-btn icon-search-btn-small">Vue</button>
-          <button onClick={() => exportCart('tailwind')} className="icon-search-btn icon-search-btn-small">Tailwind</button>
-          <button onClick={() => exportCart('csv')} className="icon-search-btn icon-search-btn-small">CSV</button>
+        
+        {cart.length > 0 && (
+          <button 
+            onClick={() => setIsExportModalOpen(true)} 
+            className="icon-search-btn"
+            style={{ 
+              width: '100%', 
+              marginBottom: '12px', 
+              background: 'var(--accent)', 
+              borderColor: 'var(--accent)', 
+              color: '#fff',
+              fontWeight: 'bold',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '6px'
+            }}
+          >
+            📦 Export Pack ({cart.length})
+          </button>
+        )}
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '4px', marginBottom: '12px' }}>
+          <button onClick={() => exportCart('json')} className="icon-search-btn icon-search-btn-small" style={{ fontSize: '9px', padding: '4px 2px' }}>JSON</button>
+          <button onClick={() => exportCart('react')} className="icon-search-btn icon-search-btn-small" style={{ fontSize: '9px', padding: '4px 2px' }}>React</button>
+          <button onClick={() => exportCart('vue')} className="icon-search-btn icon-search-btn-small" style={{ fontSize: '9px', padding: '4px 2px' }}>Vue</button>
+          <button onClick={() => exportCart('tailwind')} className="icon-search-btn icon-search-btn-small" style={{ fontSize: '9px', padding: '4px 2px' }}>Tailwind</button>
+          <button onClick={() => exportCart('csv')} className="icon-search-btn icon-search-btn-small" style={{ fontSize: '9px', padding: '4px 2px' }}>CSV</button>
         </div>
         {exportNotice ? (
-          <p style={{ color: 'var(--green)', fontSize: '11px', marginBottom: '10px', fontFamily: 'JetBrains Mono, monospace' }}>{exportNotice}</p>
+          <p style={{ color: 'var(--green)', fontSize: '10px', marginBottom: '10px', fontFamily: 'JetBrains Mono, monospace' }}>{exportNotice}</p>
         ) : null}
         {cart.length === 0 ? (
           <p style={{ color: 'var(--text-muted)', fontSize: '12px' }}>No icons yet. Open any icon and add it to cart.</p>
@@ -775,6 +846,259 @@ import { Icon } from '@iconify/vue'
           </div>
         )}
       </aside>
+
+      {/* Export Workspace Package Modal (Phase 2 Upgrade) */}
+      {isExportModalOpen && (
+        <>
+          <div 
+            onClick={() => !isExporting && setIsExportModalOpen(false)} 
+            style={{ 
+              position: 'fixed', 
+              inset: 0, 
+              background: 'rgba(0,0,0,0.75)', 
+              backdropFilter: 'blur(4px)',
+              zIndex: 200 
+            }} 
+          />
+          
+          <div style={{
+            position: 'fixed',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: '580px',
+            maxHeight: '90vh',
+            overflowY: 'auto',
+            background: 'rgba(18, 18, 21, 0.96)',
+            border: '1px solid var(--border)',
+            borderRadius: '18px',
+            padding: '24px',
+            zIndex: 201,
+            boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '20px',
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h3 style={{ fontSize: '20px', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span>📦</span> Export Workspace Package
+              </h3>
+              <button 
+                onClick={() => setIsExportModalOpen(false)} 
+                disabled={isExporting}
+                className="icon-search-btn icon-search-btn-small icon-search-close-btn"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div>
+              <label style={{ fontSize: '11px', color: 'var(--text-muted)', display: 'block', marginBottom: '6px', fontFamily: 'JetBrains Mono, monospace' }}>
+                // PACKAGE FILE NAME
+              </label>
+              <input 
+                type="text" 
+                placeholder="icon-hub-package" 
+                value={exportPackageName}
+                onChange={(e) => setExportPackageName(e.target.value.replace(/[^a-zA-Z0-9-_]/g, ''))}
+                style={{
+                  width: '100%',
+                  background: 'var(--bg)',
+                  border: '1px solid var(--border)',
+                  borderRadius: '8px',
+                  padding: '8px 12px',
+                  color: 'var(--text)',
+                  fontSize: '14px',
+                  outline: 'none'
+                }}
+                disabled={isExporting}
+              />
+            </div>
+
+            <div style={{ border: '1px solid var(--border)', borderRadius: '12px', padding: '14px', background: 'var(--bg-secondary)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                <div>
+                  <h4 style={{ fontSize: '13px', fontWeight: 700 }}>Cohesive Presets Overrides</h4>
+                  <p style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Force all icons in package to use a uniform preset</p>
+                </div>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                  <input 
+                    type="checkbox" 
+                    checked={exportUsePreset} 
+                    onChange={(e) => setExportUsePreset(e.target.checked)}
+                    disabled={isExporting}
+                  />
+                  <span style={{ fontSize: '12px', fontFamily: 'JetBrains Mono, monospace' }}>Enable</span>
+                </label>
+              </div>
+
+              {exportUsePreset && (
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginTop: '10px', paddingTop: '10px', borderTop: '1px solid var(--border)' }}>
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                      <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Preset Size</span>
+                      <span style={{ fontSize: '11px', color: 'var(--accent)', fontFamily: 'JetBrains Mono, monospace' }}>{exportPresetSize}px</span>
+                    </div>
+                    <input 
+                      type="range" 
+                      aria-label="Preset size range selector"
+                      min={16} 
+                      max={96} 
+                      value={exportPresetSize}
+                      onChange={(e) => setExportPresetSize(Number(e.target.value))}
+                      className="icon-search-slider"
+                      disabled={isExporting}
+                    />
+                  </div>
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                      <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Preset Stroke</span>
+                      <span style={{ fontSize: '11px', color: 'var(--accent)', fontFamily: 'JetBrains Mono, monospace' }}>{exportPresetStroke.toFixed(1)}px</span>
+                    </div>
+                    <input 
+                      type="range" 
+                      aria-label="Preset stroke range selector"
+                      min={0.5} 
+                      max={3} 
+                      step={0.1}
+                      value={exportPresetStroke}
+                      onChange={(e) => setExportPresetStroke(Number(e.target.value))}
+                      className="icon-search-slider"
+                      disabled={isExporting}
+                    />
+                  </div>
+                  <div style={{ gridColumn: 'span 2', display: 'flex', alignItems: 'center', gap: '10px', marginTop: '4px' }}>
+                    <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Preset Color:</span>
+                    <input 
+                      type="color" 
+                      aria-label="Preset color selection picker"
+                      value={exportPresetColor} 
+                      onChange={(e) => setExportPresetColor(e.target.value)}
+                      disabled={isExporting}
+                    />
+                    <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace' }}>{exportPresetColor}</span>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div>
+              <label style={{ fontSize: '11px', color: 'var(--text-muted)', display: 'block', marginBottom: '8px', fontFamily: 'JetBrains Mono, monospace' }}>
+                // SELECT EXPORT FORMATS
+              </label>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '10px' }}>
+                {[
+                  { id: 'svg', label: 'Optimized SVGs (.svg)' },
+                  { id: 'react', label: 'React Elements (.tsx)' },
+                  { id: 'vue', label: 'Vue Components (.vue)' },
+                  { id: 'tailwind', label: 'Tailwind / HTML embeds' },
+                  { id: 'sprite', label: 'SVG Sprite Sheet (sprite.svg)' },
+                  { id: 'png', label: 'PNG Images (.png)' },
+                ].map((f) => (
+                  <label 
+                    key={f.id} 
+                    style={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: '8px', 
+                      background: 'var(--bg-card)', 
+                      border: '1px solid var(--border)', 
+                      borderRadius: '8px', 
+                      padding: '10px', 
+                      cursor: 'pointer',
+                      fontSize: '12px'
+                    }}
+                  >
+                    <input 
+                      type="checkbox" 
+                      checked={exportFormats[f.id as keyof typeof exportFormats]} 
+                      onChange={(e) => setExportFormats(prev => ({ ...prev, [f.id]: e.target.checked }))}
+                      disabled={isExporting}
+                    />
+                    {f.label}
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {exportFormats.png && (
+              <div style={{ border: '1px solid var(--border)', borderRadius: '12px', padding: '14px', background: 'var(--bg-secondary)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                  <div>
+                    <h4 style={{ fontSize: '13px', fontWeight: 700 }}>PNG Scale Multiplier</h4>
+                    <p style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Multiply standard size for high DPI (e.g. Retina @2x)</p>
+                  </div>
+                  <span style={{ fontSize: '13px', color: 'var(--accent)', fontWeight: 800, fontFamily: 'JetBrains Mono, monospace' }}>
+                    @{exportPngScale}x
+                  </span>
+                </div>
+                <input 
+                  type="range" 
+                  aria-label="PNG scale multiplier selector"
+                  min={1} 
+                  max={4} 
+                  step={1}
+                  value={exportPngScale}
+                  onChange={(e) => setExportPngScale(Number(e.target.value))}
+                  className="icon-search-slider"
+                  disabled={isExporting}
+                />
+              </div>
+            )}
+
+            {isExporting && (
+              <div style={{
+                background: 'rgba(129,140,248,0.06)',
+                border: '1px solid rgba(129,140,248,0.2)',
+                borderRadius: '10px',
+                padding: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+              }}>
+                <div style={{
+                  width: '18px',
+                  height: '18px',
+                  border: '2px solid rgba(129,140,248,0.2)',
+                  borderTopColor: 'var(--accent)',
+                  borderRadius: '50%',
+                  animation: 'spin 1s linear infinite',
+                }} />
+                <span style={{ fontSize: '13px', color: 'var(--accent)', fontFamily: 'JetBrains Mono, monospace' }}>
+                  {exportStatus}
+                </span>
+              </div>
+            )}
+
+            <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+              <button 
+                onClick={handleStartExport}
+                disabled={isExporting || Object.values(exportFormats).every(v => !v)}
+                className="icon-search-btn"
+                style={{ 
+                  flex: 1, 
+                  background: 'var(--accent)', 
+                  color: '#fff', 
+                  borderColor: 'var(--accent)', 
+                  fontWeight: 'bold',
+                  padding: '12px' 
+                }}
+              >
+                {isExporting ? 'Packaging Workspace...' : 'Download ZIP Archive'}
+              </button>
+              <button 
+                onClick={() => setIsExportModalOpen(false)}
+                disabled={isExporting}
+                className="icon-search-btn"
+                style={{ padding: '12px' }}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+
     </main>
   )
 }
