@@ -127,6 +127,26 @@ export default function IconSearchPage() {
   const [exportStatus, setExportStatus] = useState('')
   const [isExporting, setIsExporting] = useState(false)
 
+  // Workspace Upgrades (Phase 3)
+  const [packs, setPacks] = useState<any[]>([
+    { id: 'default', name: 'Dashboard Pack', items: [], createdAt: new Date().toISOString() }
+  ])
+  const [activePackId, setActivePackId] = useState('default')
+  const [isRenamePackOpen, setIsRenamePackOpen] = useState(false)
+  const [renamePackName, setRenamePackName] = useState('')
+  const [isCreatePackOpen, setIsCreatePackOpen] = useState(false)
+  const [createPackName, setCreatePackName] = useState('')
+
+  // Style Presets Upgrades (Phase 3)
+  const [presets, setPresets] = useState<any[]>([
+    { id: 'default', name: 'Lucide Outline Default', size: 32, stroke: 1.5, color: '#818cf8' },
+    { id: 'dense', name: 'Dense UI Outline (16px)', size: 16, stroke: 1.0, color: '#3b82f6' },
+    { id: 'bold', name: 'Bold High-Contrast (48px)', size: 48, stroke: 2.2, color: '#ec4899' },
+  ])
+  const [selectedPresetId, setSelectedPresetId] = useState('none')
+  const [isCreatePresetOpen, setIsCreatePresetOpen] = useState(false)
+  const [createPresetName, setCreatePresetName] = useState('')
+
   async function handleStartExport() {
     if (cart.length === 0) return
     setIsExporting(true)
@@ -149,6 +169,76 @@ export default function IconSearchPage() {
       setIsExporting(false)
     }
   }
+
+  // Packs & Workspace helper handlers (Phase 3)
+  function handleSwitchPack(packId: string) {
+    setActivePackId(packId)
+    const pack = packs.find(p => p.id === packId)
+    if (pack) {
+      setCart(pack.items)
+    }
+  }
+
+  function handleCreatePack() {
+    const name = createPackName.trim() || `Pack #${packs.length + 1}`
+    const id = `pack-${Date.now()}`
+    const newPack = { id, name, items: [], createdAt: new Date().toISOString() }
+    setPacks(prev => [...prev, newPack])
+    setActivePackId(id)
+    setCart([])
+    setIsCreatePackOpen(false)
+  }
+
+  function handleRenamePack() {
+    const name = renamePackName.trim()
+    if (!name) return
+    setPacks(prev => prev.map(p => p.id === activePackId ? { ...p, name } : p))
+    setIsRenamePackOpen(false)
+  }
+
+  function handleDeleteActivePack() {
+    if (packs.length <= 1) return
+    const remaining = packs.filter(p => p.id !== activePackId)
+    setPacks(remaining)
+    const nextActive = remaining[0]
+    setActivePackId(nextActive.id)
+    setCart(nextActive.items)
+  }
+
+  function handleClearActivePack() {
+    setCart([])
+    setExportNotice('Cleared all icons in current pack.')
+    setTimeout(() => setExportNotice(''), 1800)
+  }
+
+  // Presets helper handlers (Phase 3)
+  function applyStylePreset(presetId: string) {
+    setSelectedPresetId(presetId)
+    if (presetId === 'none') return
+    const preset = presets.find((p) => p.id === presetId)
+    if (preset) {
+      setCustomSize(preset.size)
+      setCustomStroke(preset.stroke)
+      setCustomColor(preset.color)
+    }
+  }
+
+  function applyPresetToAllCart(presetId: string) {
+    if (presetId === 'none') return
+    const preset = presets.find((p) => p.id === presetId)
+    if (!preset) return
+    setCart((prev) =>
+      prev.map((item) => ({
+        ...item,
+        size: preset.size,
+        stroke: preset.stroke,
+        color: preset.color,
+      }))
+    )
+    setExportNotice('Applied preset styling to all cart icons!')
+    setTimeout(() => setExportNotice(''), 2200)
+  }
+
 
 
   useEffect(() => {
@@ -206,20 +296,122 @@ export default function IconSearchPage() {
     }
   }, [query, selectedLib, selectedIconifySet, selectedCategory, selectedStyle, currentPage, sortBy, legalOnly])
 
+  // Load packs, presets, and check URL params on startup (Phase 3)
   useEffect(() => {
     try {
-      const raw = localStorage.getItem('icon-search-cart')
-      if (!raw) return
-      const parsed = JSON.parse(raw)
-      if (Array.isArray(parsed)) setCart(parsed)
-    } catch {
-      // ignore local storage errors
+      const rawPacks = localStorage.getItem('icon-hub-workspace-packs')
+      const rawActiveId = localStorage.getItem('icon-hub-workspace-active-pack')
+      const rawPresets = localStorage.getItem('icon-hub-style-presets')
+
+      let initialPacks = [
+        { id: 'default', name: 'Dashboard Pack', items: [], createdAt: new Date().toISOString() }
+      ]
+      let activeId = 'default'
+
+      if (rawPacks) {
+        const parsed = JSON.parse(rawPacks)
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          initialPacks = parsed
+          activeId = rawActiveId || parsed[0].id
+        }
+      }
+
+      setPacks(initialPacks)
+      setActivePackId(activeId)
+
+      if (rawPresets) {
+        const parsedPresets = JSON.parse(rawPresets)
+        if (Array.isArray(parsedPresets)) setPresets(parsedPresets)
+      }
+
+      // Check if URL has cart deep-link parameter
+      const params = new URLSearchParams(window.location.search)
+      const cartParam = params.get('cart')
+      if (cartParam) {
+        const parts = cartParam.split(',').filter(Boolean)
+        const parsedItems = parts.map(part => {
+          const [id, sizeStr, strokeStr, colorHex] = part.split(':')
+          return {
+            id,
+            size: Number(sizeStr) || 32,
+            stroke: Number(strokeStr) || 1.5,
+            color: colorHex ? `#${colorHex}` : '#818cf8'
+          }
+        })
+
+        if (parsedItems.length > 0) {
+          const ids = parsedItems.map(p => p.id).join(',')
+          setLoading(true)
+          fetch(`/api/icon-search?ids=${ids}&limit=100`)
+            .then(res => res.json())
+            .then(data => {
+              const fetchedIcons = data.icons || []
+              const cartItems: CartItem[] = parsedItems.map(p => {
+                const matchedIcon = fetchedIcons.find((i: any) => i.id === p.id)
+                if (!matchedIcon) return null
+                return {
+                  key: `${p.id}-${Date.now()}-${Math.random()}`,
+                  icon: matchedIcon,
+                  size: p.size,
+                  stroke: p.stroke,
+                  color: p.color
+                }
+              }).filter(Boolean) as CartItem[]
+
+              if (cartItems.length > 0) {
+                setCart(cartItems)
+                // Also update the active pack with these loaded items
+                setPacks(prev => prev.map(p => p.id === activeId ? { ...p, items: cartItems } : p))
+              }
+            })
+            .catch(e => console.error('Failed to restore cart from URL', e))
+            .finally(() => setLoading(false))
+        }
+      } else {
+        // No URL params, load active pack's items
+        const activePack = initialPacks.find((p: any) => p.id === activeId)
+        if (activePack) setCart(activePack.items)
+      }
+    } catch (e) {
+      console.error('Failed to initialize workspace data', e)
     }
   }, [])
 
+  // Persist packs, active pack, and presets to local storage
   useEffect(() => {
-    localStorage.setItem('icon-search-cart', JSON.stringify(cart))
+    localStorage.setItem('icon-hub-workspace-packs', JSON.stringify(packs))
+  }, [packs])
+
+  useEffect(() => {
+    localStorage.setItem('icon-hub-workspace-active-pack', activePackId)
+  }, [activePackId])
+
+  useEffect(() => {
+    localStorage.setItem('icon-hub-style-presets', JSON.stringify(presets))
+  }, [presets])
+
+  // Synchronize cart changes to browser URL parameter dynamically (no next-router lag)
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const url = new URL(window.location.href)
+    if (cart.length === 0) {
+      url.searchParams.delete('cart')
+    } else {
+      const serialized = cart
+        .map((item) => `${item.icon.id}:${item.size}:${item.stroke}:${item.color.replace('#', '')}`)
+        .join(',')
+      url.searchParams.set('cart', serialized)
+    }
+    window.history.replaceState({}, '', url.toString())
   }, [cart])
+
+  // Keep packs array in sync whenever active pack's cart items are altered
+  useEffect(() => {
+    setPacks((prev) =>
+      prev.map((p) => (p.id === activePackId ? { ...p, items: cart } : p))
+    )
+  }, [cart, activePackId])
+
 
   useEffect(() => {
     if (!selectedIcon) return
@@ -754,6 +946,48 @@ import { Icon } from '@iconify/vue'
               />
               <span style={{ marginLeft: '8px', fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace' }}>{customColor}</span>
             </div>
+
+            {/* Visual Style Presets Panel (Phase 3 Upgrade) */}
+            <div style={{ marginBottom: '12px', border: '1px solid var(--border)', borderRadius: '8px', padding: '10px', background: 'var(--bg-secondary)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                <label style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Style Preset</label>
+                <button 
+                  onClick={() => {
+                    setCreatePresetName('')
+                    setIsCreatePresetOpen(true)
+                  }}
+                  className="icon-search-btn icon-search-btn-small"
+                  style={{ fontSize: '9px', padding: '2px 6px' }}
+                  title="Save current styles as custom preset"
+                >
+                  Save Preset
+                </button>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                <select 
+                  aria-label="Style preset select picker"
+                  value={selectedPresetId} 
+                  onChange={(e) => applyStylePreset(e.target.value)} 
+                  className="icon-search-select"
+                  style={{ width: '100%', fontSize: '11px', padding: '4px 6px' }}
+                >
+                  <option value="none">No Preset (Custom Styles)</option>
+                  {presets.map(p => (
+                    <option key={p.id} value={p.id}>{p.name} ({p.size}px, {p.stroke}px)</option>
+                  ))}
+                </select>
+                {selectedPresetId !== 'none' && cart.length > 0 && (
+                  <button 
+                    onClick={() => applyPresetToAllCart(selectedPresetId)}
+                    className="icon-search-btn icon-search-btn-small"
+                    style={{ width: '100%', fontSize: '9px', padding: '4px', background: 'var(--accent-dim)', color: 'var(--accent)', borderColor: 'var(--border)' }}
+                  >
+                    Apply Preset to All Icons in Cart
+                  </button>
+                )}
+              </div>
+            </div>
+
             <div style={{ marginBottom: '12px', border: '1px solid var(--border)', borderRadius: '10px', padding: '12px', minHeight: '90px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)' }}>
               {customizedSvg ? (
                 <div dangerouslySetInnerHTML={{ __html: customizedSvg }} />
@@ -787,6 +1021,61 @@ import { Icon } from '@iconify/vue'
         zIndex: 90,
         backdropFilter: 'blur(8px)',
       }}>
+        {/* Workspace Pack Manager dropdown (Phase 3 Upgrade) */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '12px', borderBottom: '1px solid var(--border)', paddingBottom: '12px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace' }}>// ACTIVE WORKSPACE PACK</span>
+            <div style={{ display: 'flex', gap: '4px' }}>
+              <button 
+                onClick={() => {
+                  const pack = packs.find(p => p.id === activePackId)
+                  if (pack) {
+                    setRenamePackName(pack.name)
+                    setIsRenamePackOpen(true)
+                  }
+                }} 
+                className="icon-search-btn icon-search-btn-small" 
+                title="Rename active pack"
+                style={{ padding: '2px 6px', fontSize: '10px' }}
+              >
+                ✏️
+              </button>
+              <button 
+                onClick={() => {
+                  setCreatePackName('')
+                  setIsCreatePackOpen(true)
+                }} 
+                className="icon-search-btn icon-search-btn-small" 
+                title="Create new pack"
+                style={{ padding: '2px 6px', fontSize: '10px' }}
+              >
+                ➕
+              </button>
+              {packs.length > 1 && (
+                <button 
+                  onClick={handleDeleteActivePack} 
+                  className="icon-search-btn icon-search-btn-small" 
+                  title="Delete active pack"
+                  style={{ padding: '2px 6px', fontSize: '10px', color: 'var(--red)' }}
+                >
+                  🗑️
+                </button>
+              )}
+            </div>
+          </div>
+          <select 
+            aria-label="Active workspace pack selection selector"
+            value={activePackId} 
+            onChange={(e) => handleSwitchPack(e.target.value)} 
+            className="icon-search-select" 
+            style={{ width: '100%', fontSize: '12px', padding: '6px 8px' }}
+          >
+            {packs.map((pack) => (
+              <option key={pack.id} value={pack.id}>{pack.name} ({pack.items.length})</option>
+            ))}
+          </select>
+        </div>
+
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
           <h4 style={{ fontSize: '14px', fontWeight: 800 }}>Workspace Cart ({cart.length})</h4>
           {cart.length > 0 && (
@@ -795,6 +1084,7 @@ import { Icon } from '@iconify/vue'
             </button>
           )}
         </div>
+
         
         {cart.length > 0 && (
           <button 
@@ -823,7 +1113,11 @@ import { Icon } from '@iconify/vue'
           <button onClick={() => exportCart('vue')} className="icon-search-btn icon-search-btn-small" style={{ fontSize: '9px', padding: '4px 2px' }}>Vue</button>
           <button onClick={() => exportCart('tailwind')} className="icon-search-btn icon-search-btn-small" style={{ fontSize: '9px', padding: '4px 2px' }}>Tailwind</button>
           <button onClick={() => exportCart('csv')} className="icon-search-btn icon-search-btn-small" style={{ fontSize: '9px', padding: '4px 2px' }}>CSV</button>
+          {cart.length > 0 && (
+            <button onClick={handleClearActivePack} className="icon-search-btn icon-search-btn-small" style={{ fontSize: '9px', padding: '4px 2px', color: 'var(--red)' }} title="Clear current pack items">Clear All</button>
+          )}
         </div>
+
         {exportNotice ? (
           <p style={{ color: 'var(--green)', fontSize: '10px', marginBottom: '10px', fontFamily: 'JetBrains Mono, monospace' }}>{exportNotice}</p>
         ) : null}
@@ -846,6 +1140,94 @@ import { Icon } from '@iconify/vue'
           </div>
         )}
       </aside>
+
+      {/* Workspace Dialog Modals (Phase 3 Upgrade) */}
+      {isCreatePackOpen && (
+        <>
+          <div onClick={() => setIsCreatePackOpen(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 300 }} />
+          <div style={{
+            position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
+            width: '320px', background: 'var(--bg-secondary)', border: '1px solid var(--border)',
+            borderRadius: '12px', padding: '18px', zIndex: 301, display: 'flex', flexDirection: 'column', gap: '12px'
+          }}>
+            <h4 style={{ fontSize: '15px', fontWeight: 800 }}>Create New Icon Pack</h4>
+            <input 
+              type="text" 
+              placeholder="e.g. Dashboard Icons" 
+              value={createPackName} 
+              onChange={(e) => setCreatePackName(e.target.value)}
+              style={{ width: '100%', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: '6px', padding: '6px 10px', color: 'var(--text)', fontSize: '13px', outline: 'none' }}
+            />
+            <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+              <button onClick={handleCreatePack} className="icon-search-btn icon-search-btn-small" style={{ background: 'var(--accent)', color: '#fff', borderColor: 'var(--accent)' }}>Create</button>
+              <button onClick={() => setIsCreatePackOpen(false)} className="icon-search-btn icon-search-btn-small">Cancel</button>
+            </div>
+          </div>
+        </>
+      )}
+
+      {isRenamePackOpen && (
+        <>
+          <div onClick={() => setIsRenamePackOpen(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 300 }} />
+          <div style={{
+            position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
+            width: '320px', background: 'var(--bg-secondary)', border: '1px solid var(--border)',
+            borderRadius: '12px', padding: '18px', zIndex: 301, display: 'flex', flexDirection: 'column', gap: '12px'
+          }}>
+            <h4 style={{ fontSize: '15px', fontWeight: 800 }}>Rename Icon Pack</h4>
+            <input 
+              type="text" 
+              value={renamePackName} 
+              onChange={(e) => setRenamePackName(e.target.value)}
+              style={{ width: '100%', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: '6px', padding: '6px 10px', color: 'var(--text)', fontSize: '13px', outline: 'none' }}
+            />
+            <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+              <button onClick={handleRenamePack} className="icon-search-btn icon-search-btn-small" style={{ background: 'var(--accent)', color: '#fff', borderColor: 'var(--accent)' }}>Rename</button>
+              <button onClick={() => setIsRenamePackOpen(false)} className="icon-search-btn icon-search-btn-small">Cancel</button>
+            </div>
+          </div>
+        </>
+      )}
+
+      {isCreatePresetOpen && (
+        <>
+          <div onClick={() => setIsCreatePresetOpen(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 300 }} />
+          <div style={{
+            position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
+            width: '320px', background: 'var(--bg-secondary)', border: '1px solid var(--border)',
+            borderRadius: '12px', padding: '18px', zIndex: 301, display: 'flex', flexDirection: 'column', gap: '12px'
+          }}>
+            <h4 style={{ fontSize: '15px', fontWeight: 800 }}>Save Preset Style</h4>
+            <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+              Size: {customSize}px | Stroke: {customStroke.toFixed(1)}px | Color: {customColor}
+            </div>
+            <input 
+              type="text" 
+              placeholder="e.g. SaaS Brand Primary" 
+              value={createPresetName} 
+              onChange={(e) => setCreatePresetName(e.target.value)}
+              style={{ width: '100%', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: '6px', padding: '6px 10px', color: 'var(--text)', fontSize: '13px', outline: 'none' }}
+            />
+            <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+              <button 
+                onClick={() => {
+                  const name = createPresetName.trim() || `Preset #${presets.length + 1}`
+                  const id = `preset-${Date.now()}`
+                  const newPreset = { id, name, size: customSize, stroke: customStroke, color: customColor }
+                  setPresets(prev => [...prev, newPreset])
+                  setSelectedPresetId(id)
+                  setIsCreatePresetOpen(false)
+                }} 
+                className="icon-search-btn icon-search-btn-small" 
+                style={{ background: 'var(--accent)', color: '#fff', borderColor: 'var(--accent)' }}
+              >
+                Save
+              </button>
+              <button onClick={() => setIsCreatePresetOpen(false)} className="icon-search-btn icon-search-btn-small">Cancel</button>
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Export Workspace Package Modal (Phase 2 Upgrade) */}
       {isExportModalOpen && (
