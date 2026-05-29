@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { readFileSync, existsSync } from 'fs'
 import { join } from 'path'
+import { gunzipSync } from 'zlib'
 
 let cachedIcons: any[] | null = null
 const LEGAL_SAFE_LICENSES = new Set([
@@ -35,8 +36,18 @@ function loadIcons() {
   }
   
   let iconifyList: any[] = []
+  const iconifyPathGz = join(process.cwd(), 'data/iconify-icon-search.json.gz')
   const iconifyPath = join(process.cwd(), 'data/iconify-icon-search.json')
-  if (existsSync(iconifyPath)) {
+  
+  if (existsSync(iconifyPathGz)) {
+    try {
+      const compressedData = readFileSync(iconifyPathGz)
+      const decompressedData = gunzipSync(compressedData).toString('utf-8')
+      iconifyList = JSON.parse(decompressedData)
+    } catch (e) {
+      console.error('Error decompressing or parsing gzipped Iconify index file:', e)
+    }
+  } else if (existsSync(iconifyPath)) {
     try {
       iconifyList = JSON.parse(readFileSync(iconifyPath, 'utf-8'))
     } catch (e) {
