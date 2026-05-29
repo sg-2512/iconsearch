@@ -202,7 +202,7 @@ export default async function UseCasePage({ params }: { params: Promise<{ slug: 
           <div>
             <h3 style={{ fontSize: '12px', color: 'var(--text)', fontFamily: 'JetBrains Mono, monospace', marginBottom: '12px' }}>Resources</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <Link href="/icon-search" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '14px' }}>Search All 15,000+ Icons</Link>
+              <Link href="/icon-search" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '14px' }}>Search All 360,000+ Icons</Link>
               <Link href="/licenses" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '14px' }}>Icon Library License Guide</Link>
               <Link href="/directory" style={{ color: 'var(--accent)', textDecoration: 'none', fontSize: '14px', marginTop: '4px' }}>View Full Site Directory →</Link>
             </div>

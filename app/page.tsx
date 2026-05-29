@@ -5,11 +5,11 @@ import DynamicHome from './components/DynamicHome'
 
 export const metadata = {
   title: 'IconSearch — Find & Compare Free SVG Icon Libraries (2026)',
-  description: 'Search 17,000+ free SVG icons across Lucide, Heroicons, Tabler, Phosphor, Bootstrap, Remix, Feather, Radix and Iconoir. Compare React icon libraries by size, stars, and license.',
-  keywords: 'free svg icons, react icons, icon library comparison, lucide icons, heroicons, tabler icons, phosphor icons, open source icons, bootstrap icons, remix icons, feather icons, iconoir icons',
+  description: 'Search 360,000+ free SVG icons across Lucide, Heroicons, Tabler, Phosphor, Bootstrap, Remix, Feather, Radix, Iconoir, and Iconify. Compare React icon libraries by size, stars, and license.',
+  keywords: 'free svg icons, react icons, icon library comparison, lucide icons, heroicons, tabler icons, phosphor icons, open source icons, bootstrap icons, remix icons, feather icons, iconoir icons, iconify',
   openGraph: {
     title: 'IconSearch — Find & Compare Free SVG Icon Libraries',
-    description: 'Search 17,000+ free SVG icons across Lucide, Heroicons, Tabler, Phosphor, Bootstrap, Remix, Feather, Radix and Iconoir.',
+    description: 'Search 360,000+ free SVG icons across Lucide, Heroicons, Tabler, Phosphor, Bootstrap, Remix, Feather, Radix, Iconoir, and Iconify.',
     url: 'https://iconsearch.info',
     siteName: 'IconSearch',
     type: 'website',
@@ -17,7 +17,7 @@ export const metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'IconSearch — Find & Compare Free SVG Icon Libraries',
-    description: 'Search 17,000+ free SVG icons across Lucide, Heroicons, Tabler, Phosphor, Bootstrap, Remix, Feather, Radix and Iconoir.',
+    description: 'Search 360,000+ free SVG icons across Lucide, Heroicons, Tabler, Phosphor, Bootstrap, Remix, Feather, Radix, Iconoir, and Iconify.',
   },
   alternates: {
     canonical: 'https://iconsearch.info',
@@ -48,7 +48,7 @@ export default function HomePage() {
           "mainEntity": [
             { "@type": "Question", "name": "What is the best free icon library for React?", "acceptedAnswer": { "@type": "Answer", "text": "Lucide Icons, Heroicons, and Iconoir are highly popular outline choices for React." }},
             { "@type": "Question", "name": "Are these icon libraries free to use commercially?", "acceptedAnswer": { "@type": "Answer", "text": "Yes — all libraries use MIT or ISC licenses which allow free commercial use." }},
-            { "@type": "Question", "name": "Which icon library has the most icons?", "acceptedAnswer": { "@type": "Answer", "text": "React Icons aggregates 52,000+ icons. For single-system libraries, Tabler Icons has the largest collection with 6,000+ icons." }},
+            { "@type": "Question", "name": "Which icon library has the most icons?", "acceptedAnswer": { "@type": "Answer", "text": "Iconify aggregates 350,000+ icons across 211 icon sets. React Icons aggregates 52,000+ icons. For single-system libraries, Tabler Icons has the largest collection with 6,100+ icons." }},
             { "@type": "Question", "name": "Can I use these icons with Next.js?", "acceptedAnswer": { "@type": "Answer", "text": "Yes — all listed libraries ship as React components and work with Next.js App Router." }},
           ]
         })}}

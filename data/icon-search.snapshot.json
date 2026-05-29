@@ -1,0 +1,29 @@
+{
+  "generatedAt": "2026-05-28T07:30:22.956Z",
+  "source": "@iconify/json + base-libraries",
+  "iconifyCollections": 227,
+  "totalIcons": 349269,
+  "commercialSafeIcons": 252925,
+  "licenseCounts": {
+    "ISC": 5265,
+    "MIT": 136773,
+    "Apache 2.0": 3229,
+    "Apache-2.0": 95929,
+    "OFL-1.1": 6871,
+    "CC-BY-4.0": 58549,
+    "CC-BY-SA-4.0": 22742,
+    "MPL-2.0": 288,
+    "GPL-2.0-only": 207,
+    "GPL-2.0-or-later": 681,
+    "BSD-3-Clause": 210,
+    "Unlicense": 432,
+    "CC0-1.0": 11087,
+    "CC-BY-NC-SA-4.0": 1665,
+    "CC-BY-SA-3.0": 79,
+    "CC-BY-3.0": 4137,
+    "GPL-3.0": 55,
+    "GPL-3.0-or-later": 591,
+    "CC-BY-NC-4.0": 479
+  },
+  "sha256": "1235c83e90ed20fe951f88d2f11abf97dd38fd40aad0f9e7ccaba7e047fcc91c"
+}

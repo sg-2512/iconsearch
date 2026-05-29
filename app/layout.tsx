@@ -20,7 +20,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL('https://iconsearch.info'),
   title: 'IconSearch — Find & Compare 13+ Free SVG Icon Libraries (2026)',
-  description: 'Search 15,000+ free SVG icons across Lucide, Heroicons, Tabler, Phosphor, Bootstrap, Remix, Feather, and Radix. Compare 13+ React icon libraries by size, stars, and license.',
+  description: 'Search 360,000+ free SVG icons across Lucide, Heroicons, Tabler, Phosphor, Bootstrap, Remix, Feather, Radix, Iconoir and Iconify. Compare React icon libraries by size, stars, and license.',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

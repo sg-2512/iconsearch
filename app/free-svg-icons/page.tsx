@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 export const metadata = {
   title: 'Free SVG Icons for Web Projects (2026) — Open Source Collections',
-  description: 'Browse the best free SVG icon libraries for web projects. Search 15,000+ icons or compare 13+ open source icon libraries like Lucide, Heroicons, and Tabler.',
+  description: 'Browse the best free SVG icon libraries for web projects. Search 360,000+ icons or compare 13+ open source icon libraries like Lucide, Heroicons, and Tabler.',
 }
 
 export default function FreeSvgIconsPage() {

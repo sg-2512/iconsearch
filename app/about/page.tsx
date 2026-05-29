@@ -2,7 +2,7 @@ import { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'About IconSearch — Free SVG Icon Library Comparison Tool (2026)',
-  description: 'IconSearch is the most comprehensive independent resource for comparing and discovering free open source SVG icon libraries for React, Next.js, Vue, and Svelte. 17,000+ icons, 14 libraries, 91 comparisons.',
+  description: 'IconSearch is the most comprehensive independent resource for comparing and discovering free open source SVG icon libraries for React, Next.js, Vue, and Svelte. 360,000+ icons, 14 libraries, 91 comparisons.',
 }
 
 export default function AboutPage() {
@@ -43,7 +43,7 @@ export default function AboutPage() {
           </h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '12px' }}>
             {[
-              { value: '16,000+', label: 'Searchable icons' },
+              { value: '360,000+', label: 'Searchable icons' },
               { value: '14', label: 'Libraries indexed' },
               { value: '91', label: 'Side-by-side comparisons' },
               { value: '16+', label: 'In-depth blog posts' },
@@ -86,7 +86,7 @@ export default function AboutPage() {
             {[
               {
                 title: 'Icon Search Tool',
-                desc: 'Search 17,000+ free SVG icons across all 14 libraries simultaneously. No npm install required.',
+                desc: 'Search 360,000+ free SVG icons across all 14 libraries simultaneously. No npm install required.',
               },
               {
                 title: 'SVG Customizer Sandbox',

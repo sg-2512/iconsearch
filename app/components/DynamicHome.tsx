@@ -357,7 +357,7 @@ export default function DynamicHome({ initialLibraries, recentItems }: DynamicHo
             marginBottom: '32px',
             lineHeight: '1.6'
           }}>
-            Instant search across <span style={{ color: 'var(--text)', fontWeight: 600 }}>17,000+ free SVG icons</span> in Lucide, Heroicons, Tabler, Phosphor, and Iconoir. Zero packages required to customize and export.
+            Instant search across <span style={{ color: 'var(--text)', fontWeight: 600 }}>360,000+ free SVG icons</span> across Lucide, Heroicons, Tabler, Phosphor, Iconoir, and the Iconify registry. Zero packages required to customize and export.
           </p>
 
           {/* Core Search Form */}
@@ -365,7 +365,7 @@ export default function DynamicHome({ initialLibraries, recentItems }: DynamicHo
             <div style={{ position: 'relative' }}>
               <input
                 type="text"
-                placeholder="Search 17,000+ icons — try 'settings', 'bell', 'arrow'..."
+                placeholder="Search 360,000+ icons — try 'settings', 'bell', 'arrow'..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 style={{
@@ -474,7 +474,7 @@ export default function DynamicHome({ initialLibraries, recentItems }: DynamicHo
               onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
               onMouseLeave={e => e.currentTarget.style.transform = 'none'}
             >
-              Explore 17,000+ Icons →
+              Explore 360,000+ Icons →
             </Link>
             <Link href="/compare" style={{
               background: 'rgba(24, 24, 27, 0.5)',
