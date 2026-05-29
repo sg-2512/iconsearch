@@ -38,6 +38,7 @@ export async function GET(request: Request) {
   const legalOnly = searchParams.get('legalOnly') !== '0'
   const page = parseInt(searchParams.get('page') || '1', 10)
   const limit = parseInt(searchParams.get('limit') || '80', 10)
+  const sort = searchParams.get('sort') || 'relevance'
 
   const allIcons = loadIcons()
   
@@ -123,6 +124,53 @@ export async function GET(request: Request) {
       const tags = icon.tags ? icon.tags.map((t: string) => t.toLowerCase()) : []
       return qParts.every(part => name.includes(part) || tags.some((t: string) => t.includes(part)))
     })
+  }
+
+  // 5. Sorting
+  if (sort === 'relevance' && query) {
+    filtered.sort((a, b) => {
+      const aName = a.name.toLowerCase()
+      const bName = b.name.toLowerCase()
+      
+      // 1. Exact Match
+      if (aName === query && bName !== query) return -1
+      if (bName === query && aName !== query) return 1
+      
+      // 2. Starts with Match
+      const aStarts = aName.startsWith(query)
+      const bStarts = bName.startsWith(query)
+      if (aStarts && !bStarts) return -1
+      if (bStarts && !aStarts) return 1
+      
+      // 3. Shorter name length (closer match)
+      if (aStarts && bStarts) {
+        return aName.length - bName.length
+      }
+      
+      // 4. Default Alphabetical
+      return aName.localeCompare(bName)
+    })
+  } else if (sort === 'popular') {
+    const LIBRARY_POPULARITY: Record<string, number> = {
+      'lucide-icons': 10,
+      'heroicons': 9,
+      'tabler-icons': 8,
+      'phosphor-icons': 7,
+      'remix-icon': 6,
+      'bootstrap-icons': 5,
+      'radix-icons': 4,
+      'feather-icons': 3,
+      'iconoir': 2,
+    }
+    filtered.sort((a, b) => {
+      const pa = LIBRARY_POPULARITY[a.library] || 0
+      const pb = LIBRARY_POPULARITY[b.library] || 0
+      if (pa !== pb) return pb - pa
+      return a.name.localeCompare(b.name)
+    })
+  } else {
+    // Default or 'alphabetical'
+    filtered.sort((a, b) => a.name.localeCompare(b.name))
   }
 
   const facetsSource = legalOnly ? allIcons.filter((icon) => Boolean(icon.legalSafe)) : allIcons

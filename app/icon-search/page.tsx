@@ -89,7 +89,7 @@ export default function IconSearchPage() {
   const [selectedIconifySet, setSelectedIconifySet] = useState('all')
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [selectedStyle, setSelectedStyle] = useState('all')
-  const [sortBy, setSortBy] = useState<'relevance' | 'popular'>('relevance')
+  const [sortBy, setSortBy] = useState<'relevance' | 'popular' | 'alphabetical'>('alphabetical')
   const [legalOnly, setLegalOnly] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
   const [loading, setLoading] = useState(true)
@@ -140,17 +140,11 @@ export default function IconSearchPage() {
           legalOnly: legalOnly ? '1' : '0',
           page: String(currentPage),
           limit: '80',
+          sort: sortBy,
         })
         const res = await fetch(`/api/icon-search?${params.toString()}`, { signal: controller.signal })
         const data = await res.json()
         const icons: Icon[] = Array.isArray(data?.icons) ? data.icons : []
-        if (sortBy === 'popular') {
-          icons.sort((a, b) => {
-            const pa = (LIBRARY_COLORS[a.library] ? 1 : 0)
-            const pb = (LIBRARY_COLORS[b.library] ? 1 : 0)
-            return pb - pa || a.name.localeCompare(b.name)
-          })
-        }
         setResults({ ...data, icons })
       } catch (error) {
         if ((error as Error).name !== 'AbortError') {
@@ -516,7 +510,8 @@ import { Icon } from '@iconify/vue'
           <option value="twotone">Two-Tone</option>
           <option value="sharp">Sharp</option>
         </select>
-        <select aria-label="Sort search results" title="Sort search results" value={sortBy} onChange={(e) => setSortBy(e.target.value as 'relevance' | 'popular')} className="icon-search-select">
+        <select aria-label="Sort search results" title="Sort search results" value={sortBy} onChange={(e) => setSortBy(e.target.value as 'relevance' | 'popular' | 'alphabetical')} className="icon-search-select">
+          <option value="alphabetical">Sort: A → Z</option>
           <option value="relevance">Sort: Relevance</option>
           <option value="popular">Sort: Popular</option>
         </select>
