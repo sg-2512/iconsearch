@@ -16,7 +16,13 @@ function loadIcons() {
       const compressedData = readFileSync(canonicalPathGz)
       const decompressedData = gunzipSync(compressedData).toString('utf-8')
       const list = JSON.parse(decompressedData)
-      cachedIcons = Array.isArray(list) ? list : []
+      const parsedList = Array.isArray(list) ? list : []
+      
+      // Pre-sort alphabetically once on startup to optimize future default/alphabetical requests
+      console.log('Pre-sorting icons alphabetically...')
+      parsedList.sort((a, b) => a.name.localeCompare(b.name))
+      
+      cachedIcons = parsedList
       console.log(`Successfully compiled in-memory index: ${cachedIcons.length} icons in ${Date.now() - start}ms`)
       return cachedIcons
     } catch (e) {
@@ -162,15 +168,19 @@ export async function GET(request: Request) {
       'feather-icons': 3,
       'iconoir': 2,
     }
-    filtered.sort((a, b) => {
+    // Since we are sorting, prevent mutating the global memory cache if no filters were applied
+    const toSort = filtered === allIcons ? [...filtered] : filtered
+    toSort.sort((a, b) => {
       const pa = LIBRARY_POPULARITY[a.library] || 0
       const pb = LIBRARY_POPULARITY[b.library] || 0
       if (pa !== pb) return pb - pa
       return a.name.localeCompare(b.name)
     })
+    filtered = toSort
   } else {
     // Default or 'alphabetical'
-    filtered.sort((a, b) => a.name.localeCompare(b.name))
+    // Since the master list is pre-sorted alphabetically on load and JS filter() preserves order,
+    // we don't need to do anything here! This is a massive CPU optimization.
   }
 
   const facetsSource = legalOnly ? allIcons.filter((icon) => Boolean(icon.legalSafe)) : allIcons
