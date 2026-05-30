@@ -5,6 +5,40 @@ import { gunzipSync } from 'zlib'
 
 let cachedIcons: any[] | null = null
 
+type Facets = {
+  libraries: string[]
+  licenses: string[]
+  iconifySets: string[]
+}
+
+let cachedFacets: {
+  all: Facets
+  legal: Facets
+} | null = null
+
+// Sliding window rate limiter (Phase 4 Upgrade)
+const ipCache = new Map<string, { count: number; resetTime: number }>()
+const RATE_LIMIT_WINDOW = 60 * 1000 // 1 minute
+const MAX_REQUESTS = 120 // 120 requests per minute
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now()
+  const record = ipCache.get(ip)
+  if (!record) {
+    ipCache.set(ip, { count: 1, resetTime: now + RATE_LIMIT_WINDOW })
+    return false
+  }
+  
+  if (now > record.resetTime) {
+    ipCache.set(ip, { count: 1, resetTime: now + RATE_LIMIT_WINDOW })
+    return false
+  }
+  
+  record.count++
+  return record.count > MAX_REQUESTS
+}
+
+
 function loadIcons() {
   if (cachedIcons) return cachedIcons
   const start = Date.now()
@@ -23,6 +57,29 @@ function loadIcons() {
       parsedList.sort((a, b) => a.name.localeCompare(b.name))
       
       cachedIcons = parsedList
+
+      // Pre-compute static facets to optimize query execution latency (Phase 4 Upgrade)
+      console.log('Pre-computing static search facets...')
+      const allLibs = Array.from(new Set(parsedList.map((icon) => icon.library))).sort()
+      const allLics = Array.from(new Set(parsedList.map((icon) => icon.license))).sort()
+      const allSets = allLibs
+        .filter((name) => name.startsWith('iconify-'))
+        .map((name) => name.replace(/^iconify-/, ''))
+        .sort()
+
+      const legalList = parsedList.filter((icon) => Boolean(icon.legalSafe))
+      const legalLibs = Array.from(new Set(legalList.map((icon) => icon.library))).sort()
+      const legalLics = Array.from(new Set(legalList.map((icon) => icon.license))).sort()
+      const legalSets = legalLibs
+        .filter((name) => name.startsWith('iconify-'))
+        .map((name) => name.replace(/^iconify-/, ''))
+        .sort()
+
+      cachedFacets = {
+        all: { libraries: allLibs, licenses: allLics, iconifySets: allSets },
+        legal: { libraries: legalLibs, licenses: legalLics, iconifySets: legalSets }
+      }
+
       console.log(`Successfully compiled in-memory index: ${cachedIcons.length} icons in ${Date.now() - start}ms`)
       return cachedIcons
     } catch (e) {
@@ -31,11 +88,36 @@ function loadIcons() {
   }
   
   cachedIcons = []
+  cachedFacets = {
+    all: { libraries: [], licenses: [], iconifySets: [] },
+    legal: { libraries: [], licenses: [], iconifySets: [] }
+  }
   return cachedIcons
 }
 
 export async function GET(request: Request) {
+  const startTime = performance.now()
   const { searchParams } = new URL(request.url)
+
+  // 1. IP Abuse Protection / Rate Limiting (Phase 4 Upgrade)
+  const clientIp = request.headers.get('x-forwarded-for') || 
+                   request.headers.get('x-real-ip') || 
+                   '127.0.0.1'
+  
+  if (isRateLimited(clientIp)) {
+    console.warn(`[API Rate Limit] Blocked IP: ${clientIp} due to high search query hits`)
+    return new NextResponse(
+      JSON.stringify({ error: 'Too Many Requests', message: 'You have exceeded your rate limit of 120 requests per minute.' }),
+      {
+        status: 429,
+        headers: {
+          'Content-Type': 'application/json',
+          'Retry-After': '60'
+        }
+      }
+    )
+  }
+
   const idsParam = searchParams.get('ids') || ''
   const query = searchParams.get('q')?.toLowerCase().trim() || ''
   const lib = searchParams.get('lib') || 'all'
@@ -192,18 +274,17 @@ export async function GET(request: Request) {
     // we don't need to do anything here! This is a massive CPU optimization.
   }
 
-  const facetsSource = legalOnly ? allIcons.filter((icon) => Boolean(icon.legalSafe)) : allIcons
-  const libraries = Array.from(new Set(facetsSource.map((icon) => icon.library))).sort()
-  const licenses = Array.from(new Set(facetsSource.map((icon) => icon.license))).sort()
-  const iconifySets = libraries
-    .filter((name) => name.startsWith('iconify-'))
-    .map((name) => name.replace(/^iconify-/, ''))
-    .sort()
   const legalSafeCount = filtered.filter((icon) => icon.legalSafe).length
   
   const total = filtered.length
   const paginated = filtered.slice((page - 1) * limit, page * limit)
   
+  // Use precomputed facets for incredible speed boost! (Phase 4 Upgrade)
+  const facets = legalOnly ? cachedFacets?.legal : cachedFacets?.all
+
+  const elapsed = (performance.now() - startTime).toFixed(2)
+  console.log(`[API Search] query: "${query || idsParam || '(none)'}", results: ${total}, taken: ${elapsed}ms`)
+
   return NextResponse.json({
     icons: paginated,
     total,
@@ -211,11 +292,18 @@ export async function GET(request: Request) {
     limit,
     totalPages: Math.ceil(total / limit),
     facets: {
-      libraries,
-      licenses,
-      iconifySets,
+      libraries: facets?.libraries || [],
+      licenses: facets?.licenses || [],
+      iconifySets: facets?.iconifySets || [],
       legalSafeCount,
       legalOnlyApplied: legalOnly,
     }
+  }, {
+    headers: {
+      'X-Response-Time': `${elapsed}ms`
+    }
   })
 }
+
+// Module-level Cache Startup Warmup (Phase 4 Upgrade)
+loadIcons()
