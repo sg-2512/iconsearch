@@ -1,7 +1,10 @@
 'use client'
 
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState, useCallback } from 'react'
 import { generateZipPackage } from '../../lib/exporter'
+import { createClient, isSupabaseConfigured } from '@/lib/supabase'
+import AuthModal from '../components/AuthModal'
+import ProUpgradeModal from '../components/ProUpgradeModal'
 
 
 type Icon = {
@@ -147,8 +150,194 @@ export default function IconSearchPage() {
   const [isCreatePresetOpen, setIsCreatePresetOpen] = useState(false)
   const [createPresetName, setCreatePresetName] = useState('')
 
+  // Phase 5: Auth, Cloud Sync & Plan Gating
+  const [user, setUser] = useState<any>(null)
+  const [userPlan, setUserPlan] = useState<'free' | 'pro'>('free')
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
+  const [isProModalOpen, setIsProModalOpen] = useState(false)
+  const [proModalReason, setProModalReason] = useState('')
+  const [cloudSyncStatus, setCloudSyncStatus] = useState('')
+
+  // Plan limits
+  const FREE_MAX_PACKS = 3
+  const FREE_MAX_ICONS_PER_PACK = 12
+  const FREE_EXPORT_FORMATS = ['svg', 'json', 'csv']
+
+  function showProGate(reason: string) {
+    setProModalReason(reason)
+    setIsProModalOpen(true)
+  }
+
+  // Cloud sync helper: push packs to Supabase
+  const syncPacksToCloud = useCallback(async (packsData: any[]) => {
+    if (!user || !isSupabaseConfigured()) return
+    const supabase = createClient()
+    if (!supabase) return
+    try {
+      // Upsert each pack
+      for (const pack of packsData) {
+        const { error } = await supabase
+          .from('packs')
+          .upsert({
+            id: pack.id,
+            user_id: user.id,
+            name: pack.name,
+            items: pack.items,
+            updated_at: new Date().toISOString(),
+          }, { onConflict: 'id' })
+        if (error) console.warn('Pack sync error:', error.message)
+      }
+    } catch (e) {
+      console.warn('Cloud sync failed (packs):', e)
+    }
+  }, [user])
+
+  // Cloud sync helper: push presets to Supabase
+  const syncPresetsToCloud = useCallback(async (presetsData: any[]) => {
+    if (!user || !isSupabaseConfigured()) return
+    const supabase = createClient()
+    if (!supabase) return
+    try {
+      for (const preset of presetsData) {
+        const { error } = await supabase
+          .from('presets')
+          .upsert({
+            id: preset.id,
+            user_id: user.id,
+            name: preset.name,
+            size: preset.size,
+            stroke: preset.stroke,
+            color: preset.color,
+          }, { onConflict: 'id' })
+        if (error) console.warn('Preset sync error:', error.message)
+      }
+    } catch (e) {
+      console.warn('Cloud sync failed (presets):', e)
+    }
+  }, [user])
+
+  // Fetch cloud data on login
+  const fetchCloudData = useCallback(async (userId: string) => {
+    if (!isSupabaseConfigured()) return
+    const supabase = createClient()
+    if (!supabase) return
+    try {
+      setCloudSyncStatus('Syncing from cloud...')
+
+      // Fetch profile for plan
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('plan')
+        .eq('id', userId)
+        .single()
+      if (profile?.plan) setUserPlan(profile.plan as 'free' | 'pro')
+
+      // Fetch packs
+      const { data: cloudPacks } = await supabase
+        .from('packs')
+        .select('*')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: true })
+
+      if (cloudPacks && cloudPacks.length > 0) {
+        const merged = cloudPacks.map((p: any) => ({
+          id: p.id,
+          name: p.name,
+          items: p.items || [],
+          createdAt: p.created_at,
+        }))
+        setPacks(merged)
+        setActivePackId(merged[0].id)
+        setCart(merged[0].items || [])
+        localStorage.setItem('icon-hub-workspace-packs', JSON.stringify(merged))
+      }
+
+      // Fetch presets
+      const { data: cloudPresets } = await supabase
+        .from('presets')
+        .select('*')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: true })
+
+      if (cloudPresets && cloudPresets.length > 0) {
+        const mapped = cloudPresets.map((p: any) => ({
+          id: p.id,
+          name: p.name,
+          size: p.size,
+          stroke: Number(p.stroke),
+          color: p.color,
+        }))
+        setPresets(mapped)
+        localStorage.setItem('icon-hub-style-presets', JSON.stringify(mapped))
+      }
+
+      setCloudSyncStatus('Cloud sync complete')
+      setTimeout(() => setCloudSyncStatus(''), 2500)
+    } catch (e) {
+      console.warn('Failed to fetch cloud data:', e)
+      setCloudSyncStatus('')
+    }
+  }, [])
+
+  // Auth session listener
+  useEffect(() => {
+    if (!isSupabaseConfigured()) return
+    const supabase = createClient()
+    if (!supabase) return
+
+    // Check existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        setUser(session.user)
+        fetchCloudData(session.user.id)
+      }
+    })
+
+    // Listen for auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        if (session?.user) {
+          setUser(session.user)
+          fetchCloudData(session.user.id)
+        } else {
+          setUser(null)
+          setUserPlan('free')
+        }
+      }
+    )
+
+    return () => subscription.unsubscribe()
+  }, [fetchCloudData])
+
+  // Handle sign out
+  async function handleSignOut() {
+    if (!isSupabaseConfigured()) return
+    const supabase = createClient()
+    if (!supabase) return
+    await supabase.auth.signOut()
+    setUser(null)
+    setUserPlan('free')
+    setCloudSyncStatus('')
+  }
+
+  function handleAuthSuccess(authUser: any) {
+    setUser(authUser)
+    fetchCloudData(authUser.id)
+  }
+
   async function handleStartExport() {
     if (cart.length === 0) return
+
+    // Plan gate: check if user is trying to use pro-only export formats
+    if (userPlan !== 'pro') {
+      const proFormats = ['react', 'vue', 'tailwind', 'sprite', 'png']
+      const selectedProFormats = proFormats.filter(f => exportFormats[f as keyof typeof exportFormats])
+      if (selectedProFormats.length > 0) {
+        showProGate(`Export formats ${selectedProFormats.map(f => f.toUpperCase()).join(', ')} are available on the Pro plan. Free accounts can export SVG files only.`)
+        return
+      }
+    }
+
     setIsExporting(true)
     try {
       await generateZipPackage({
@@ -180,13 +369,21 @@ export default function IconSearchPage() {
   }
 
   function handleCreatePack() {
+    // Plan gate: free users limited to FREE_MAX_PACKS packs
+    if (userPlan !== 'pro' && packs.length >= FREE_MAX_PACKS) {
+      showProGate(`Free accounts are limited to ${FREE_MAX_PACKS} icon packs. Upgrade to Pro for unlimited packs.`)
+      setIsCreatePackOpen(false)
+      return
+    }
     const name = createPackName.trim() || `Pack #${packs.length + 1}`
     const id = `pack-${Date.now()}`
     const newPack = { id, name, items: [], createdAt: new Date().toISOString() }
-    setPacks(prev => [...prev, newPack])
+    const updatedPacks = [...packs, newPack]
+    setPacks(updatedPacks)
     setActivePackId(id)
     setCart([])
     setIsCreatePackOpen(false)
+    syncPacksToCloud(updatedPacks)
   }
 
   function handleRenamePack() {
@@ -377,7 +574,7 @@ export default function IconSearchPage() {
     }
   }, [])
 
-  // Persist packs, active pack, and presets to local storage
+  // Persist packs, active pack, and presets to local storage + cloud
   useEffect(() => {
     localStorage.setItem('icon-hub-workspace-packs', JSON.stringify(packs))
   }, [packs])
@@ -389,6 +586,24 @@ export default function IconSearchPage() {
   useEffect(() => {
     localStorage.setItem('icon-hub-style-presets', JSON.stringify(presets))
   }, [presets])
+
+  // Cloud sync: push packs when modified (debounced)
+  useEffect(() => {
+    if (!user) return
+    const timer = setTimeout(() => {
+      syncPacksToCloud(packs)
+    }, 2000)
+    return () => clearTimeout(timer)
+  }, [packs, user, syncPacksToCloud])
+
+  // Cloud sync: push presets when modified (debounced)
+  useEffect(() => {
+    if (!user) return
+    const timer = setTimeout(() => {
+      syncPresetsToCloud(presets)
+    }, 2000)
+    return () => clearTimeout(timer)
+  }, [presets, user, syncPresetsToCloud])
 
   // Synchronize cart changes to browser URL parameter dynamically (no next-router lag)
   useEffect(() => {
@@ -521,6 +736,13 @@ export default function IconSearchPage() {
 
   function addToCart() {
     if (!selectedIcon) return
+
+    // Plan gate: free users limited to FREE_MAX_ICONS_PER_PACK icons per pack
+    if (userPlan !== 'pro' && cart.length >= FREE_MAX_ICONS_PER_PACK) {
+      showProGate(`Free accounts are limited to ${FREE_MAX_ICONS_PER_PACK} icons per pack. Upgrade to Pro for unlimited icons.`)
+      return
+    }
+
     const item: CartItem = {
       key: `${selectedIcon.id}-${Date.now()}`,
       icon: selectedIcon,
@@ -644,6 +866,13 @@ import { Icon } from '@iconify/vue'
 
   function exportCart(format: 'json' | 'react' | 'vue' | 'tailwind' | 'csv') {
     if (cart.length === 0) return
+
+    // Plan gate: free users can only export SVG, JSON, CSV
+    if (userPlan !== 'pro' && !FREE_EXPORT_FORMATS.includes(format)) {
+      showProGate(`${format.toUpperCase()} exports are a Pro feature. Free accounts can download JSON and CSV. Upgrade to Pro for React, Vue, and Tailwind exports.`)
+      return
+    }
+
     if (format === 'json') {
       downloadText('icon-cart.json', JSON.stringify(buildCartJson(), null, 2), 'application/json;charset=utf-8')
       setExportNotice('Downloaded JSON export')
@@ -669,20 +898,138 @@ import { Icon } from '@iconify/vue'
       <div className="glow-gradient-node" />
 
       <section style={{ position: 'relative', zIndex: 1, marginBottom: '24px' }}>
-        <div style={{ fontSize: '11px', color: 'var(--accent)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '2px', marginBottom: '12px' }}>
-          // HUGE ICON REGISTRY
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <div>
+            <div style={{ fontSize: '11px', color: 'var(--accent)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '2px', marginBottom: '12px' }}>
+              // HUGE ICON REGISTRY
+            </div>
+            <h1 style={{ fontSize: 'clamp(34px, 5vw, 56px)', fontWeight: 900, lineHeight: 1.1, marginBottom: '12px' }}>
+              Search 349,000+ Icons
+            </h1>
+            <p style={{ color: 'var(--text-muted)', fontSize: '16px', maxWidth: '760px', lineHeight: 1.7 }}>
+              Hugeicons-style explorer with lightning-fast API search, clean cards, rich filters, and polished dark UI.
+            </p>
+            <p style={{ color: 'var(--green)', fontSize: '12px', marginTop: '8px', fontFamily: 'JetBrains Mono, monospace' }}>
+              {loading
+                ? 'Checking license safety...'
+                : `Legal-safe icons in current scope: ${formatNumber(results.facets?.legalSafeCount || 0)}`}
+            </p>
+          </div>
+
+          {/* Auth / Profile Area */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
+            {cloudSyncStatus && (
+              <span style={{
+                fontSize: '10px',
+                color: 'var(--accent)',
+                fontFamily: 'JetBrains Mono, monospace',
+                background: 'rgba(139, 92, 246, 0.08)',
+                border: '1px solid rgba(139, 92, 246, 0.2)',
+                borderRadius: '6px',
+                padding: '4px 8px',
+              }}>
+                ☁️ {cloudSyncStatus}
+              </span>
+            )}
+
+            {user ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                {/* Plan Badge */}
+                <span style={{
+                  fontSize: '10px',
+                  fontWeight: 700,
+                  fontFamily: 'JetBrains Mono, monospace',
+                  letterSpacing: '1px',
+                  textTransform: 'uppercase',
+                  padding: '4px 10px',
+                  borderRadius: '999px',
+                  background: userPlan === 'pro'
+                    ? 'linear-gradient(135deg, rgba(234, 179, 8, 0.2), rgba(245, 158, 11, 0.2))'
+                    : 'rgba(139, 92, 246, 0.1)',
+                  border: `1px solid ${userPlan === 'pro' ? 'rgba(234, 179, 8, 0.4)' : 'rgba(139, 92, 246, 0.3)'}`,
+                  color: userPlan === 'pro' ? '#fef08a' : 'rgba(139, 92, 246, 1)',
+                }}>
+                  {userPlan === 'pro' ? '✦ PRO' : 'FREE'}
+                </span>
+
+                {/* Profile Button */}
+                <div style={{ position: 'relative' }}>
+                  <button
+                    onClick={handleSignOut}
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      borderRadius: '8px',
+                      padding: '6px 12px',
+                      color: '#fff',
+                      fontSize: '12px',
+                      cursor: 'pointer',
+                      fontFamily: 'JetBrains Mono, monospace',
+                      transition: 'all 0.2s',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = 'rgba(244, 63, 94, 0.1)'
+                      e.currentTarget.style.borderColor = 'rgba(244, 63, 94, 0.3)'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)'
+                      e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)'
+                    }}
+                  >
+                    <span style={{
+                      width: '18px',
+                      height: '18px',
+                      borderRadius: '50%',
+                      background: 'linear-gradient(135deg, #8b5cf6, #6366f1)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '10px',
+                      fontWeight: 800,
+                    }}>
+                      {user.email?.charAt(0)?.toUpperCase() || 'U'}
+                    </span>
+                    Sign Out
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <button
+                onClick={() => setIsAuthModalOpen(true)}
+                style={{
+                  background: 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%)',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '8px 16px',
+                  color: '#fff',
+                  fontSize: '12px',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  fontFamily: 'JetBrains Mono, monospace',
+                  transition: 'all 0.2s',
+                  boxShadow: '0 2px 8px rgba(139, 92, 246, 0.3)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(139, 92, 246, 0.5)'
+                  e.currentTarget.style.transform = 'translateY(-1px)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.boxShadow = '0 2px 8px rgba(139, 92, 246, 0.3)'
+                  e.currentTarget.style.transform = 'translateY(0)'
+                }}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                Sign In
+              </button>
+            )}
+          </div>
         </div>
-        <h1 style={{ fontSize: 'clamp(34px, 5vw, 56px)', fontWeight: 900, lineHeight: 1.1, marginBottom: '12px' }}>
-          Search 349,000+ Icons
-        </h1>
-        <p style={{ color: 'var(--text-muted)', fontSize: '16px', maxWidth: '760px', lineHeight: 1.7 }}>
-          Hugeicons-style explorer with lightning-fast API search, clean cards, rich filters, and polished dark UI.
-        </p>
-        <p style={{ color: 'var(--green)', fontSize: '12px', marginTop: '8px', fontFamily: 'JetBrains Mono, monospace' }}>
-          {loading
-            ? 'Checking license safety...'
-            : `Legal-safe icons in current scope: ${formatNumber(results.facets?.legalSafeCount || 0)}`}
-        </p>
       </section>
 
       <section style={{ position: 'relative', zIndex: 2, marginBottom: '18px' }}>
@@ -1109,14 +1456,56 @@ import { Icon } from '@iconify/vue'
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '4px', marginBottom: '12px' }}>
           <button onClick={() => exportCart('json')} className="icon-search-btn icon-search-btn-small" style={{ fontSize: '9px', padding: '4px 2px' }}>JSON</button>
-          <button onClick={() => exportCart('react')} className="icon-search-btn icon-search-btn-small" style={{ fontSize: '9px', padding: '4px 2px' }}>React</button>
-          <button onClick={() => exportCart('vue')} className="icon-search-btn icon-search-btn-small" style={{ fontSize: '9px', padding: '4px 2px' }}>Vue</button>
-          <button onClick={() => exportCart('tailwind')} className="icon-search-btn icon-search-btn-small" style={{ fontSize: '9px', padding: '4px 2px' }}>Tailwind</button>
+          <button onClick={() => exportCart('react')} className="icon-search-btn icon-search-btn-small" style={{ fontSize: '9px', padding: '4px 2px', position: 'relative' }}>
+            React
+            {userPlan !== 'pro' && <span style={{ position: 'absolute', top: '-4px', right: '-2px', fontSize: '7px', color: '#fef08a' }}>PRO</span>}
+          </button>
+          <button onClick={() => exportCart('vue')} className="icon-search-btn icon-search-btn-small" style={{ fontSize: '9px', padding: '4px 2px', position: 'relative' }}>
+            Vue
+            {userPlan !== 'pro' && <span style={{ position: 'absolute', top: '-4px', right: '-2px', fontSize: '7px', color: '#fef08a' }}>PRO</span>}
+          </button>
+          <button onClick={() => exportCart('tailwind')} className="icon-search-btn icon-search-btn-small" style={{ fontSize: '9px', padding: '4px 2px', position: 'relative' }}>
+            Tailwind
+            {userPlan !== 'pro' && <span style={{ position: 'absolute', top: '-4px', right: '-2px', fontSize: '7px', color: '#fef08a' }}>PRO</span>}
+          </button>
           <button onClick={() => exportCart('csv')} className="icon-search-btn icon-search-btn-small" style={{ fontSize: '9px', padding: '4px 2px' }}>CSV</button>
           {cart.length > 0 && (
             <button onClick={handleClearActivePack} className="icon-search-btn icon-search-btn-small" style={{ fontSize: '9px', padding: '4px 2px', color: 'var(--red)' }} title="Clear current pack items">Clear All</button>
           )}
         </div>
+
+        {/* Plan Status Badge in Cart */}
+        {userPlan !== 'pro' && (
+          <div style={{
+            background: 'rgba(234, 179, 8, 0.06)',
+            border: '1px solid rgba(234, 179, 8, 0.2)',
+            borderRadius: '8px',
+            padding: '8px 10px',
+            marginBottom: '10px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}>
+            <span style={{ fontSize: '10px', color: '#fef08a', fontFamily: 'JetBrains Mono, monospace' }}>
+              Free: {cart.length}/{FREE_MAX_ICONS_PER_PACK} icons · {packs.length}/{FREE_MAX_PACKS} packs
+            </span>
+            <button
+              onClick={() => showProGate('Unlock unlimited packs, icons, and all export formats with Pro.')}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#eab308',
+                fontSize: '9px',
+                fontWeight: 700,
+                cursor: 'pointer',
+                textDecoration: 'underline',
+                fontFamily: 'JetBrains Mono, monospace',
+              }}
+            >
+              Upgrade
+            </button>
+          </div>
+        )}
 
         {exportNotice ? (
           <p style={{ color: 'var(--green)', fontSize: '10px', marginBottom: '10px', fontFamily: 'JetBrains Mono, monospace' }}>{exportNotice}</p>
@@ -1480,6 +1869,20 @@ import { Icon } from '@iconify/vue'
           </div>
         </>
       )}
+
+      {/* Phase 5: Auth Modal */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        onAuthSuccess={handleAuthSuccess}
+      />
+
+      {/* Phase 5: Pro Upgrade Modal */}
+      <ProUpgradeModal
+        isOpen={isProModalOpen}
+        onClose={() => setIsProModalOpen(false)}
+        reason={proModalReason}
+      />
 
     </main>
   )
