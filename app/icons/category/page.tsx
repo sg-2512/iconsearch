@@ -61,6 +61,58 @@ export default function CategoriesPage() {
         ))}
       </div>
 
+      {/* Programmatic Collections Directory Section */}
+      <section style={{ marginTop: '64px', borderTop: '1px solid var(--border)', paddingTop: '48px' }}>
+        <div style={{ fontSize: '12px', color: 'var(--accent)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '2px', marginBottom: '12px' }}>
+          // POPULAR COLLECTIONS
+        </div>
+        <h2 style={{ fontSize: '24px', fontWeight: 800, marginBottom: '24px' }}>
+          Curated Icon Collections
+        </h2>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '12px' }}>
+          {[
+            { tag: 'arrow-icons', label: 'Arrow Icons' },
+            { tag: 'settings-icons', label: 'Settings & Gear Icons' },
+            { tag: 'user-icons', label: 'User & Profile Icons' },
+            { tag: 'bell-icons', label: 'Bell & Alarm Icons' },
+            { tag: 'heart-icons', label: 'Heart & Medical Icons' },
+            { tag: 'cloud-icons', label: 'Cloud & Network Icons' },
+            { tag: 'security-icons', label: 'Security & Key Icons' },
+            { tag: 'commerce-icons', label: 'Cart & E-Commerce Icons' },
+            { tag: 'weather-icons', label: 'Weather & Climate Icons' },
+            { tag: 'device-icons', label: 'Device & Phone Icons' },
+            { tag: 'design-icons', label: 'Design & Paint Icons' },
+            { tag: 'communication-icons', label: 'Chat & Mail Icons' },
+            { tag: 'building-icons', label: 'Home & Building Icons' },
+            { tag: 'health-icons', label: 'Plus & Activity Icons' },
+            { tag: 'finance-icons', label: 'Money & Wallet Icons' },
+            { tag: 'star-icons', label: 'Star & Rating Icons' },
+            { tag: 'trash-icons', label: 'Trash & Delete Icons' },
+            { tag: 'lock-icons', label: 'Lock & Password Icons' },
+          ].map(col => (
+            <Link key={col.tag} href={`/icons/collection/${col.tag}`} style={{
+              background: 'var(--bg-card)',
+              border: '1px solid var(--border)',
+              borderRadius: '8px',
+              padding: '14px 18px',
+              textDecoration: 'none',
+              color: 'var(--text-muted)',
+              fontSize: '13px',
+              fontFamily: 'JetBrains Mono, monospace',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              transition: 'all 0.2s',
+            }}
+            className="link-hover"
+            >
+              {col.label}
+              <span style={{ color: 'var(--accent)' }}>→</span>
+            </Link>
+          ))}
+        </div>
+      </section>
+
     </main>
   )
 }

@@ -83,6 +83,27 @@ export default function sitemap(): MetadataRoute.Sitemap {
     })),
   ]
 
+  // ─── Collection pages (pSEO) ──────────────────────────────────────────────
+  const POPULAR_TAGS = [
+    'arrow', 'settings', 'user', 'bell', 'heart', 'cloud', 'security', 'commerce', 'edit', 'media',
+    'alert', 'weather', 'device', 'design', 'communication', 'building', 'health', 'finance', 'search', 'home',
+    'star', 'trash', 'lock', 'key', 'eye', 'check', 'plus', 'minus', 'download', 'upload',
+    'share', 'mail', 'message', 'chat', 'phone', 'call', 'send', 'inbox', 'envelope', 'folder',
+    'cpu', 'bot', 'chip', 'robot', 'keyboard', 'laptop', 'tablet', 'monitor', 'wifi', 'battery',
+    'tv', 'plug', 'database', 'server', 'terminal', 'code', 'file', 'shield', 'auth', 'unlock',
+    'password', 'cart', 'shop', 'card', 'price', 'wallet', 'dollar', 'euro', 'money', 'bag',
+    'bank', 'coins', 'percent', 'chart', 'graph', 'analytics', 'target', 'gift', 'delivery', 'tag',
+    'play', 'music', 'video', 'sound', 'audio', 'volume', 'camera', 'image', 'picture', 'disc',
+    'film', 'mic', 'sun', 'rain', 'snow', 'wind', 'temp', 'leaf', 'tree', 'flower'
+  ]
+
+  const collectionPages: MetadataRoute.Sitemap = POPULAR_TAGS.map(tag => ({
+    url: `${base}/icons/collection/${tag}-icons`,
+    lastModified: now,
+    changeFrequency: 'weekly' as const,
+    priority: 0.8,
+  }))
+
   return [
     ...staticPages,
     ...libraryPages,
@@ -90,5 +111,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...blogPages,
     ...categoryPages,
     ...useCasePages,
+    ...collectionPages,
   ]
 }
