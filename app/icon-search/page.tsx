@@ -4,8 +4,6 @@ import { useEffect, useMemo, useRef, useState, useCallback } from 'react'
 import { generateZipPackage } from '../../lib/exporter'
 import { createClient, isSupabaseConfigured } from '@/lib/supabase'
 import AuthModal from '../components/AuthModal'
-import ProUpgradeModal from '../components/ProUpgradeModal'
-
 
 type Icon = {
   id: string
@@ -152,22 +150,8 @@ export default function IconSearchPage() {
 
   // Phase 5: Auth, Cloud Sync & Plan Gating
   const [user, setUser] = useState<any>(null)
-  const [userPlan, setUserPlan] = useState<'free' | 'pro'>('free')
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
-  const [isProModalOpen, setIsProModalOpen] = useState(false)
-  const [proModalReason, setProModalReason] = useState('')
   const [cloudSyncStatus, setCloudSyncStatus] = useState('')
-
-  // Plan limits
-  const FREE_MAX_PACKS = 3
-  const FREE_MAX_ICONS_PER_PACK = 12
-  const FREE_EXPORT_FORMATS = ['svg', 'json', 'csv']
-
-  function showProGate(reason: string) {
-    setProModalReason(reason)
-    setIsProModalOpen(true)
-  }
-
   // Cloud sync helper: push packs to Supabase
   const syncPacksToCloud = useCallback(async (packsData: any[]) => {
     if (!user || !isSupabaseConfigured()) return
@@ -185,10 +169,14 @@ export default function IconSearchPage() {
             items: pack.items,
             updated_at: new Date().toISOString(),
           }, { onConflict: 'id' })
-        if (error) console.warn('Pack sync error:', error.message)
+        if (error) {
+          console.warn('Pack sync error:', error.message)
+          alert('Pack sync error: ' + error.message)
+        }
       }
-    } catch (e) {
+    } catch (e: any) {
       console.warn('Cloud sync failed (packs):', e)
+      alert('Cloud sync failed: ' + e.message)
     }
   }, [user])
 
@@ -224,13 +212,6 @@ export default function IconSearchPage() {
     try {
       setCloudSyncStatus('Syncing from cloud...')
 
-      // Fetch profile for plan
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('plan')
-        .eq('id', userId)
-        .single()
-      if (profile?.plan) setUserPlan(profile.plan as 'free' | 'pro')
 
       // Fetch packs
       const { data: cloudPacks } = await supabase
@@ -301,7 +282,6 @@ export default function IconSearchPage() {
           fetchCloudData(session.user.id)
         } else {
           setUser(null)
-          setUserPlan('free')
         }
       }
     )
@@ -316,7 +296,6 @@ export default function IconSearchPage() {
     if (!supabase) return
     await supabase.auth.signOut()
     setUser(null)
-    setUserPlan('free')
     setCloudSyncStatus('')
   }
 
@@ -327,16 +306,6 @@ export default function IconSearchPage() {
 
   async function handleStartExport() {
     if (cart.length === 0) return
-
-    // Plan gate: check if user is trying to use pro-only export formats
-    if (userPlan !== 'pro') {
-      const proFormats = ['react', 'vue', 'tailwind', 'sprite', 'png']
-      const selectedProFormats = proFormats.filter(f => exportFormats[f as keyof typeof exportFormats])
-      if (selectedProFormats.length > 0) {
-        showProGate(`Export formats ${selectedProFormats.map(f => f.toUpperCase()).join(', ')} are available on the Pro plan. Free accounts can export SVG files only.`)
-        return
-      }
-    }
 
     setIsExporting(true)
     try {
@@ -369,12 +338,6 @@ export default function IconSearchPage() {
   }
 
   function handleCreatePack() {
-    // Plan gate: free users limited to FREE_MAX_PACKS packs
-    if (userPlan !== 'pro' && packs.length >= FREE_MAX_PACKS) {
-      showProGate(`Free accounts are limited to ${FREE_MAX_PACKS} icon packs. Upgrade to Pro for unlimited packs.`)
-      setIsCreatePackOpen(false)
-      return
-    }
     const name = createPackName.trim() || `Pack #${packs.length + 1}`
     const id = `pack-${Date.now()}`
     const newPack = { id, name, items: [], createdAt: new Date().toISOString() }
@@ -737,12 +700,6 @@ export default function IconSearchPage() {
   function addToCart() {
     if (!selectedIcon) return
 
-    // Plan gate: free users limited to FREE_MAX_ICONS_PER_PACK icons per pack
-    if (userPlan !== 'pro' && cart.length >= FREE_MAX_ICONS_PER_PACK) {
-      showProGate(`Free accounts are limited to ${FREE_MAX_ICONS_PER_PACK} icons per pack. Upgrade to Pro for unlimited icons.`)
-      return
-    }
-
     const item: CartItem = {
       key: `${selectedIcon.id}-${Date.now()}`,
       icon: selectedIcon,
@@ -867,12 +824,6 @@ import { Icon } from '@iconify/vue'
   function exportCart(format: 'json' | 'react' | 'vue' | 'tailwind' | 'csv') {
     if (cart.length === 0) return
 
-    // Plan gate: free users can only export SVG, JSON, CSV
-    if (userPlan !== 'pro' && !FREE_EXPORT_FORMATS.includes(format)) {
-      showProGate(`${format.toUpperCase()} exports are a Pro feature. Free accounts can download JSON and CSV. Upgrade to Pro for React, Vue, and Tailwind exports.`)
-      return
-    }
-
     if (format === 'json') {
       downloadText('icon-cart.json', JSON.stringify(buildCartJson(), null, 2), 'application/json;charset=utf-8')
       setExportNotice('Downloaded JSON export')
@@ -934,23 +885,6 @@ import { Icon } from '@iconify/vue'
 
             {user ? (
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                {/* Plan Badge */}
-                <span style={{
-                  fontSize: '10px',
-                  fontWeight: 700,
-                  fontFamily: 'JetBrains Mono, monospace',
-                  letterSpacing: '1px',
-                  textTransform: 'uppercase',
-                  padding: '4px 10px',
-                  borderRadius: '999px',
-                  background: userPlan === 'pro'
-                    ? 'linear-gradient(135deg, rgba(234, 179, 8, 0.2), rgba(245, 158, 11, 0.2))'
-                    : 'rgba(139, 92, 246, 0.1)',
-                  border: `1px solid ${userPlan === 'pro' ? 'rgba(234, 179, 8, 0.4)' : 'rgba(139, 92, 246, 0.3)'}`,
-                  color: userPlan === 'pro' ? '#fef08a' : 'rgba(139, 92, 246, 1)',
-                }}>
-                  {userPlan === 'pro' ? '✦ PRO' : 'FREE'}
-                </span>
 
                 {/* Profile Button */}
                 <div style={{ position: 'relative' }}>
@@ -1458,54 +1392,18 @@ import { Icon } from '@iconify/vue'
           <button onClick={() => exportCart('json')} className="icon-search-btn icon-search-btn-small" style={{ fontSize: '9px', padding: '4px 2px' }}>JSON</button>
           <button onClick={() => exportCart('react')} className="icon-search-btn icon-search-btn-small" style={{ fontSize: '9px', padding: '4px 2px', position: 'relative' }}>
             React
-            {userPlan !== 'pro' && <span style={{ position: 'absolute', top: '-4px', right: '-2px', fontSize: '7px', color: '#fef08a' }}>PRO</span>}
           </button>
           <button onClick={() => exportCart('vue')} className="icon-search-btn icon-search-btn-small" style={{ fontSize: '9px', padding: '4px 2px', position: 'relative' }}>
             Vue
-            {userPlan !== 'pro' && <span style={{ position: 'absolute', top: '-4px', right: '-2px', fontSize: '7px', color: '#fef08a' }}>PRO</span>}
           </button>
           <button onClick={() => exportCart('tailwind')} className="icon-search-btn icon-search-btn-small" style={{ fontSize: '9px', padding: '4px 2px', position: 'relative' }}>
             Tailwind
-            {userPlan !== 'pro' && <span style={{ position: 'absolute', top: '-4px', right: '-2px', fontSize: '7px', color: '#fef08a' }}>PRO</span>}
           </button>
           <button onClick={() => exportCart('csv')} className="icon-search-btn icon-search-btn-small" style={{ fontSize: '9px', padding: '4px 2px' }}>CSV</button>
           {cart.length > 0 && (
             <button onClick={handleClearActivePack} className="icon-search-btn icon-search-btn-small" style={{ fontSize: '9px', padding: '4px 2px', color: 'var(--red)' }} title="Clear current pack items">Clear All</button>
           )}
         </div>
-
-        {/* Plan Status Badge in Cart */}
-        {userPlan !== 'pro' && (
-          <div style={{
-            background: 'rgba(234, 179, 8, 0.06)',
-            border: '1px solid rgba(234, 179, 8, 0.2)',
-            borderRadius: '8px',
-            padding: '8px 10px',
-            marginBottom: '10px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}>
-            <span style={{ fontSize: '10px', color: '#fef08a', fontFamily: 'JetBrains Mono, monospace' }}>
-              Free: {cart.length}/{FREE_MAX_ICONS_PER_PACK} icons · {packs.length}/{FREE_MAX_PACKS} packs
-            </span>
-            <button
-              onClick={() => showProGate('Unlock unlimited packs, icons, and all export formats with Pro.')}
-              style={{
-                background: 'none',
-                border: 'none',
-                color: '#eab308',
-                fontSize: '9px',
-                fontWeight: 700,
-                cursor: 'pointer',
-                textDecoration: 'underline',
-                fontFamily: 'JetBrains Mono, monospace',
-              }}
-            >
-              Upgrade
-            </button>
-          </div>
-        )}
 
         {exportNotice ? (
           <p style={{ color: 'var(--green)', fontSize: '10px', marginBottom: '10px', fontFamily: 'JetBrains Mono, monospace' }}>{exportNotice}</p>
@@ -1875,13 +1773,6 @@ import { Icon } from '@iconify/vue'
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
         onAuthSuccess={handleAuthSuccess}
-      />
-
-      {/* Phase 5: Pro Upgrade Modal */}
-      <ProUpgradeModal
-        isOpen={isProModalOpen}
-        onClose={() => setIsProModalOpen(false)}
-        reason={proModalReason}
       />
 
     </main>

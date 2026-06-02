@@ -1,4 +1,5 @@
 import { Metadata } from 'next'
+import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'About IconSearch — Free SVG Icon Library Comparison Tool (2026)',
@@ -29,7 +30,7 @@ export default function AboutPage() {
             What is IconSearch?
           </h2>
           <p style={{ color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.8, marginBottom: '12px' }}>
-            IconSearch is an independent comparison and search platform covering the 14 most widely used free SVG icon libraries in the web development ecosystem. We help React, Next.js, Vue, and Svelte developers find the right icon library through real benchmark data, side-by-side comparisons, and honest recommendations — all in one place.
+            IconSearch is an independent comparison and search platform covering the 14 most widely used free SVG icon libraries in the web development ecosystem. We help React, Next.js, Vue, and Svelte developers find the right icon library through real benchmark data, <Link href="/compare" style={{ color: 'var(--accent)', textDecoration: 'none' }}>side-by-side comparisons</Link>, and honest recommendations — all in one place.
           </p>
           <p style={{ color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.8 }}>
             The site covers every major open-source icon library: Lucide Icons, Heroicons, Tabler Icons, Phosphor Icons, Remix Icon, Feather Icons, Bootstrap Icons, Radix Icons, Font Awesome, React Icons, Material Icons, Iconify, Simple Icons, and Iconoir.
@@ -86,49 +87,59 @@ export default function AboutPage() {
             {[
               {
                 title: 'Icon Search Tool',
+                link: '/icon-search',
                 desc: 'Search 360,000+ free SVG icons across all 14 libraries simultaneously. No npm install required.',
               },
               {
                 title: 'SVG Customizer Sandbox',
+                link: '/icon-search',
                 desc: 'Adjust icon size, stroke weight, and color palette in real-time. Copy output as a React JSX component or raw SVG markup instantly.',
               },
               {
                 title: 'Library Comparison Simulator',
+                link: '/compare',
                 desc: 'Select any two libraries and get a live side-by-side breakdown of GitHub stars, icon count, bundle size, license, and framework support.',
               },
               {
                 title: '91 Side-by-Side Comparisons',
+                link: '/compare',
                 desc: 'Every pair combination of the 14 libraries — with real Next.js 15 bundle size benchmarks, feature matrices, and install commands.',
               },
               {
                 title: 'Best For You Quiz',
+                link: '/best-for-you',
                 desc: 'A 7-question guided quiz that recommends the exact right library for your framework, project type, design style, and license requirements.',
               },
               {
                 title: 'Stats Dashboard',
+                link: '/stats',
                 desc: 'Live rankings by GitHub stars, weekly npm downloads, and icon count. Full feature matrix for TypeScript, tree-shaking, Figma support, and framework compatibility.',
               },
               {
                 title: 'Bundle Size Benchmarks',
+                link: '/stats',
                 desc: 'Real gzip measurements for 10, 50, and 100 icons across all libraries in Next.js 15 with Turbopack.',
               },
               {
                 title: 'License Guide',
+                link: '/licenses',
                 desc: 'Clear breakdown of MIT, ISC, Apache 2.0, CC0, and CC BY 4.0 licenses — with official GitHub source links for every library.',
               },
               {
                 title: 'Framework & Use Case Guides',
+                link: '/use-cases',
                 desc: 'Dedicated guides for React, Next.js App Router, Vue 3, Svelte, Tailwind CSS, and TypeScript. Plus 10 use-case guides covering SaaS, dashboards, mobile, dark mode, and more.',
               },
               {
                 title: 'Blog',
+                link: '/blog',
                 desc: '16+ in-depth posts on performance, accessibility, animation, migration, and design systems — written specifically for frontend developers.',
               },
             ].map(item => (
               <div key={item.title} style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '8px', padding: '16px 20px', display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
                 <span style={{ color: 'var(--accent)', fontFamily: 'JetBrains Mono, monospace', fontSize: '13px', marginTop: '2px', flexShrink: 0 }}>→</span>
                 <div>
-                  <div style={{ fontWeight: 700, fontSize: '14px', color: 'var(--text)', marginBottom: '4px' }}>{item.title}</div>
+                  <Link href={item.link} style={{ display: 'block', fontWeight: 700, fontSize: '14px', color: 'var(--text)', marginBottom: '4px', textDecoration: 'none' }}>{item.title}</Link>
                   <div style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.7 }}>{item.desc}</div>
                 </div>
               </div>
@@ -186,7 +197,7 @@ export default function AboutPage() {
           </h2>
           <p style={{ color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.8 }}>
             Have a suggestion, found an error, or want to partner with us? Visit our{' '}
-            <a href="/contact" style={{ color: 'var(--accent)', textDecoration: 'none' }}>contact page</a> or email us directly at{' '}
+            <Link href="/contact" style={{ color: 'var(--accent)', textDecoration: 'none' }}>contact page</Link> or email us directly at{' '}
             <a href="mailto:iconsearchinfo@gmail.com" style={{ color: 'var(--accent)', textDecoration: 'none' }}>iconsearchinfo@gmail.com</a>.
             We aim to respond within 48 business hours.
           </p>

@@ -1,11 +1,13 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false)
 
   const links = [
+    { label: 'Home', href: '/' },
     { label: 'Browse', href: '/free-svg-icons' },
     { label: 'Compare', href: '/compare' },
     { label: 'Best For You', href: '/best-for-you' },
@@ -33,7 +35,7 @@ export default function Navbar() {
     }}>
 
       {/* Logo */}
-      <a href="/" style={{
+      <Link href="/" style={{
         fontFamily: 'JetBrains Mono, monospace',
         fontWeight: 700,
         fontSize: '18px',
@@ -44,7 +46,7 @@ export default function Navbar() {
         <span style={{ color: 'var(--accent)' }}>&lt;</span>
         IconSearch
         <span style={{ color: 'var(--accent)' }}>/&gt;</span>
-      </a>
+      </Link>
 
       {/* Desktop Links */}
       <div style={{
@@ -55,8 +57,7 @@ export default function Navbar() {
         className="desktop-nav"
       >
         {links.map(link => (
-          <a
-
+          <Link
             key={link.href}
             href={link.href}
             className="nav-link"
@@ -72,7 +73,7 @@ export default function Navbar() {
             }}
           >
             {link.label}
-          </a>
+          </Link>
         ))}
       </div>
 
@@ -114,7 +115,7 @@ export default function Navbar() {
           }}
         >
           {links.map(link => (
-            <a
+            <Link
               key={link.href}
               href={link.href}
               onClick={() => setMenuOpen(false)}
@@ -129,7 +130,7 @@ export default function Navbar() {
               }}
             >
               {link.label}
-            </a>
+            </Link>
           ))}
         </div>
       )}

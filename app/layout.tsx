@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 import Navbar from './components/Navbar'
 import { JetBrains_Mono, Inter } from 'next/font/google'
+import Link from 'next/link'
 import Script from 'next/script'
 import { Analytics } from "@vercel/analytics/next"
 
@@ -21,6 +22,11 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://iconsearch.info'),
   title: 'IconSearch — Find & Compare 13+ Free SVG Icon Libraries (2026)',
   description: 'Search 360,000+ free SVG icons across Lucide, Heroicons, Tabler, Phosphor, Bootstrap, Remix, Feather, Radix, Iconoir and Iconify. Compare React icon libraries by size, stars, and license.',
+}
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -53,10 +59,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </Script>
       </head>
       <body>
-        {/* Global Affiliate Banner */}
-        <div style={{ background: 'linear-gradient(90deg, var(--accent) 0%, #8b5cf6 100%)', color: 'white', padding: '10px', textAlign: 'center', fontSize: '13px', fontFamily: 'JetBrains Mono, monospace' }}>
-          ✨ Need a premium icon library? <a href="https://hugeicons.com?via=IconSearch" target="_blank" rel="noopener noreferrer" style={{ color: 'white', textDecoration: 'underline', fontWeight: 700 }}>Check out Hugeicons Pro →</a>
-        </div>
         <Navbar />
         <div style={{ minHeight: 'calc(100vh - 60px - 80px)' }}>
           {children}
@@ -94,9 +96,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   { label: 'Phosphor Icons', href: '/icons/phosphor-icons' },
                   { label: 'All Libraries', href: '/free-svg-icons' },
                 ].map(link => (
-                  <a key={link.href} href={link.href} style={{ display: 'block', color: 'var(--text-muted)', textDecoration: 'none', fontSize: '13px', marginBottom: '8px', fontFamily: 'JetBrains Mono, monospace' }}>
+                  <Link key={link.href} href={link.href} style={{ display: 'block', color: 'var(--text-muted)', textDecoration: 'none', fontSize: '13px', marginBottom: '8px', fontFamily: 'JetBrains Mono, monospace' }}>
                     {link.label}
-                  </a>
+                  </Link>
                 ))}
               </div>
 
@@ -112,9 +114,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   { label: 'Svelte Icons', href: '/svelte-icons' },
                   { label: 'Tailwind Icons', href: '/tailwind-icons' },
                 ].map(link => (
-                  <a key={link.href} href={link.href} style={{ display: 'block', color: 'var(--text-muted)', textDecoration: 'none', fontSize: '13px', marginBottom: '8px', fontFamily: 'JetBrains Mono, monospace' }}>
+                  <Link key={link.href} href={link.href} style={{ display: 'block', color: 'var(--text-muted)', textDecoration: 'none', fontSize: '13px', marginBottom: '8px', fontFamily: 'JetBrains Mono, monospace' }}>
                     {link.label}
-                  </a>
+                  </Link>
                 ))}
               </div>
 
@@ -130,9 +132,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   { label: 'Icons for Dark Mode', href: '/use-cases/icons-for-dark-mode' },
                   { label: 'All Use Cases', href: '/use-cases' },
                 ].map(link => (
-                  <a key={link.href} href={link.href} style={{ display: 'block', color: 'var(--text-muted)', textDecoration: 'none', fontSize: '13px', marginBottom: '8px', fontFamily: 'JetBrains Mono, monospace' }}>
+                  <Link key={link.href} href={link.href} style={{ display: 'block', color: 'var(--text-muted)', textDecoration: 'none', fontSize: '13px', marginBottom: '8px', fontFamily: 'JetBrains Mono, monospace' }}>
                     {link.label}
-                  </a>
+                  </Link>
                 ))}
               </div>
 
@@ -153,9 +155,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   { label: 'Blog', href: '/blog' },
                   { label: 'TypeScript Icons', href: '/typescript-icons' },
                 ].map(link => (
-                  <a key={link.href} href={link.href} style={{ display: 'block', color: 'var(--text-muted)', textDecoration: 'none', fontSize: '13px', marginBottom: '8px', fontFamily: 'JetBrains Mono, monospace' }}>
+                  <Link key={link.href} href={link.href} style={{ display: 'block', color: 'var(--text-muted)', textDecoration: 'none', fontSize: '13px', marginBottom: '8px', fontFamily: 'JetBrains Mono, monospace' }}>
                     {link.label}
-                  </a>
+                  </Link>
                 ))}
               </div>
 
@@ -175,9 +177,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   { label: 'Terms', href: '/terms' },
                   { label: 'Contact', href: '/contact' },
                 ].map(link => (
-                  <a key={link.href} href={link.href} style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '12px', fontFamily: 'JetBrains Mono, monospace' }}>
+                  <Link key={link.href} href={link.href} style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '12px', fontFamily: 'JetBrains Mono, monospace' }}>
                     {link.label}
-                  </a>
+                  </Link>
                 ))}
               </div>
             </div>

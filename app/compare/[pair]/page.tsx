@@ -98,6 +98,20 @@ export default async function ComparisonPage({ params }: { params: Promise<{ pai
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
+      {/* Structured Data: BreadcrumbList */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://iconsearch.info" },
+            { "@type": "ListItem", "position": 2, "name": "Compare", "item": "https://iconsearch.info/compare" },
+            { "@type": "ListItem", "position": 3, "name": `${a.name} vs ${b.name}`, "item": `https://iconsearch.info/compare/${pair}` },
+          ]
+        })}}
+      />
+
       {/* Breadcrumb */}
       <nav style={{ display: 'flex', gap: '8px', fontSize: '13px', fontFamily: 'JetBrains Mono, monospace', marginBottom: '24px' }}>
         <Link href="/" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>Home</Link>
@@ -365,12 +379,54 @@ export default async function ComparisonPage({ params }: { params: Promise<{ pai
         </div>
       </section>
 
+      {/* Editorial: When to Choose Each Library */}
+      <section style={{ marginBottom: '48px', paddingBottom: '48px', borderBottom: '1px solid var(--border)' }}>
+        <h2 style={{ fontSize: '13px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '2px', marginBottom: '20px' }}>
+          OUR RECOMMENDATION
+        </h2>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+          <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', padding: '24px' }}>
+            <div style={{ fontSize: '12px', color: 'var(--green)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '1px', marginBottom: '12px' }}>✓ CHOOSE {a.name.toUpperCase()} IF YOU...</div>
+            <ul style={{ paddingLeft: '16px', margin: 0, fontSize: '14px', color: 'var(--text-muted)', lineHeight: 1.8 }}>
+              <li>Need a library with {a.iconCount.toLocaleString()} icons and {a.style.join('/')} style options</li>
+              <li>{a.treeshakable ? 'Want tree-shakable imports to keep bundles small' : 'Prioritize icon variety over bundle optimization'}</li>
+              <li>{a.typescript ? 'Require first-class TypeScript support in your codebase' : 'Are working with a JavaScript-only project'}</li>
+              <li>Are building with {a.frameworks.join(', ')}</li>
+              {a.figmaPlugin && <li>Need a Figma plugin for designer-developer handoff</li>}
+            </ul>
+            <div style={{ marginTop: '16px' }}>
+              <Link href={`/icons/${a.slug}`} style={{ color: 'var(--accent)', fontSize: '13px', textDecoration: 'none', fontWeight: 700 }}>
+                Read full {a.name} guide →
+              </Link>
+            </div>
+          </div>
+          <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', padding: '24px' }}>
+            <div style={{ fontSize: '12px', color: 'var(--green)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '1px', marginBottom: '12px' }}>✓ CHOOSE {b.name.toUpperCase()} IF YOU...</div>
+            <ul style={{ paddingLeft: '16px', margin: 0, fontSize: '14px', color: 'var(--text-muted)', lineHeight: 1.8 }}>
+              <li>Need a library with {b.iconCount.toLocaleString()} icons and {b.style.join('/')} style options</li>
+              <li>{b.treeshakable ? 'Want tree-shakable imports to keep bundles small' : 'Prioritize icon variety over bundle optimization'}</li>
+              <li>{b.typescript ? 'Require first-class TypeScript support in your codebase' : 'Are working with a JavaScript-only project'}</li>
+              <li>Are building with {b.frameworks.join(', ')}</li>
+              {b.figmaPlugin && <li>Need a Figma plugin for designer-developer handoff</li>}
+            </ul>
+            <div style={{ marginTop: '16px' }}>
+              <Link href={`/icons/${b.slug}`} style={{ color: 'var(--accent)', fontSize: '13px', textDecoration: 'none', fontWeight: 700 }}>
+                Read full {b.name} guide →
+              </Link>
+            </div>
+          </div>
+        </div>
+        <p style={{ color: 'var(--text-muted)', fontSize: '14px', lineHeight: 1.7, marginTop: '20px' }}>
+          Still unsure? Try our <Link href="/best-for-you" style={{ color: 'var(--accent)', textDecoration: 'none' }}>interactive quiz</Link> to get a personalized recommendation, or <Link href="/icon-search" style={{ color: 'var(--accent)', textDecoration: 'none' }}>search 349,000+ icons</Link> from both libraries side by side. You can also check our <Link href="/stats" style={{ color: 'var(--accent)', textDecoration: 'none' }}>live stats dashboard</Link> for real-time download and GitHub star trends.
+        </p>
+      </section>
+
       {/* Installation */}
       <section style={{ marginBottom: '48px', paddingBottom: '48px', borderBottom: '1px solid var(--border)' }}>
         <h2 style={{ fontSize: '13px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '2px', marginBottom: '20px' }}>
           NPM INSTALLATION COMMANDS
         </h2>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px' }}>
           <div>
             <div style={{ fontSize: '12px', color: 'var(--accent)', fontFamily: 'JetBrains Mono, monospace', marginBottom: '8px' }}>Install {a.name}</div>
             <pre style={{ background: 'var(--code-bg)', border: '1px solid var(--border)', borderRadius: '8px', padding: '16px', fontFamily: 'JetBrains Mono, monospace', fontSize: '13px', color: 'var(--green)', overflowX: 'auto' }}>

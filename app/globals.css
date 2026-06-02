@@ -339,4 +339,88 @@ input[type="range"]::-webkit-slider-thumb:hover {
   box-shadow: 0 0 0 2px rgba(129, 140, 248, 0.35);
 }
 
+/* ===== Focus Visible for Accessibility ===== */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
 
+/* ===== Mobile Responsive: 768px and below ===== */
+@media (max-width: 768px) {
+  /* Global page padding */
+  main {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  /* Icon Search: Stack layout vertically */
+  .icon-search-workspace {
+    flex-direction: column !important;
+  }
+
+  /* Hero section font adjustments */
+  h1 {
+    font-size: clamp(24px, 6vw, 40px) !important;
+  }
+
+  /* Comparison page: Make 2-col grids single column */
+  section > div[style*="gridTemplateColumns: '1fr 1fr'"],
+  section > div[style*="grid-template-columns: 1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Footer grid */
+  footer > div > div[style*="grid"] {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  /* Feature matrix table: horizontal scroll */
+  table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Pre/code blocks: horizontal scroll */
+  pre {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    font-size: 12px !important;
+  }
+
+  /* Hide glow effects on mobile to save GPU */
+  .glow-grid-overlay,
+  .glow-gradient-node {
+    display: none !important;
+  }
+}
+
+/* ===== Mobile Responsive: 480px and below ===== */
+@media (max-width: 480px) {
+  /* Even tighter padding */
+  main {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  /* Footer: single column */
+  footer > div > div[style*="grid"] {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+  }
+
+  /* Smaller text for stat cards */
+  div[style*="fontSize: '28px'"],
+  div[style*="fontSize: '22px'"] {
+    font-size: 20px !important;
+  }
+
+  /* Breadcrumb wrap */
+  nav[style*="gap: '8px'"] {
+    flex-wrap: wrap;
+  }
+}

@@ -105,10 +105,58 @@ export default async function LibraryPage({ params }: { params: Promise<{ slug: 
   return (
     <main style={{ maxWidth: '900px', margin: '0 auto', padding: '40px 24px' }}>
 
+      {/* Structured Data: BreadcrumbList */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://iconsearch.info" },
+            { "@type": "ListItem", "position": 2, "name": "Icon Libraries", "item": "https://iconsearch.info/free-svg-icons" },
+            { "@type": "ListItem", "position": 3, "name": data.name, "item": `https://iconsearch.info/icons/${slug}` },
+          ]
+        })}}
+      />
+
+      {/* Structured Data: FAQPage */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "mainEntity": (data.faqs as any[]).map((faq: any) => ({
+            "@type": "Question",
+            "name": faq.q,
+            "acceptedAnswer": { "@type": "Answer", "text": faq.a }
+          }))
+        })}}
+      />
+
+      {/* Structured Data: SoftwareApplication */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "SoftwareApplication",
+          "name": data.name,
+          "applicationCategory": "DeveloperApplication",
+          "operatingSystem": "Any",
+          "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+          "description": `${data.name} is a free, open-source SVG icon library with ${data.stats.iconCount.toLocaleString()} icons. Licensed under ${data.stats.license}.`,
+          "url": data.links.website,
+          "aggregateRating": undefined
+        })}}
+      />
+
       {/* Breadcrumb */}
-      <Link href="/" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '13px', fontFamily: 'JetBrains Mono, monospace' }}>
-        ← back to all libraries
-      </Link>
+      <div style={{ display: 'flex', gap: '8px', alignItems: 'center', fontSize: '13px', fontFamily: 'JetBrains Mono, monospace', marginBottom: '8px' }}>
+        <Link href="/" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>Home</Link>
+        <span style={{ color: 'var(--text-dim)' }}>/</span>
+        <Link href="/free-svg-icons" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>Libraries</Link>
+        <span style={{ color: 'var(--text-dim)' }}>/</span>
+        <span style={{ color: 'var(--accent)' }}>{data.name}</span>
+      </div>
 
       {/* Hero */}
       <section style={{ margin: '24px 0 48px', paddingBottom: '48px', borderBottom: '1px solid var(--border)' }}>
