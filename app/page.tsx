@@ -5,11 +5,11 @@ import DynamicHome from './components/DynamicHome'
 
 export const metadata = {
   title: 'IconSearch — Find & Compare Free SVG Icon Libraries (2026)',
-  description: 'Search 360,000+ free SVG icons across Lucide, Heroicons, Tabler, Phosphor, Bootstrap, Remix, Feather, Radix, Iconoir, and Iconify. Compare React icon libraries by size, stars, and license.',
+  description: 'Search 350,000+ free SVG icons across Lucide, Heroicons, Tabler, Phosphor, Bootstrap, Remix, Feather, Radix, Iconoir, IonIcons, Octicons, and Iconify. Compare 16 React icon libraries by size, stars, and license.',
   keywords: 'free svg icons, react icons, icon library comparison, lucide icons, heroicons, tabler icons, phosphor icons, open source icons, bootstrap icons, remix icons, feather icons, iconoir icons, iconify',
   openGraph: {
     title: 'IconSearch — Find & Compare Free SVG Icon Libraries',
-    description: 'Search 360,000+ free SVG icons across Lucide, Heroicons, Tabler, Phosphor, Bootstrap, Remix, Feather, Radix, Iconoir, and Iconify.',
+    description: 'Search 350,000+ free SVG icons across Lucide, Heroicons, Tabler, Phosphor, Bootstrap, Remix, Feather, Radix, Iconoir, IonIcons, Octicons, and Iconify.',
     url: 'https://iconsearch.info',
     siteName: 'IconSearch',
     type: 'website',
@@ -17,7 +17,7 @@ export const metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'IconSearch — Find & Compare Free SVG Icon Libraries',
-    description: 'Search 360,000+ free SVG icons across Lucide, Heroicons, Tabler, Phosphor, Bootstrap, Remix, Feather, Radix, Iconoir, and Iconify.',
+    description: 'Search 350,000+ free SVG icons across Lucide, Heroicons, Tabler, Phosphor, Bootstrap, Remix, Feather, Radix, Iconoir, IonIcons, Octicons, and Iconify.',
   },
   alternates: {
     canonical: 'https://iconsearch.info',

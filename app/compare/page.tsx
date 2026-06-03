@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 export const metadata = {
   title: 'Icon Library Comparisons (2026) — Side by Side Comparison Tool',
-  description: 'Compare any two icon libraries side by side. Lucide vs Heroicons, Tabler vs Phosphor, and 180+ more comparisons with real data.',
+  description: 'Compare any two icon libraries side by side. Lucide vs Heroicons, Tabler vs Phosphor, and 120 more comparisons with real data.',
 }
 
 export default function ComparePage() {

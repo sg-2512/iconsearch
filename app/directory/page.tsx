@@ -42,7 +42,7 @@ export default function DirectoryPage() {
           </h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             <Link href="/" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '14px' }}>Homepage</Link>
-            <Link href="/icon-search" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '14px' }}>Search All Icons (360,000+)</Link>
+            <Link href="/icon-search" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '14px' }}>Search All Icons (350,000+)</Link>
             <Link href="/free-svg-icons" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '14px' }}>Browse All Libraries</Link>
             <Link href="/compare" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '14px' }}>Compare Libraries</Link>
             <Link href="/best-for-you" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '14px' }}>Interactive Quiz: Best For You</Link>

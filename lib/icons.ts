@@ -366,7 +366,62 @@ export const icons: IconLibrary[] = [
     installCommand: 'npm install iconoir-react',
     usageExample: "import { Camera, Search } from 'iconoir-react'\n\nexport default function App() {\n  return (\n    <div className=\"flex gap-4 text-blue-500\">\n      <Camera color=\"currentColor\" strokeWidth={1.5} />\n      <Search />\n    </div>\n  )\n}",
   },
-
+  {
+    name: "IonIcons",
+    slug: "ionicons",
+    description: "Premium, carefully designed icons by the Ionic Framework team. Provides Outline, Filled, and Sharp variants with over 1300 icons for responsive mobile and web apps.",
+    website: "https://ionic.io/ionicons",
+    github: "https://github.com/ionic-team/ionicons",
+    npm: "react-ionicons",
+    stars: 17200,
+    iconCount: 1300,
+    license: "MIT",
+    frameworks: ["react", "nextjs", "vanilla"],
+    style: ["outline", "filled", "sharp"],
+    figmaPlugin: false,
+    typescript: true,
+    treeshakable: true,
+    pros: [
+      "Outline, Filled, and Sharp variants for every single icon",
+      "Designed specifically for high-fidelity iOS and Android web applications",
+      "Robust official react-ionicons NPM module for quick React integration",
+      "Clean path dimensions optimized for small layouts (16px/24px)",
+    ],
+    cons: [
+      "No official bindings for Vue or Svelte",
+      "NPM library uses string size props instead of standard numbers",
+    ],
+    installCommand: "npm install react-ionicons",
+    usageExample: "import { HomeOutline } from 'react-ionicons'\n\nexport default function App() {\n  return <HomeOutline color='#6366f1' height='24px' width='24px' />\n}"
+  },
+  {
+    name: "Octicons",
+    slug: "octicons",
+    description: "GitHub's official icon set designed specifically for developer dashboards, code repositories, git histories, and developer utilities.",
+    website: "https://primer.style/octicons/",
+    github: "https://github.com/primer/octicons",
+    npm: "@primer/octicons-react",
+    stars: 10400,
+    iconCount: 280,
+    license: "MIT",
+    frameworks: ["react", "vue", "nextjs", "jekyll"],
+    style: ["outline"],
+    figmaPlugin: false,
+    typescript: true,
+    treeshakable: true,
+    pros: [
+      "Designed on strict 16px and 24px grid systems to prevent rendering blurriness",
+      "Specialized Git workflow, repo, pull-request, and codebase symbols",
+      "Maintained directly by GitHub's design systems team",
+      "Built-in semantic accessibility descriptions and aria attributes",
+    ],
+    cons: [
+      "Small overall collection size (280 icons)",
+      "Strictly technical visual aesthetic, no multitone or colored variations",
+    ],
+    installCommand: "npm install @primer/octicons-react",
+    usageExample: "import { RepoIcon } from '@primer/octicons-react'\n\nexport default function App() {\n  return <RepoIcon size={16} />\n}"
+  }
 ]
 
 export function getIconBySlug(slug: string) {

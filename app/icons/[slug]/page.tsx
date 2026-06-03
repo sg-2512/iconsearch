@@ -13,6 +13,8 @@ import { materialIconsData } from '../../../data/libraries/material-icons'
 import { iconifyIconsData } from '../../../data/libraries/iconify-icons'
 import { simpleIconsData } from '../../../data/libraries/simple-icons'
 import { iconoirData } from '../../../data/libraries/iconoir'
+import { ioniconsData } from '../../../data/libraries/ionicons'
+import { octiconsData } from '../../../data/libraries/octicons'
 
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -32,6 +34,8 @@ const libraryData: Record<string, any> = {
   'iconify': iconifyIconsData,
   'simple-icons': simpleIconsData,
   'iconoir': iconoirData,
+  'ionicons': ioniconsData,
+  'octicons': octiconsData,
 }
 
 export async function generateStaticParams() {

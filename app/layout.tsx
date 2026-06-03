@@ -20,8 +20,8 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://iconsearch.info'),
-  title: 'IconSearch — Find & Compare 13+ Free SVG Icon Libraries (2026)',
-  description: 'Search 360,000+ free SVG icons across Lucide, Heroicons, Tabler, Phosphor, Bootstrap, Remix, Feather, Radix, Iconoir and Iconify. Compare React icon libraries by size, stars, and license.',
+  title: 'IconSearch — Find & Compare 16 Free SVG Icon Libraries (2026)',
+  description: 'Search 350,000+ free SVG icons across Lucide, Heroicons, Tabler, Phosphor, Bootstrap, Remix, Feather, Radix, Iconoir, IonIcons, Octicons, and Iconify. Compare 16 React icon libraries by size, stars, and license.',
 }
 
 export const viewport = {

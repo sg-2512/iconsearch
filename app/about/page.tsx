@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'About IconSearch — Free SVG Icon Library Comparison Tool (2026)',
-  description: 'IconSearch is the most comprehensive independent resource for comparing and discovering free open source SVG icon libraries for React, Next.js, Vue, and Svelte. 360,000+ icons, 14 libraries, 91 comparisons.',
+  description: 'IconSearch is the most comprehensive independent resource for comparing and discovering free open source SVG icon libraries for React, Next.js, Vue, and Svelte. 350,000+ icons, 16 libraries, 120 comparisons.',
 }
 
 export default function AboutPage() {
@@ -30,10 +30,10 @@ export default function AboutPage() {
             What is IconSearch?
           </h2>
           <p style={{ color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.8, marginBottom: '12px' }}>
-            IconSearch is an independent comparison and search platform covering the 14 most widely used free SVG icon libraries in the web development ecosystem. We help React, Next.js, Vue, and Svelte developers find the right icon library through real benchmark data, <Link href="/compare" style={{ color: 'var(--accent)', textDecoration: 'none' }}>side-by-side comparisons</Link>, and honest recommendations — all in one place.
+            IconSearch is an independent comparison and search platform covering the 16 most widely used free SVG icon libraries in the web development ecosystem. We help React, Next.js, Vue, and Svelte developers find the right icon library through real benchmark data, <Link href="/compare" style={{ color: 'var(--accent)', textDecoration: 'none' }}>side-by-side comparisons</Link>, and honest recommendations — all in one place.
           </p>
           <p style={{ color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.8 }}>
-            The site covers every major open-source icon library: Lucide Icons, Heroicons, Tabler Icons, Phosphor Icons, Remix Icon, Feather Icons, Bootstrap Icons, Radix Icons, Font Awesome, React Icons, Material Icons, Iconify, Simple Icons, and Iconoir.
+            The site covers every major open-source icon library: Lucide Icons, Heroicons, Tabler Icons, Phosphor Icons, Remix Icon, Feather Icons, Bootstrap Icons, Radix Icons, Font Awesome, React Icons, Material Icons, Iconify, Simple Icons, Iconoir, IonIcons, and Octicons.
           </p>
         </div>
 
@@ -44,9 +44,9 @@ export default function AboutPage() {
           </h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '12px' }}>
             {[
-              { value: '360,000+', label: 'Searchable icons' },
-              { value: '14', label: 'Libraries indexed' },
-              { value: '91', label: 'Side-by-side comparisons' },
+              { value: '350,000+', label: 'Searchable icons' },
+              { value: '16', label: 'Libraries indexed' },
+              { value: '120', label: 'Side-by-side comparisons' },
               { value: '16+', label: 'In-depth blog posts' },
               { value: '10', label: 'Icon category guides' },
               { value: '10', label: 'Use case guides' },
@@ -88,7 +88,7 @@ export default function AboutPage() {
               {
                 title: 'Icon Search Tool',
                 link: '/icon-search',
-                desc: 'Search 360,000+ free SVG icons across all 14 libraries simultaneously. No npm install required.',
+                desc: 'Search 350,000+ free SVG icons across all 16 libraries simultaneously. No npm install required.',
               },
               {
                 title: 'SVG Customizer Sandbox',
@@ -101,9 +101,9 @@ export default function AboutPage() {
                 desc: 'Select any two libraries and get a live side-by-side breakdown of GitHub stars, icon count, bundle size, license, and framework support.',
               },
               {
-                title: '91 Side-by-Side Comparisons',
+                title: '120 Side-by-Side Comparisons',
                 link: '/compare',
-                desc: 'Every pair combination of the 14 libraries — with real Next.js 15 bundle size benchmarks, feature matrices, and install commands.',
+                desc: 'Every pair combination of the 16 libraries — with real Next.js 15 bundle size benchmarks, feature matrices, and install commands.',
               },
               {
                 title: 'Best For You Quiz',
@@ -163,7 +163,7 @@ export default function AboutPage() {
         {/* Libraries Covered */}
         <div>
           <h2 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '16px', color: 'var(--text)', fontFamily: 'JetBrains Mono, monospace' }}>
-            Libraries Covered (14 Total)
+            Libraries Covered (16 Total)
           </h2>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
             {[
@@ -181,6 +181,8 @@ export default function AboutPage() {
               { name: 'Iconify', license: 'MIT' },
               { name: 'Simple Icons', license: 'CC0' },
               { name: 'Iconoir', license: 'MIT' },
+              { name: 'IonIcons', license: 'MIT' },
+              { name: 'Octicons', license: 'MIT' },
             ].map(lib => (
               <div key={lib.name} style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '6px', padding: '8px 14px', display: 'flex', flexDirection: 'column', gap: '2px' }}>
                 <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text)' }}>{lib.name}</span>

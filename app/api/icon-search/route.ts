@@ -42,7 +42,7 @@ function isRateLimited(ip: string): boolean {
 function loadIcons() {
   if (cachedIcons) return cachedIcons
   const start = Date.now()
-  console.log('Loading 360,000+ Icon database into server memory cache...')
+  console.log('Loading 350,000+ Icon database into server memory cache...')
   
   const canonicalPathGz = join(process.cwd(), 'data/canonical-icon-search.json.gz')
   if (existsSync(canonicalPathGz)) {
@@ -52,6 +52,30 @@ function loadIcons() {
       const list = JSON.parse(decompressedData)
       const parsedList = Array.isArray(list) ? list : []
       
+      // Helper to convert kebab/snake cases to PascalCase
+      const toPascalCase = (str: string) => {
+        return str.split(/[-_]/).map(word => word.charAt(0).toUpperCase() + word.slice(1)).join('')
+      }
+
+      // Map dynamic Iconify subsets to native, first-class libraries
+      parsedList.forEach(icon => {
+        if (icon.library === 'iconify-ion') {
+          icon.library = 'ionicons'
+          icon.libraryName = 'IonIcons'
+          icon.npmPackage = 'react-ionicons'
+          const compName = toPascalCase(icon.name) + 'Outline'
+          icon.reactImport = `import { ${compName} } from 'react-ionicons'`
+          icon.reactUsage = `<${compName} color="#818cf8" height="24px" width="24px" />`
+        } else if (icon.library === 'iconify-octicon') {
+          icon.library = 'octicons'
+          icon.libraryName = 'Octicons'
+          icon.npmPackage = '@primer/octicons-react'
+          const compName = toPascalCase(icon.name) + 'Icon'
+          icon.reactImport = `import { ${compName} } from '@primer/octicons-react'`
+          icon.reactUsage = `<${compName} size={16} />`
+        }
+      })
+
       // Pre-sort alphabetically once on startup to optimize future default/alphabetical requests
       console.log('Pre-sorting icons alphabetically...')
       parsedList.sort((a, b) => a.name.localeCompare(b.name))

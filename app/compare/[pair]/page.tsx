@@ -417,7 +417,7 @@ export default async function ComparisonPage({ params }: { params: Promise<{ pai
           </div>
         </div>
         <p style={{ color: 'var(--text-muted)', fontSize: '14px', lineHeight: 1.7, marginTop: '20px' }}>
-          Still unsure? Try our <Link href="/best-for-you" style={{ color: 'var(--accent)', textDecoration: 'none' }}>interactive quiz</Link> to get a personalized recommendation, or <Link href="/icon-search" style={{ color: 'var(--accent)', textDecoration: 'none' }}>search 349,000+ icons</Link> from both libraries side by side. You can also check our <Link href="/stats" style={{ color: 'var(--accent)', textDecoration: 'none' }}>live stats dashboard</Link> for real-time download and GitHub star trends.
+          Still unsure? Try our <Link href="/best-for-you" style={{ color: 'var(--accent)', textDecoration: 'none' }}>interactive quiz</Link> to get a personalized recommendation, or <Link href="/icon-search" style={{ color: 'var(--accent)', textDecoration: 'none' }}>search 350,000+ icons</Link> from both libraries side by side. You can also check our <Link href="/stats" style={{ color: 'var(--accent)', textDecoration: 'none' }}>live stats dashboard</Link> for real-time download and GitHub star trends.
         </p>
       </section>
 

@@ -657,6 +657,12 @@ export default function IconSearchPage() {
     } else if (icon.library === 'iconoir') {
       add(`https://api.iconify.design/iconoir/${dashedName}.svg`)
       add(`https://cdn.jsdelivr.net/npm/iconoir@latest/icons/regular/${dashedName}.svg`)
+    } else if (icon.library === 'ionicons') {
+      add(`https://api.iconify.design/ion/${dashedName}.svg`)
+      add(`https://api.iconify.design/ion/${underscoredName}.svg`)
+    } else if (icon.library === 'octicons') {
+      add(`https://api.iconify.design/octicon/${dashedName}.svg`)
+      add(`https://api.iconify.design/octicon/${underscoredName}.svg`)
     } else if (icon.library.startsWith('iconify-')) {
       const prefix = icon.library.replace(/^iconify-/, '')
       add(`https://api.iconify.design/${prefix}/${dashedName}.svg`)
@@ -855,7 +861,7 @@ import { Icon } from '@iconify/vue'
               // HUGE ICON REGISTRY
             </div>
             <h1 style={{ fontSize: 'clamp(34px, 5vw, 56px)', fontWeight: 900, lineHeight: 1.1, marginBottom: '12px' }}>
-              Search 349,000+ Icons
+              Search 350,000+ Icons
             </h1>
             <p style={{ color: 'var(--text-muted)', fontSize: '16px', maxWidth: '760px', lineHeight: 1.7 }}>
               Hugeicons-style explorer with lightning-fast API search, clean cards, rich filters, and polished dark UI.

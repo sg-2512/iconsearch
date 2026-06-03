@@ -19,7 +19,7 @@ export default function HomeSearch() {
         <div style={{ position: 'relative', maxWidth: '680px' }}>
           <input
             type="text"
-            placeholder="Search 360,000+ icons — try 'camera', 'home', 'arrow'..."
+            placeholder="Search 350,000+ icons — try 'camera', 'home', 'arrow'..."
             value={query}
             onChange={e => setQuery(e.target.value)}
             style={{
