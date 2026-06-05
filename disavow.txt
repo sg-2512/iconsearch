@@ -1,0 +1,21 @@
+# Spammy and low-quality backlink domains identified from Ahrefs audit
+domain:seogeko.shop
+domain:high-traffic-backlinks.site
+domain:seorankflow.shop
+domain:premium-backlinks-usa.shop
+domain:jameslinks.agency
+domain:ranklinkerpro.shop
+domain:seopxl-performance-authority-engine.shop
+domain:geko-backlinks.site
+domain:linkrankpro.shop
+domain:pbnseolinks.shop
+domain:rank-optimizer.website
+domain:buyseobacklinks.shop
+domain:seodaro.com
+domain:seo-growth-optimization-hub.shop
+domain:toplinkranker.shop
+domain:seopxl-traffic-growth-lab.shop
+domain:fiverr-seo-for-business-growth.site
+domain:itxoft-professional-seo-services.site
+domain:seolinkpro.shop
+domain:seorankoo.site

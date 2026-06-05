@@ -26,7 +26,24 @@ const sandboxIcons = [
 
 export default function MyWidget() {
   return <Home size={32} strokeWidth={${stroke}} color="${color}" />;
-}`
+}`,
+    vueCode: (size: number, stroke: number, color: string) =>
+`<template>
+  <svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round">
+    <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+    <polyline points="9 22 9 12 15 12 15 22" />
+  </svg>
+</template>`,
+    svelteCode: (size: number, stroke: number, color: string) =>
+`<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round">
+  <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+  <polyline points="9 22 9 12 15 12 15 22" />
+</svg>`,
+    tailwindCode: (size: number, stroke: number, color: string) =>
+`<svg class="w-[${size}px] h-[${size}px] text-[${color}]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round">
+  <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+  <polyline points="9 22 9 12 15 12 15 22" />
+</svg>`
   },
   {
     name: 'Search',
@@ -47,7 +64,24 @@ export default function MyWidget() {
 
 export default function MyWidget() {
   return <Search size={32} strokeWidth={${stroke}} color="${color}" />;
-}`
+}`,
+    vueCode: (size: number, stroke: number, color: string) =>
+`<template>
+  <svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="11" cy="11" r="8" />
+    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+  </svg>
+</template>`,
+    svelteCode: (size: number, stroke: number, color: string) =>
+`<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="11" cy="11" r="8" />
+  <line x1="21" y1="21" x2="16.65" y2="16.65" />
+</svg>`,
+    tailwindCode: (size: number, stroke: number, color: string) =>
+`<svg class="w-[${size}px] h-[${size}px] text-[${color}]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="11" cy="11" r="8" />
+  <line x1="21" y1="21" x2="16.65" y2="16.65" />
+</svg>`
   },
   {
     name: 'Settings',
@@ -68,7 +102,24 @@ export default function MyWidget() {
 
 export default function MyWidget() {
   return <Settings size={32} strokeWidth={${stroke}} color="${color}" />;
-}`
+}`,
+    vueCode: (size: number, stroke: number, color: string) =>
+`<template>
+  <svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="3" />
+    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+  </svg>
+</template>`,
+    svelteCode: (size: number, stroke: number, color: string) =>
+`<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="12" cy="12" r="3" />
+  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+</svg>`,
+    tailwindCode: (size: number, stroke: number, color: string) =>
+`<svg class="w-[${size}px] h-[${size}px] text-[${color}]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="12" cy="12" r="3" />
+  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+</svg>`
   },
   {
     name: 'Heart',
@@ -87,7 +138,21 @@ export default function MyWidget() {
 
 export default function MyWidget() {
   return <Heart size={32} strokeWidth={${stroke}} color="${color}" />;
-}`
+}`,
+    vueCode: (size: number, stroke: number, color: string) =>
+`<template>
+  <svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+  </svg>
+</template>`,
+    svelteCode: (size: number, stroke: number, color: string) =>
+`<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+</svg>`,
+    tailwindCode: (size: number, stroke: number, color: string) =>
+`<svg class="w-[${size}px] h-[${size}px] text-[${color}]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+</svg>`
   },
   {
     name: 'Camera',
@@ -108,7 +173,24 @@ export default function MyWidget() {
 
 export default function MyWidget() {
   return <Camera size={32} strokeWidth={${stroke}} color="${color}" />;
-}`
+}`,
+    vueCode: (size: number, stroke: number, color: string) =>
+`<template>
+  <svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z" />
+    <circle cx="12" cy="13" r="4" />
+  </svg>
+</template>`,
+    svelteCode: (size: number, stroke: number, color: string) =>
+`<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z" />
+  <circle cx="12" cy="13" r="4" />
+</svg>`,
+    tailwindCode: (size: number, stroke: number, color: string) =>
+`<svg class="w-[${size}px] h-[${size}px] text-[${color}]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z" />
+  <circle cx="12" cy="13" r="4" />
+</svg>`
   },
   {
     name: 'Bell',
@@ -129,7 +211,24 @@ export default function MyWidget() {
 
 export default function MyWidget() {
   return <Bell size={32} strokeWidth={${stroke}} color="${color}" />;
-}`
+}`,
+    vueCode: (size: number, stroke: number, color: string) =>
+`<template>
+  <svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+    <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+  </svg>
+</template>`,
+    svelteCode: (size: number, stroke: number, color: string) =>
+`<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+  <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+</svg>`,
+    tailwindCode: (size: number, stroke: number, color: string) =>
+`<svg class="w-[${size}px] h-[${size}px] text-[${color}]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+  <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+</svg>`
   },
   {
     name: 'Shield',
@@ -148,7 +247,21 @@ export default function MyWidget() {
 
 export default function MyWidget() {
   return <Shield size={32} strokeWidth={${stroke}} color="${color}" />;
-}`
+}`,
+    vueCode: (size: number, stroke: number, color: string) =>
+`<template>
+  <svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+  </svg>
+</template>`,
+    svelteCode: (size: number, stroke: number, color: string) =>
+`<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+</svg>`,
+    tailwindCode: (size: number, stroke: number, color: string) =>
+`<svg class="w-[${size}px] h-[${size}px] text-[${color}]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+</svg>`
   },
   {
     name: 'Cloud',
@@ -167,7 +280,21 @@ export default function MyWidget() {
 
 export default function MyWidget() {
   return <Cloud size={32} strokeWidth={${stroke}} color="${color}" />;
-}`
+}`,
+    vueCode: (size: number, stroke: number, color: string) =>
+`<template>
+  <svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M17.5 19A5.5 5.5 0 0 0 22 13.5A5.5 5.5 0 0 0 16.5 8H15a7 7 0 1 0-14 0h.5A5.5 5.5 0 0 0 7 13.5a5.5 5.5 0 0 0 5.5 5.5Z" />
+  </svg>
+</template>`,
+    svelteCode: (size: number, stroke: number, color: string) =>
+`<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M17.5 19A5.5 5.5 0 0 0 22 13.5A5.5 5.5 0 0 0 16.5 8H15a7 7 0 1 0-14 0h.5A5.5 5.5 0 0 0 7 13.5a5.5 5.5 0 0 0 5.5 5.5Z" />
+</svg>`,
+    tailwindCode: (size: number, stroke: number, color: string) =>
+`<svg class="w-[${size}px] h-[${size}px] text-[${color}]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M17.5 19A5.5 5.5 0 0 0 22 13.5A5.5 5.5 0 0 0 16.5 8H15a7 7 0 1 0-14 0h.5A5.5 5.5 0 0 0 7 13.5a5.5 5.5 0 0 0 5.5 5.5Z" />
+</svg>`
   }
 ]
 
@@ -217,14 +344,20 @@ export default function DynamicHome({ initialLibraries, recentItems }: DynamicHo
   const [iconSize, setIconSize] = useState(48)
   const [strokeWidth, setStrokeWidth] = useState(1.5)
   const [iconColor, setIconColor] = useState('#818cf8')
-  const [codeTab, setCodeTab] = useState<'jsx' | 'svg'>('jsx')
+  const [selectedFramework, setSelectedFramework] = useState<'react' | 'vue' | 'svelte' | 'tailwind' | 'svg'>('react')
   const [copied, setCopied] = useState(false)
 
   const activeSandboxIcon = sandboxIcons[selectedIconIdx]
 
   function handleCopy() {
-    const textToCopy = codeTab === 'jsx' 
+    const textToCopy = selectedFramework === 'react' 
       ? activeSandboxIcon.reactCode(strokeWidth, iconColor)
+      : selectedFramework === 'vue'
+      ? activeSandboxIcon.vueCode(iconSize, strokeWidth, iconColor)
+      : selectedFramework === 'svelte'
+      ? activeSandboxIcon.svelteCode(iconSize, strokeWidth, iconColor)
+      : selectedFramework === 'tailwind'
+      ? activeSandboxIcon.tailwindCode(iconSize, strokeWidth, iconColor)
       : activeSandboxIcon.rawCode(iconSize, strokeWidth, iconColor)
 
     navigator.clipboard.writeText(textToCopy)
@@ -658,6 +791,7 @@ export default function DynamicHome({ initialLibraries, recentItems }: DynamicHo
                 {sandboxIcons.map((icon, idx) => (
                   <button
                     key={icon.slug}
+                    aria-label={`Select ${icon.name} icon`}
                     onClick={() => setSelectedIconIdx(idx)}
                     style={{
                       background: selectedIconIdx === idx ? 'rgba(129, 140, 248, 0.1)' : 'var(--bg)',
@@ -695,6 +829,7 @@ export default function DynamicHome({ initialLibraries, recentItems }: DynamicHo
                     <span style={{ color: 'var(--accent)', fontWeight: 600 }}>{iconSize}px</span>
                   </div>
                   <input
+                    aria-label="Icon Size"
                     type="range"
                     min="16"
                     max="64"
@@ -710,6 +845,7 @@ export default function DynamicHome({ initialLibraries, recentItems }: DynamicHo
                     <span style={{ color: 'var(--accent)', fontWeight: 600 }}>{strokeWidth}px</span>
                   </div>
                   <input
+                    aria-label="Stroke Weight"
                     type="range"
                     min="1"
                     max="3"
@@ -800,39 +936,34 @@ export default function DynamicHome({ initialLibraries, recentItems }: DynamicHo
 
               {/* Code output blocks */}
               <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-                <div style={{ display: 'flex', borderBottom: '1px solid var(--border)', marginBottom: '14px' }}>
-                  <button
-                    onClick={() => setCodeTab('jsx')}
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      borderBottom: codeTab === 'jsx' ? '2px solid var(--accent)' : 'none',
-                      color: codeTab === 'jsx' ? 'var(--text)' : 'var(--text-muted)',
-                      padding: '8px 16px',
-                      cursor: 'pointer',
-                      fontSize: '13px',
-                      fontFamily: 'JetBrains Mono, monospace',
-                      fontWeight: 600
-                    }}
-                  >
-                    React component (JSX)
-                  </button>
-                  <button
-                    onClick={() => setCodeTab('svg')}
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      borderBottom: codeTab === 'svg' ? '2px solid var(--accent)' : 'none',
-                      color: codeTab === 'svg' ? 'var(--text)' : 'var(--text-muted)',
-                      padding: '8px 16px',
-                      cursor: 'pointer',
-                      fontSize: '13px',
-                      fontFamily: 'JetBrains Mono, monospace',
-                      fontWeight: 600
-                    }}
-                  >
-                    Raw SVG Markup
-                  </button>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', borderBottom: '1px solid var(--border)', paddingBottom: '12px', marginBottom: '14px' }}>
+                  {[
+                    { id: 'react', label: 'React/Next.js' },
+                    { id: 'vue', label: 'Vue 3' },
+                    { id: 'svelte', label: 'Svelte' },
+                    { id: 'tailwind', label: 'Tailwind' },
+                    { id: 'svg', label: 'Raw SVG' }
+                  ].map(fw => (
+                    <button
+                      key={fw.id}
+                      onClick={() => setSelectedFramework(fw.id as any)}
+                      style={{
+                        background: selectedFramework === fw.id ? 'var(--accent)' : 'transparent',
+                        border: '1px solid',
+                        borderColor: selectedFramework === fw.id ? 'var(--accent)' : 'var(--border)',
+                        color: selectedFramework === fw.id ? '#fff' : 'var(--text-muted)',
+                        padding: '6px 12px',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        fontSize: '12px',
+                        fontFamily: 'JetBrains Mono, monospace',
+                        fontWeight: 600,
+                        transition: 'all 0.2s'
+                      }}
+                    >
+                      {fw.label}
+                    </button>
+                  ))}
                 </div>
 
                 <div style={{
@@ -851,8 +982,14 @@ export default function DynamicHome({ initialLibraries, recentItems }: DynamicHo
                   alignItems: 'stretch'
                 }}>
                   <pre style={{ margin: 0, whiteSpace: 'pre-wrap', overflowX: 'auto', width: '100%' }}>
-                    {codeTab === 'jsx' 
+                    {selectedFramework === 'react' 
                       ? activeSandboxIcon.reactCode(strokeWidth, iconColor)
+                      : selectedFramework === 'vue'
+                      ? activeSandboxIcon.vueCode(iconSize, strokeWidth, iconColor)
+                      : selectedFramework === 'svelte'
+                      ? activeSandboxIcon.svelteCode(iconSize, strokeWidth, iconColor)
+                      : selectedFramework === 'tailwind'
+                      ? activeSandboxIcon.tailwindCode(iconSize, strokeWidth, iconColor)
                       : activeSandboxIcon.rawCode(iconSize, strokeWidth, iconColor)
                     }
                   </pre>
@@ -929,6 +1066,7 @@ export default function DynamicHome({ initialLibraries, recentItems }: DynamicHo
                   LIBRARY A
                 </label>
                 <select
+                  aria-label="Compare Library A"
                   value={libAKey}
                   onChange={e => setLibAKey(e.target.value)}
                   style={{
@@ -958,6 +1096,7 @@ export default function DynamicHome({ initialLibraries, recentItems }: DynamicHo
                   LIBRARY B
                 </label>
                 <select
+                  aria-label="Compare Library B"
                   value={libBKey}
                   onChange={e => setLibBKey(e.target.value)}
                   style={{
