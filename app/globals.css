@@ -424,3 +424,25 @@ select:focus-visible {
     flex-wrap: wrap;
   }
 }
+
+/* ===== Premium UI Animations ===== */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+  100% { transform: translateY(0px); }
+}
+
+@keyframes glowPulse {
+  0% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.05); }
+  100% { opacity: 0.4; transform: scale(1); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.search-input-focus:focus-within {
+  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.4), 0 8px 32px rgba(139, 92, 246, 0.15);
+  border-color: #8b5cf6 !important;
+}

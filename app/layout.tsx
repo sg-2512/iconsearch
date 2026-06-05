@@ -36,13 +36,27 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "WebSite",
-              "name": "IconSearch",
-              "alternateName": "IconSearch",
-              "url": "https://iconsearch.info"
-            })
+            __html: JSON.stringify([
+              {
+                "@context": "https://schema.org",
+                "@type": "WebSite",
+                "name": "IconSearch",
+                "alternateName": "IconSearch",
+                "url": "https://iconsearch.info",
+                "potentialAction": {
+                  "@type": "SearchAction",
+                  "target": "https://iconsearch.info/icon-search?q={search_term_string}",
+                  "query-input": "required name=search_term_string"
+                }
+              },
+              {
+                "@context": "https://schema.org",
+                "@type": "Organization",
+                "name": "IconSearch",
+                "url": "https://iconsearch.info",
+                "logo": "https://iconsearch.info/favicon.svg"
+              }
+            ])
           }}
         />
         <Script

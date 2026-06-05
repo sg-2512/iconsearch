@@ -465,17 +465,18 @@ export default function DynamicHome({ initialLibraries, recentItems }: DynamicHo
             // The Ultimate Developer Icon Registry
           </div>
           
-          <h1 style={{
-            fontSize: 'clamp(38px, 6.5vw, 68px)',
+          <h1 className="animate-float" style={{
+            fontSize: 'clamp(42px, 7vw, 76px)',
             fontWeight: 800,
             lineHeight: 1.05,
-            marginBottom: '20px',
+            marginBottom: '24px',
             fontFamily: 'var(--font-inter), sans-serif',
-            letterSpacing: '-0.03em',
+            letterSpacing: '-0.04em',
+            textShadow: '0 4px 24px rgba(139, 92, 246, 0.25)'
           }}>
             Find, Compare &<br />
             <span style={{ 
-              background: 'linear-gradient(135deg, var(--accent) 0%, #a855f7 100%)', 
+              background: 'linear-gradient(135deg, #a855f7 0%, #3b82f6 50%, #2dd4bf 100%)', 
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               color: 'var(--accent)'
@@ -495,7 +496,7 @@ export default function DynamicHome({ initialLibraries, recentItems }: DynamicHo
 
           {/* Core Search Form */}
           <form onSubmit={handleSearchSubmit} style={{ maxWidth: '640px', marginBottom: '36px' }}>
-            <div style={{ position: 'relative' }}>
+            <div style={{ position: 'relative' }} className="search-input-focus">
               <input
                 type="text"
                 placeholder="Search 350,000+ icons — try 'settings', 'bell', 'arrow'..."
@@ -503,20 +504,19 @@ export default function DynamicHome({ initialLibraries, recentItems }: DynamicHo
                 onChange={e => setSearchQuery(e.target.value)}
                 style={{
                   width: '100%',
-                  background: 'rgba(24, 24, 27, 0.75)',
-                  border: '1px solid var(--border)',
-                  borderRadius: '12px',
-                  padding: '18px 130px 18px 24px',
-                  fontSize: '15px',
+                  background: 'rgba(24, 24, 27, 0.65)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  borderRadius: '16px',
+                  padding: '20px 140px 20px 28px',
+                  fontSize: '16px',
                   color: 'var(--text)',
                   fontFamily: 'JetBrains Mono, monospace',
                   outline: 'none',
                   boxSizing: 'border-box',
-                  backdropFilter: 'blur(8px)',
-                  transition: 'border-color 0.2s',
+                  backdropFilter: 'blur(16px)',
+                  transition: 'all 0.3s ease',
+                  boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.5)'
                 }}
-                onFocus={e => e.target.style.borderColor = 'var(--accent)'}
-                onBlur={e => e.target.style.borderColor = 'var(--border)'}
               />
               <button
                 type="submit"
@@ -593,63 +593,56 @@ export default function DynamicHome({ initialLibraries, recentItems }: DynamicHo
 
           <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
             <Link href="/icon-search" style={{
-              background: 'linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%)',
+              background: 'linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%)',
               color: 'white',
-              padding: '14px 28px',
-              borderRadius: '10px',
+              padding: '16px 32px',
+              borderRadius: '12px',
               textDecoration: 'none',
-              fontSize: '14px',
+              fontSize: '15px',
               fontFamily: 'JetBrains Mono, monospace',
-              fontWeight: 600,
-              boxShadow: '0 4px 20px rgba(99, 102, 241, 0.25)',
-              transition: 'transform 0.2s'
+              fontWeight: 700,
+              boxShadow: '0 8px 32px rgba(139, 92, 246, 0.4)',
+              transition: 'all 0.3s ease',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px'
             }}
-              onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
-              onMouseLeave={e => e.currentTarget.style.transform = 'none'}
+              onMouseEnter={e => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.boxShadow = '0 12px 40px rgba(139, 92, 246, 0.6)';
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.transform = 'none';
+                e.currentTarget.style.boxShadow = '0 8px 32px rgba(139, 92, 246, 0.4)';
+              }}
             >
               Explore 350,000+ Icons →
             </Link>
             <Link href="/compare" style={{
-              background: 'rgba(24, 24, 27, 0.5)',
-              border: '1px solid var(--border)',
+              background: 'rgba(255, 255, 255, 0.03)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              backdropFilter: 'blur(10px)',
               color: 'var(--text)',
-              padding: '14px 28px',
-              borderRadius: '10px',
+              padding: '16px 32px',
+              borderRadius: '12px',
               textDecoration: 'none',
-              fontSize: '14px',
+              fontSize: '15px',
               fontFamily: 'JetBrains Mono, monospace',
-              transition: 'all 0.2s'
+              transition: 'all 0.3s ease'
             }}
               onMouseEnter={e => {
-                e.currentTarget.style.borderColor = 'var(--border-hover)'
-                e.currentTarget.style.background = 'rgba(39, 39, 42, 0.5)'
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)';
+                e.currentTarget.style.transform = 'translateY(-2px)';
               }}
               onMouseLeave={e => {
-                e.currentTarget.style.borderColor = 'var(--border)'
-                e.currentTarget.style.background = 'rgba(24, 24, 27, 0.5)'
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.03)';
+                e.currentTarget.style.transform = 'none';
               }}
             >
               Compare Libraries
             </Link>
-            <a href="https://hugeicons.com?via=IconSearch" target="_blank" rel="noopener noreferrer" style={{
-              background: 'rgba(24, 24, 27, 0.3)',
-              border: '1px solid rgba(251, 191, 36, 0.4)',
-              color: '#fbbf24',
-              padding: '14px 28px',
-              borderRadius: '10px',
-              textDecoration: 'none',
-              fontSize: '14px',
-              fontFamily: 'JetBrains Mono, monospace',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              transition: 'transform 0.2s'
-            }}
-              onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
-              onMouseLeave={e => e.currentTarget.style.transform = 'none'}
-            >
-              <span>✨</span> Hugeicons Pro (Premium)
-            </a>
           </div>
         </section>
 
@@ -699,6 +692,8 @@ export default function DynamicHome({ initialLibraries, recentItems }: DynamicHo
                     strokeWidth="1.5"
                     strokeLinecap="round"
                     strokeLinejoin="round"
+                    role="img"
+                    aria-label={`${item.name} icon`}
                   >
                     {item.paths}
                   </svg>
@@ -730,14 +725,15 @@ export default function DynamicHome({ initialLibraries, recentItems }: DynamicHo
           }}>
             {/* Left side: Canvas & Controls */}
             <div style={{
-              background: 'rgba(24, 24, 27, 0.6)',
-              border: '1px solid var(--border)',
-              borderRadius: '16px',
-              padding: '28px',
+              background: 'rgba(15, 15, 20, 0.7)',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+              borderRadius: '24px',
+              padding: '32px',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-between',
-              backdropFilter: 'blur(12px)'
+              backdropFilter: 'blur(24px)',
+              boxShadow: '0 24px 64px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
             }}>
               {/* Live Preview Screen */}
               <div style={{
@@ -918,6 +914,8 @@ export default function DynamicHome({ initialLibraries, recentItems }: DynamicHo
                       type="color"
                       value={iconColor}
                       onChange={e => setIconColor(e.target.value)}
+                      title="Pick a custom icon color"
+                      aria-label="Pick a custom icon color"
                       style={{
                         border: 'none',
                         background: 'transparent',

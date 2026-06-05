@@ -225,6 +225,24 @@ export default async function ComparisonPage({ params }: { params: Promise<{ pai
         </div>
       </section>
 
+      {/* Design & Aesthetics Deep-Dive */}
+      <section style={{ marginBottom: '48px', paddingBottom: '48px', borderBottom: '1px solid var(--border)' }}>
+        <h2 style={{ fontSize: '13px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '2px', marginBottom: '20px' }}>
+          DESIGN AESTHETICS & VISUAL STYLE
+        </h2>
+        <div style={{ color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.8 }}>
+          <p style={{ marginBottom: '16px' }}>
+            Beyond the code, the visual identity of your application is heavily influenced by your choice of iconography. <strong>{a.name}</strong> primarily features a {a.style.length > 0 ? a.style[0].toLowerCase() : 'clean'} aesthetic, whereas <strong>{b.name}</strong> leans toward a {b.style.length > 0 ? b.style[0].toLowerCase() : 'versatile'} look.
+          </p>
+          <p style={{ marginBottom: '16px' }}>
+            {a.name} is designed with strict geometric rules and a consistent grid, ensuring that all {a.iconCount.toLocaleString()} icons share the same visual weight. This makes it particularly well-suited for professional dashboards, enterprise SaaS products, and minimal user interfaces. 
+          </p>
+          <p>
+            On the other hand, {b.name} offers a more distinct personality. With its {b.iconCount.toLocaleString()} carefully crafted icons, it can bring warmth and character to consumer-facing mobile apps, marketing websites, and creative portfolios.
+          </p>
+        </div>
+      </section>
+
       {/* Licensing & Commercial Use Deep-Dive */}
       <section style={{ marginBottom: '48px', paddingBottom: '48px', borderBottom: '1px solid var(--border)' }}>
         <h2 style={{ fontSize: '13px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '2px', marginBottom: '20px' }}>
