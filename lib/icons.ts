@@ -421,6 +421,26 @@ export const icons: IconLibrary[] = [
     ],
     installCommand: "npm install @primer/octicons-react",
     usageExample: "import { RepoIcon } from '@primer/octicons-react'\n\nexport default function App() {\n  return <RepoIcon size={16} />\n}"
+  },
+  {
+    name: "Ant Design Icons",
+    slug: "ant-design-icons",
+    description: "The official icon set for Ant Design (AntD), featuring over 800 highly consistent icons in Outlined, Filled, and TwoTone themes for enterprise UIs.",
+    website: "https://ant.design/components/icon",
+    github: "https://github.com/ant-design/ant-design-icons",
+    npm: "@ant-design/icons",
+    stars: 8700,
+    iconCount: 840,
+    license: "MIT",
+    frameworks: ["react", "vue"],
+    style: ["outline", "filled", "twotone"],
+    figmaPlugin: true,
+    typescript: true,
+    treeshakable: true,
+    pros: ["Three distinct themes", "Native React components", "Dynamic TwoTone coloring", "Enterprise grade"],
+    cons: ["Opinionated aesthetic", "No mini variants", "Relies on CSS font-size for scaling"],
+    installCommand: "npm install @ant-design/icons",
+    usageExample: "import { SmileTwoTone } from '@ant-design/icons'\n\nexport default function App() {\n  return <SmileTwoTone twoToneColor='#eb2f96' style={{ fontSize: '24px' }} />\n}"
   }
 ]
 

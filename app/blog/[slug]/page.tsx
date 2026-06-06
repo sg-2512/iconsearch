@@ -295,7 +295,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   const faqs = extractFAQs(post.content)
 
   return (
-    <main style={{ maxWidth: '1200px', margin: '0 auto', padding: '40px 48px' }}>
+    <main style={{ maxWidth: '1200px', margin: '0 auto', padding: '40px 48px', overflow: 'hidden' }}>
 
       <Link href="/blog" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '13px', fontFamily: 'JetBrains Mono, monospace' }}>
         ← back to blog
@@ -350,9 +350,9 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
       </section>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 280px', gap: '48px', alignItems: 'flex-start' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 280px', gap: '48px', alignItems: 'flex-start' }}>
 
-        <article>
+        <article style={{ minWidth: 0, overflow: 'hidden' }}>
           {renderContent(post.content)}
 
           {faqs.length > 0 && (

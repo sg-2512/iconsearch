@@ -15,6 +15,7 @@ import { simpleIconsData } from '../../../data/libraries/simple-icons'
 import { iconoirData } from '../../../data/libraries/iconoir'
 import { ioniconsData } from '../../../data/libraries/ionicons'
 import { octiconsData } from '../../../data/libraries/octicons'
+import { antDesignIconsData } from '../../../data/libraries/ant-design-icons'
 
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -36,6 +37,7 @@ const libraryData: Record<string, any> = {
   'iconoir': iconoirData,
   'ionicons': ioniconsData,
   'octicons': octiconsData,
+  'ant-design-icons': antDesignIconsData,
 }
 
 export async function generateStaticParams() {
@@ -245,10 +247,10 @@ export default async function LibraryPage({ params }: { params: Promise<{ slug: 
         <h2 style={{ fontSize: '13px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '2px', marginBottom: '20px' }}>
           OVERVIEW
         </h2>
-        {[data.description.intro, data.description.detail, data.description.technical, data.description.verdict].map((para, i) => (
-          <p key={i} style={{ color: i === 3 ? 'var(--text)' : 'var(--text-muted)', fontSize: '16px', lineHeight: 1.8, marginBottom: '16px', background: i === 3 ? 'var(--accent-dim)' : 'transparent', border: i === 3 ? '1px solid var(--accent)' : 'none', borderRadius: i === 3 ? '8px' : '0', padding: i === 3 ? '16px' : '0' }}>
-            {i === 3 && <span style={{ color: 'var(--accent)', fontFamily: 'JetBrains Mono, monospace', fontSize: '12px', display: 'block', marginBottom: '8px' }}>// VERDICT</span>}
-            {para}
+        {[data.description.intro, data.description.history, data.description.detail, data.description.focus, data.description.technical, data.description.verdict].filter(Boolean).map((para, i) => (
+          <p key={i} style={{ color: para === data.description.verdict ? 'var(--text)' : 'var(--text-muted)', fontSize: '16px', lineHeight: 1.8, marginBottom: '16px', background: para === data.description.verdict ? 'var(--accent-dim)' : 'transparent', border: para === data.description.verdict ? '1px solid var(--accent)' : 'none', borderRadius: para === data.description.verdict ? '8px' : '0', padding: para === data.description.verdict ? '16px' : '0' }}>
+            {para === data.description.verdict && <span style={{ color: 'var(--accent)', fontFamily: 'JetBrains Mono, monospace', fontSize: '12px', display: 'block', marginBottom: '8px' }}>// VERDICT</span>}
+            <span dangerouslySetInnerHTML={{ __html: para as string }} />
           </p>
         ))}
       </section>

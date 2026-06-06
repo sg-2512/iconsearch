@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useRef, useState, useCallback } from 'react'
+import { useEffect, useMemo, useRef, useState, useCallback, memo } from 'react'
 import { generateZipPackage } from '../../lib/exporter'
 import { createClient, isSupabaseConfigured } from '@/lib/supabase'
 import AuthModal from '../components/AuthModal'
@@ -37,8 +37,8 @@ const LIBRARY_COLORS: Record<string, string> = {
   'radix-icons': '#ec4899',
   'bootstrap-icons': '#7952b3',
   'feather-icons': '#3b82f6',
-  'remix-icon': '#ff4c4c',
   'iconoir': '#e88c30',
+  'ant-design-icons': '#1890ff',
 }
 
 const CATEGORIES = [
@@ -86,6 +86,181 @@ function getCleanSvgUrl(url: string, library: string): string {
   return url
 }
 
+function getPreviewCandidates(icon: Icon): string[] {
+  const cleaned = getCleanSvgUrl(icon.svgUrl, icon.library)
+  const candidates = new Set<string>()
+  const add = (value?: string) => {
+    if (value) candidates.add(value)
+  }
+
+  add(cleaned)
+  add(icon.svgUrl)
+
+  const exactName = icon.name
+  const dashedName = icon.name.replace(/_/g, '-')
+  const underscoredName = icon.name.replace(/-/g, '_')
+
+  if (icon.library === 'lucide-icons') {
+    add(`https://unpkg.com/lucide-static@latest/icons/${exactName}.svg`)
+    add(`https://unpkg.com/lucide-static@latest/icons/${dashedName}.svg`)
+    add(`https://api.iconify.design/lucide/${exactName}.svg`)
+    add(`https://api.iconify.design/lucide/${dashedName}.svg`)
+  } else if (icon.library === 'tabler-icons') {
+    add(`https://cdn.jsdelivr.net/npm/@tabler/icons@2.47.0/icons/${exactName}.svg`)
+    add(`https://cdn.jsdelivr.net/npm/@tabler/icons@2.47.0/icons/${dashedName}.svg`)
+    add(`https://api.iconify.design/tabler/${exactName}.svg`)
+  } else if (icon.library === 'phosphor-icons') {
+    add(`https://unpkg.com/@phosphor-icons/core@latest/assets/regular/${exactName}.svg`)
+    add(`https://api.iconify.design/ph/${exactName}.svg`)
+  } else if (icon.library === 'heroicons') {
+    add(`https://api.iconify.design/heroicons/${exactName}.svg`)
+    add(`https://api.iconify.design/heroicons-outline/${exactName}.svg`)
+    add(`https://api.iconify.design/heroicons-solid/${exactName}.svg`)
+  } else if (icon.library === 'bootstrap-icons') {
+    add(`https://cdn.jsdelivr.net/npm/bootstrap-icons@latest/icons/${exactName}.svg`)
+    add(`https://api.iconify.design/bi/${exactName}.svg`)
+  } else if (icon.library === 'feather-icons') {
+    add(`https://unpkg.com/feather-icons@latest/dist/icons/${exactName}.svg`)
+    add(`https://api.iconify.design/feather/${exactName}.svg`)
+  } else if (icon.library === 'remix-icon') {
+    add(`https://api.iconify.design/ri/${exactName}.svg`)
+  } else if (icon.library === 'iconoir') {
+    add(`https://api.iconify.design/iconoir/${exactName}.svg`)
+    add(`https://cdn.jsdelivr.net/npm/iconoir@latest/icons/regular/${exactName}.svg`)
+  } else if (icon.library === 'ionicons') {
+    add(`https://api.iconify.design/ion/${exactName}.svg`)
+    add(`https://api.iconify.design/ion/${dashedName}.svg`)
+    add(`https://api.iconify.design/ion/${underscoredName}.svg`)
+  } else if (icon.library === 'octicons') {
+    add(`https://api.iconify.design/octicon/${exactName}.svg`)
+    add(`https://api.iconify.design/octicon/${dashedName}.svg`)
+    add(`https://api.iconify.design/octicon/${underscoredName}.svg`)
+  } else if (icon.library === 'ant-design-icons') {
+    add(`https://api.iconify.design/ant-design/${exactName}.svg`)
+    add(`https://api.iconify.design/ant-design/${dashedName}.svg`)
+    add(`https://api.iconify.design/ant-design/${exactName}-filled.svg`)
+    add(`https://api.iconify.design/ant-design/${exactName}-outlined.svg`)
+    add(`https://api.iconify.design/ant-design/${exactName}-twotone.svg`)
+    add(`https://api.iconify.design/ant-design/${exactName}-fill.svg`)
+    add(`https://api.iconify.design/ant-design/${exactName}-outline.svg`)
+  } else if (icon.library.startsWith('iconify-')) {
+    const prefix = icon.library.replace(/^iconify-/, '')
+    add(`https://api.iconify.design/${prefix}/${exactName}.svg`)
+    add(`https://api.iconify.design/${prefix}/${dashedName}.svg`)
+    add(`https://api.iconify.design/${prefix}/${underscoredName}.svg`)
+  } else {
+    const normalizedPrefix = icon.library
+      .toLowerCase()
+      .replace(/-icons?$/, '')
+      .replace(/_/g, '-')
+    add(`https://api.iconify.design/${normalizedPrefix}/${exactName}.svg`)
+    add(`https://api.iconify.design/${normalizedPrefix}/${dashedName}.svg`)
+    add(`https://api.iconify.design/${normalizedPrefix}/${underscoredName}.svg`)
+  }
+
+  return Array.from(candidates)
+}
+
+const IconCard = memo(({
+  icon,
+  color,
+  isSelected,
+  onSelect
+}: {
+  icon: Icon
+  color: string
+  isSelected: boolean
+  onSelect: () => void
+}) => {
+  const [fallbackIndex, setFallbackIndex] = useState(0)
+  const [failed, setFailed] = useState(false)
+
+  const candidates = useMemo(() => getPreviewCandidates(icon), [icon])
+  const src = candidates[fallbackIndex] || getCleanSvgUrl(icon.svgUrl, icon.library)
+
+  const onError = useCallback(() => {
+    if (fallbackIndex < candidates.length - 1) {
+      setFallbackIndex((prev) => prev + 1)
+    } else {
+      setFailed(true)
+    }
+  }, [fallbackIndex, candidates.length])
+
+  // Reset local state if icon changes
+  useEffect(() => {
+    setFallbackIndex(0)
+    setFailed(false)
+  }, [icon.id])
+
+  return (
+    <button
+      onClick={onSelect}
+      style={{
+        background: isSelected ? 'rgba(129, 140, 248, 0.15)' : 'rgba(24,24,27,0.8)',
+        border: isSelected ? `2.5px solid ${color}` : '1px solid var(--border)',
+        borderRadius: '12px',
+        padding: '14px',
+        cursor: 'pointer',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '10px',
+        alignItems: 'center',
+        transition: 'all 0.16s ease',
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.borderColor = color
+        e.currentTarget.style.transform = 'translateY(-2px)'
+        e.currentTarget.style.boxShadow = `0 8px 24px ${color}1f`
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.borderColor = isSelected ? color : 'var(--border)'
+        e.currentTarget.style.transform = 'none'
+        e.currentTarget.style.boxShadow = 'none'
+      }}
+    >
+      <div style={{ width: '54px', height: '54px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        {failed ? (
+          <span style={{ fontSize: '11px', color, fontFamily: 'JetBrains Mono, monospace', fontWeight: 700 }}>
+            {icon.displayName?.slice(0, 2)?.toUpperCase() || icon.name.slice(0, 2).toUpperCase()}
+          </span>
+        ) : (
+          <img
+            src={src}
+            alt={icon.name}
+            title={`${icon.name} from ${icon.libraryName}`}
+            width={25}
+            height={25}
+            loading="lazy"
+            decoding="async"
+            style={{ filter: 'invert(1) brightness(0.95)', opacity: 0.9 }}
+            onError={onError}
+          />
+        )}
+      </div>
+      <div style={{ textAlign: 'center', width: '100%' }}>
+        <div style={{ color: 'var(--text)', fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{icon.name}</div>
+        <div style={{ color, fontSize: '9px', textTransform: 'uppercase', letterSpacing: '0.4px', marginTop: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          {icon.libraryName}
+        </div>
+        <div style={{
+          marginTop: '6px',
+          fontSize: '8px',
+          fontFamily: 'JetBrains Mono, monospace',
+          borderRadius: '999px',
+          padding: '2px 6px',
+          display: 'inline-block',
+          background: icon.legalSafe ? 'rgba(52,211,153,0.15)' : 'rgba(248,113,113,0.15)',
+          border: `1px solid ${icon.legalSafe ? 'rgba(52,211,153,0.55)' : 'rgba(248,113,113,0.55)'}`,
+          color: icon.legalSafe ? '#34d399' : '#f87171',
+        }}>
+          {icon.legalSafe ? 'legal-safe' : 'restricted'}
+        </div>
+      </div>
+    </button>
+  )
+})
+IconCard.displayName = 'IconCard'
+
 export default function IconSearchClient({ initialData }: { initialData?: ApiResponse }) {
   const [query, setQuery] = useState('')
   const [selectedLib, setSelectedLib] = useState('all')
@@ -105,8 +280,6 @@ export default function IconSearchClient({ initialData }: { initialData?: ApiRes
   const [cart, setCart] = useState<CartItem[]>([])
   const [copied, setCopied] = useState(false)
   const [exportNotice, setExportNotice] = useState('')
-  const [previewFallbackIndex, setPreviewFallbackIndex] = useState<Record<string, number>>({})
-  const [previewFailed, setPreviewFailed] = useState<Record<string, boolean>>({})
   const searchRef = useRef<HTMLInputElement>(null)
 
   // Exporter Upgrades (Phase 2)
@@ -417,11 +590,6 @@ export default function IconSearchClient({ initialData }: { initialData?: ApiRes
   }, [query, selectedLib, selectedIconifySet, selectedCategory, selectedStyle, sortBy, legalOnly])
 
   useEffect(() => {
-    setPreviewFallbackIndex({})
-    setPreviewFailed({})
-  }, [results.page, selectedLib, selectedIconifySet, selectedCategory, selectedStyle, query, sortBy, legalOnly])
-
-  useEffect(() => {
     const controller = new AbortController()
     const timer = setTimeout(async () => {
       try {
@@ -618,76 +786,6 @@ export default function IconSearchClient({ initialData }: { initialData?: ApiRes
     if (selectedLib !== 'iconify') return selectedLib
     return selectedIconifySet === 'all' ? 'iconify' : `iconify:${selectedIconifySet}`
   }, [selectedLib, selectedIconifySet])
-
-  function getPreviewCandidates(icon: Icon): string[] {
-    const cleaned = getCleanSvgUrl(icon.svgUrl, icon.library)
-    const candidates = new Set<string>()
-    const add = (value?: string) => {
-      if (value) candidates.add(value)
-    }
-
-    add(cleaned)
-    add(icon.svgUrl)
-
-    const dashedName = icon.name.replace(/_/g, '-')
-    const underscoredName = icon.name.replace(/-/g, '_')
-
-    if (icon.library === 'lucide-icons') {
-      add(`https://unpkg.com/lucide-static@latest/icons/${dashedName}.svg`)
-      add(`https://api.iconify.design/lucide/${dashedName}.svg`)
-      add(`https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/${dashedName}.svg`)
-    } else if (icon.library === 'tabler-icons') {
-      add(`https://cdn.jsdelivr.net/npm/@tabler/icons@2.47.0/icons/${dashedName}.svg`)
-      add(`https://api.iconify.design/tabler/${dashedName}.svg`)
-    } else if (icon.library === 'phosphor-icons') {
-      add(`https://unpkg.com/@phosphor-icons/core@latest/assets/regular/${dashedName}.svg`)
-      add(`https://api.iconify.design/ph/${dashedName}.svg`)
-    } else if (icon.library === 'heroicons') {
-      add(`https://api.iconify.design/heroicons/${dashedName}.svg`)
-      add(`https://api.iconify.design/heroicons-outline/${dashedName}.svg`)
-      add(`https://api.iconify.design/heroicons-solid/${dashedName}.svg`)
-    } else if (icon.library === 'bootstrap-icons') {
-      add(`https://cdn.jsdelivr.net/npm/bootstrap-icons@latest/icons/${dashedName}.svg`)
-      add(`https://api.iconify.design/bi/${dashedName}.svg`)
-    } else if (icon.library === 'feather-icons') {
-      add(`https://unpkg.com/feather-icons@latest/dist/icons/${dashedName}.svg`)
-      add(`https://api.iconify.design/feather/${dashedName}.svg`)
-    } else if (icon.library === 'remix-icon') {
-      add(`https://api.iconify.design/ri/${dashedName}.svg`)
-    } else if (icon.library === 'iconoir') {
-      add(`https://api.iconify.design/iconoir/${dashedName}.svg`)
-      add(`https://cdn.jsdelivr.net/npm/iconoir@latest/icons/regular/${dashedName}.svg`)
-    } else if (icon.library === 'ionicons') {
-      add(`https://api.iconify.design/ion/${dashedName}.svg`)
-      add(`https://api.iconify.design/ion/${underscoredName}.svg`)
-    } else if (icon.library === 'octicons') {
-      add(`https://api.iconify.design/octicon/${dashedName}.svg`)
-      add(`https://api.iconify.design/octicon/${underscoredName}.svg`)
-    } else if (icon.library.startsWith('iconify-')) {
-      const prefix = icon.library.replace(/^iconify-/, '')
-      add(`https://api.iconify.design/${prefix}/${dashedName}.svg`)
-      add(`https://api.iconify.design/${prefix}/${underscoredName}.svg`)
-    } else {
-      const normalizedPrefix = icon.library
-        .toLowerCase()
-        .replace(/-icons?$/, '')
-        .replace(/_/g, '-')
-      add(`https://api.iconify.design/${normalizedPrefix}/${dashedName}.svg`)
-      add(`https://api.iconify.design/${normalizedPrefix}/${underscoredName}.svg`)
-    }
-
-    return Array.from(candidates)
-  }
-
-  function onPreviewError(icon: Icon) {
-    const candidates = getPreviewCandidates(icon)
-    const current = previewFallbackIndex[icon.id] || 0
-    if (current < candidates.length - 1) {
-      setPreviewFallbackIndex((prev) => ({ ...prev, [icon.id]: current + 1 }))
-    } else {
-      setPreviewFailed((prev) => ({ ...prev, [icon.id]: true }))
-    }
-  }
 
   const customizedSvg = useMemo(() => {
     if (!svgContent) return ''
@@ -1052,73 +1150,14 @@ import { Icon } from '@iconify/vue'
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(132px, 1fr))', gap: '12px' }}>
           {results.icons.map((icon) => {
             const color = LIBRARY_COLORS[icon.library] || 'var(--accent)'
-            const candidates = getPreviewCandidates(icon)
-            const src = candidates[previewFallbackIndex[icon.id] || 0] || getCleanSvgUrl(icon.svgUrl, icon.library)
-            const failed = Boolean(previewFailed[icon.id])
             return (
-              <button
+              <IconCard
                 key={icon.id}
-                onClick={() => setSelectedIcon(icon)}
-                style={{
-                  background: 'rgba(24,24,27,0.8)',
-                  border: '1px solid var(--border)',
-                  borderRadius: '12px',
-                  padding: '14px',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '10px',
-                  alignItems: 'center',
-                  transition: 'all 0.16s ease',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = color
-                  e.currentTarget.style.transform = 'translateY(-2px)'
-                  e.currentTarget.style.boxShadow = `0 8px 24px ${color}1f`
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = 'var(--border)'
-                  e.currentTarget.style.transform = 'none'
-                  e.currentTarget.style.boxShadow = 'none'
-                }}
-              >
-                <div style={{ width: '54px', height: '54px', borderRadius: '10px', background: 'var(--bg)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  {failed ? (
-                    <span style={{ fontSize: '11px', color, fontFamily: 'JetBrains Mono, monospace', fontWeight: 700 }}>
-                      {icon.displayName?.slice(0, 2)?.toUpperCase() || icon.name.slice(0, 2).toUpperCase()}
-                    </span>
-                  ) : (
-                    <img
-                      src={src}
-                      alt={icon.name}
-                      title={`${icon.name} from ${icon.libraryName}`}
-                      width={25}
-                      height={25}
-                      style={{ filter: 'invert(1) brightness(0.95)', opacity: 0.9 }}
-                      onError={() => onPreviewError(icon)}
-                    />
-                  )}
-                </div>
-                <div style={{ textAlign: 'center', width: '100%' }}>
-                  <div style={{ color: 'var(--text)', fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{icon.name}</div>
-                  <div style={{ color, fontSize: '9px', textTransform: 'uppercase', letterSpacing: '0.4px', marginTop: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                    {icon.libraryName}
-                  </div>
-                  <div style={{
-                    marginTop: '6px',
-                    fontSize: '8px',
-                    fontFamily: 'JetBrains Mono, monospace',
-                    borderRadius: '999px',
-                    padding: '2px 6px',
-                    display: 'inline-block',
-                    background: icon.legalSafe ? 'rgba(52,211,153,0.15)' : 'rgba(248,113,113,0.15)',
-                    border: `1px solid ${icon.legalSafe ? 'rgba(52,211,153,0.55)' : 'rgba(248,113,113,0.55)'}`,
-                    color: icon.legalSafe ? '#34d399' : '#f87171',
-                  }}>
-                    {icon.legalSafe ? 'legal-safe' : 'restricted'}
-                  </div>
-                </div>
-              </button>
+                icon={icon}
+                color={color}
+                isSelected={selectedIcon?.id === icon.id}
+                onSelect={() => setSelectedIcon(icon)}
+              />
             )
           })}
         </div>

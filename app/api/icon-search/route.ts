@@ -73,6 +73,27 @@ function loadIcons() {
           const compName = toPascalCase(icon.name) + 'Icon'
           icon.reactImport = `import { ${compName} } from '@primer/octicons-react'`
           icon.reactUsage = `<${compName} size={16} />`
+        } else if (icon.library === 'iconify-ant-design') {
+          icon.library = 'ant-design-icons'
+          icon.libraryName = 'Ant Design Icons'
+          icon.npmPackage = '@ant-design/icons'
+          
+          // Determine variant for React import based on name
+          let suffix = 'Outlined'
+          if (icon.name.endsWith('-fill') || icon.name.endsWith('-filled')) {
+            suffix = 'Filled'
+            icon.name = icon.name.replace(/-filled?$/, '')
+          } else if (icon.name.endsWith('-twotone') || icon.name.endsWith('-two-tone')) {
+            suffix = 'TwoTone'
+            icon.name = icon.name.replace(/-two-tone$/, '').replace(/-twotone$/, '')
+          } else if (icon.name.endsWith('-outline') || icon.name.endsWith('-outlined')) {
+            suffix = 'Outlined'
+            icon.name = icon.name.replace(/-outlined?$/, '')
+          }
+          
+          const compName = toPascalCase(icon.name) + suffix
+          icon.reactImport = `import { ${compName} } from '@ant-design/icons'`
+          icon.reactUsage = `<${compName} style={{ fontSize: '24px' }} />`
         }
       })
 
@@ -275,6 +296,7 @@ export async function GET(request: Request) {
     const LIBRARY_POPULARITY: Record<string, number> = {
       'lucide-icons': 10,
       'heroicons': 9,
+      'ant-design-icons': 8.5,
       'tabler-icons': 8,
       'phosphor-icons': 7,
       'remix-icon': 6,
