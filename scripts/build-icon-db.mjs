@@ -463,6 +463,269 @@ try {
   console.log('Iconoir error:', e.message)
 }
 
+// ─── 10. TEENYICONS ───────────────────────────────────────────
+console.log('Processing Teenyicons...')
+try {
+  const teenyDir = findDir([
+    'node_modules/teenyicons/outline',
+    'node_modules/teenyicons/solid',
+  ])
+
+  if (teenyDir) {
+    console.log('  Found at:', teenyDir)
+    const files = readdirSync(teenyDir).filter(f => f.endsWith('.svg'))
+    for (const file of files) {
+      const name = file.replace(/\.svg$/, '')
+      const componentName = name.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join('')
+      output.push({
+        id: `teenyicons-${name}`,
+        name,
+        displayName: componentName,
+        library: 'teenyicons',
+        libraryName: 'Teenyicons',
+        npmPackage: 'teenyicons',
+        license: 'MIT',
+        tags: toTags(name),
+        reactImport: `import { ${componentName} } from 'teenyicons'`,
+        reactUsage: `<${componentName} className="w-4 h-4" />`,
+        svgUrl: `https://raw.githubusercontent.com/teenyicons/teenyicons/master/outline/${name}.svg`,
+      })
+    }
+    console.log(`✓ Teenyicons: ${files.length} icons`)
+  } else {
+    console.log('  Teenyicons not found locally, trying to fetch from GitHub CDN/jsDelivr list...')
+    try {
+      const res = await fetch('https://cdn.jsdelivr.net/npm/@iconify-json/teenyicons@latest/icons.json')
+      if (res.ok) {
+        const data = await res.json()
+        let tCount = 0
+        if (data && data.icons) {
+          for (const [name, icon] of Object.entries(data.icons)) {
+            const componentName = name.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join('')
+            output.push({
+              id: `teenyicons-${name}`,
+              name,
+              displayName: componentName,
+              library: 'teenyicons',
+              libraryName: 'Teenyicons',
+              npmPackage: 'teenyicons',
+              license: 'MIT',
+              tags: toTags(name),
+              reactImport: `import { ${componentName} } from 'teenyicons'`,
+              reactUsage: `<${componentName} className="w-4 h-4" />`,
+              svgUrl: `https://raw.githubusercontent.com/teenyicons/teenyicons/master/outline/${name}.svg`,
+            })
+            tCount++
+          }
+        }
+        console.log(`✓ Teenyicons (CDN): ${tCount} icons`)
+      } else {
+        console.log('  Failed to fetch Teenyicons json from jsdelivr')
+      }
+    } catch (cdnErr) {
+      console.log('  Teenyicons CDN fetch failed:', cdnErr.message)
+    }
+  }
+} catch (e) {
+  console.log('Teenyicons error:', e.message)
+}
+
+// ─── 11. CIRCUM ICONS ─────────────────────────────────────────
+console.log('Processing Circum Icons...')
+try {
+  const circumDir = findDir([
+    'node_modules/circum-icons/svg',
+  ])
+
+  if (circumDir) {
+    console.log('  Found at:', circumDir)
+    const files = readdirSync(circumDir).filter(f => f.endsWith('.svg'))
+    for (const file of files) {
+      const name = file.replace(/\.svg$/, '')
+      const componentName = name.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join('')
+      output.push({
+        id: `circum-${name}`,
+        name,
+        displayName: componentName,
+        library: 'circum-icons',
+        libraryName: 'Circum Icons',
+        npmPackage: 'circum-icons',
+        license: 'MPL-2.0',
+        tags: toTags(name),
+        reactImport: `import { ${componentName} } from 'circum-icons'`,
+        reactUsage: `<${componentName} size={24} />`,
+        svgUrl: `https://raw.githubusercontent.com/klaufel/circum-icons/main/svg/${name}.svg`,
+      })
+    }
+    console.log(`✓ Circum Icons: ${files.length} icons`)
+  } else {
+    console.log('  Circum Icons not found locally, trying to fetch from GitHub CDN/jsDelivr list...')
+    try {
+      const res = await fetch('https://cdn.jsdelivr.net/npm/@iconify-json/circum@latest/icons.json')
+      if (res.ok) {
+        const data = await res.json()
+        let cCount = 0
+        if (data && data.icons) {
+          for (const [name, icon] of Object.entries(data.icons)) {
+            const componentName = name.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join('')
+            output.push({
+              id: `circum-${name}`,
+              name,
+              displayName: componentName,
+              library: 'circum-icons',
+              libraryName: 'Circum Icons',
+              npmPackage: 'circum-icons',
+              license: 'MPL-2.0',
+              tags: toTags(name),
+              reactImport: `import { ${componentName} } from 'circum-icons'`,
+              reactUsage: `<${componentName} size={24} />`,
+              svgUrl: `https://raw.githubusercontent.com/klaufel/circum-icons/main/svg/${name}.svg`,
+            })
+            cCount++
+          }
+        }
+        console.log(`✓ Circum Icons (CDN): ${cCount} icons`)
+      } else {
+        console.log('  Failed to fetch Circum Icons json from jsdelivr')
+      }
+    } catch (cdnErr) {
+      console.log('  Circum Icons CDN fetch failed:', cdnErr.message)
+    }
+  }
+} catch (e) {
+  console.log('Circum Icons error:', e.message)
+}
+
+// ─── 12. ELUSIVE ICONS ────────────────────────────────────────
+console.log('Processing Elusive Icons...')
+try {
+  const elusiveDir = findDir([
+    'node_modules/elusive-icons/dev/svg',
+    'node_modules/elusive-icons/svg',
+  ])
+
+  if (elusiveDir) {
+    console.log('  Found at:', elusiveDir)
+    const files = readdirSync(elusiveDir).filter(f => f.endsWith('.svg'))
+    for (const file of files) {
+      const name = file.replace(/\.svg$/, '')
+      const componentName = name.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join('')
+      output.push({
+        id: `elusive-${name}`,
+        name,
+        displayName: componentName,
+        library: 'elusive-icons',
+        libraryName: 'Elusive Icons',
+        npmPackage: 'elusive-icons',
+        license: 'OFL-1.1',
+        tags: toTags(name),
+        reactImport: `// Use via SVG or Iconify component`,
+        reactUsage: `<iconify-icon icon="el:${name}"></iconify-icon>`,
+        svgUrl: `https://raw.githubusercontent.com/dovy/elusive-icons/master/dev/svg/${name}.svg`,
+      })
+    }
+    console.log(`✓ Elusive Icons: ${files.length} icons`)
+  } else {
+    console.log('  Elusive Icons not found locally, trying to fetch from GitHub CDN/jsDelivr list...')
+    try {
+      const res = await fetch('https://cdn.jsdelivr.net/npm/@iconify-json/el@latest/icons.json')
+      if (res.ok) {
+        const data = await res.json()
+        let eCount = 0
+        if (data && data.icons) {
+          for (const [name, icon] of Object.entries(data.icons)) {
+            const componentName = name.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join('')
+            output.push({
+              id: `elusive-${name}`,
+              name,
+              displayName: componentName,
+              library: 'elusive-icons',
+              libraryName: 'Elusive Icons',
+              npmPackage: 'elusive-icons',
+              license: 'OFL-1.1',
+              tags: toTags(name),
+              reactImport: `// Use via SVG or Iconify component`,
+              reactUsage: `<iconify-icon icon="el:${name}"></iconify-icon>`,
+              svgUrl: `https://raw.githubusercontent.com/dovy/elusive-icons/master/dev/svg/${name}.svg`,
+            })
+            eCount++
+          }
+        }
+        console.log(`✓ Elusive Icons (CDN): ${eCount} icons`)
+      } else {
+        console.log('  Failed to fetch Elusive Icons json from jsdelivr')
+      }
+    } catch (cdnErr) {
+      console.log('  Elusive Icons CDN fetch failed:', cdnErr.message)
+    }
+  }
+} catch (e) {
+  console.log('Elusive Icons error:', e.message)
+}
+
+// ─── 13. DEVICONS (fetched from GitHub CDN) ──────────────────
+console.log('Processing Devicons...')
+try {
+  // Devicon publishes a JSON manifest on GitHub with all icon metadata
+  const deviconsJsonPath = join(root, 'node_modules/devicon/devicon.json')
+  let deviconsManifest = null
+
+  if (existsSync(deviconsJsonPath)) {
+    // If devicon is installed locally via npm
+    deviconsManifest = JSON.parse(readFileSync(deviconsJsonPath, 'utf-8'))
+    console.log('  Found local devicon package')
+  } else {
+    // Fallback: try to fetch from CDN at build time
+    console.log('  devicon not in node_modules — trying CDN fetch...')
+    try {
+      const resp = await fetch('https://raw.githubusercontent.com/devicons/devicon/master/devicon.json')
+      if (resp.ok) {
+        deviconsManifest = await resp.json()
+        console.log('  Fetched devicon.json from GitHub')
+      }
+    } catch (fetchErr) {
+      console.log('  CDN fetch failed:', fetchErr.message)
+    }
+  }
+
+  if (deviconsManifest && Array.isArray(deviconsManifest)) {
+    let devCount = 0
+    for (const icon of deviconsManifest) {
+      const name = icon.name
+      if (!name) continue
+      // Pick the best SVG variant: prefer "original", fallback to "plain", then "line"
+      const svgVariants = icon.versions?.svg || []
+      const bestVariant = svgVariants.includes('original') ? 'original'
+        : svgVariants.includes('plain') ? 'plain'
+        : svgVariants.includes('line') ? 'line'
+        : svgVariants[0] || 'original'
+
+      const displayName = name.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(' ')
+      const tags = [...(icon.tags || []), ...(icon.altnames || []), name].map(t => t.toLowerCase())
+
+      output.push({
+        id: `devicons-${name}`,
+        name,
+        displayName,
+        library: 'devicons',
+        libraryName: 'Devicons',
+        npmPackage: 'devicon',
+        license: 'MIT',
+        tags,
+        reactImport: `<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css" />`,
+        reactUsage: `<i className="devicon-${name}-${bestVariant} colored"></i>`,
+        svgUrl: `https://cdn.jsdelivr.net/gh/devicons/devicon/icons/${name}/${name}-${bestVariant}.svg`,
+      })
+      devCount++
+    }
+    console.log(`✓ Devicons: ${devCount} icons`)
+  } else {
+    console.log('  Devicons manifest not available')
+  }
+} catch (e) {
+  console.log('Devicons error:', e.message)
+}
+
 // ─── WRITE OUTPUT ─────────────────────────────────────────────
 const outputPath = join(root, 'data/icon-search.json')
 const publicPath = join(root, 'public/icon-search.json')

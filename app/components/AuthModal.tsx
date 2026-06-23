@@ -33,7 +33,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
       return
     }
 
-    const supabase = createClient()
+    const supabase = await createClient()
     if (!supabase) {
       setErrorMsg('Failed to initialize Supabase client.')
       return
@@ -93,7 +93,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
       return
     }
 
-    const supabase = createClient()
+    const supabase = await createClient()
     if (!supabase) return
 
     try {

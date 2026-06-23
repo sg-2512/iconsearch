@@ -87,6 +87,18 @@ Clicking any icon opens a full customization panel:
 - Code snippet: auto-generated import statement (e.g., `import { Icon } from '@iconify/react'<Icon icon="bi:0-c..."`)
 - "Add to Cart" button — adds the icon with its current custom settings to the active Workspace Cart
 
+### Individual Icon Detail Pages
+Every icon in the 350,000+ registry has a dedicated standalone page:
+- URL Pattern: `https://iconsearch.info/icons/[library-slug]/[icon-name]`
+- Example: `https://iconsearch.info/icons/lucide-icons/home`
+- Features:
+  - Clean fullscreen view of the icon with live interactive customizer (adjust size, color, stroke weight)
+  - Copy snippets for Raw SVG, React Component (JSX), and Base64 format
+  - Direct download buttons for SVG and PNG formats (with PNG scale multiplier)
+  - "Icons in Action" (Bento grid showcase): preview the icon inside browser web app mockups, mobile action buttons, progress steppers, and at varying pixel sizes (12px to 48px)
+  - Related Icons: see alternative matching icons from the same library
+  - Full SEO optimization with custom titles, descriptions, and structured JSON-LD data
+
 ### Workspace Cart System (Left Panel)
 - Active Workspace Pack selector — shows current pack name and icon count (e.g., "Dashboard Pack (0)")
 - Create New Icon Pack modal: enter a custom name (e.g., "Dashboard Icons", "Landing Page Pack")

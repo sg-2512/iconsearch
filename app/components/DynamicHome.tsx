@@ -1692,7 +1692,7 @@ export default function DynamicHome({ initialLibraries, recentItems }: DynamicHo
           </h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {recentItems.map(link => (
-              <a 
+              <Link
                 key={link.href} 
                 href={link.href} 
                 style={{ 
@@ -1719,7 +1719,7 @@ export default function DynamicHome({ initialLibraries, recentItems }: DynamicHo
               >
                 <span>{link.label}</span>
                 <span style={{ color: 'var(--accent)' }}>→</span>
-              </a>
+              </Link>
             ))}
           </div>
         </section>

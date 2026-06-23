@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IconSearch</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: var(--figma-color-bg, #ffffff);
+      --bg-secondary: var(--figma-color-bg-secondary, #f5f5f5);
+      --text: var(--figma-color-text, #1a1a1a);
+      --text-secondary: var(--figma-color-text-secondary, #666666);
+      --text-dim: var(--figma-color-text-tertiary, #999999);
+      --border: var(--figma-color-border, #e5e5e5);
+      --accent: #000000;
+      --accent-hover: #333333;
+      --sidebar-width: 44px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      overflow: hidden;
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      font-size: 12px;
+    }
+
+    /* ===== SIDEBAR ===== */
+    .sidebar {
+      width: var(--sidebar-width);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 10px;
+      gap: 6px;
+      flex-shrink: 0;
+      background: var(--bg);
+    }
+
+    .sidebar-logo {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #818cf8, #6366f1);
+      display: grid;
+      place-items: center;
+      color: white;
+      font-weight: 800;
+      font-size: 11px;
+      margin-bottom: 6px;
+      letter-spacing: -0.5px;
+    }
+
+    .nav-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      color: var(--text-dim);
+      transition: all 0.15s ease;
+    }
+
+    .nav-btn:hover {
+      background-color: var(--bg-secondary);
+      color: var(--text);
+    }
+
+    .nav-btn.active {
+      background-color: var(--bg-secondary);
+      color: var(--text);
+    }
+
+    .nav-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* ===== MAIN CONTENT ===== */
+    .content-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+      min-width: 0;
+    }
+
+    /* ===== HEADER / SEARCH ===== */
+    .header {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      background: var(--bg);
+      z-index: 5;
+    }
+
+    .search-wrapper {
+      display: flex;
+      align-items: center;
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0 10px;
+      height: 32px;
+      gap: 8px;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .search-wrapper:focus-within {
+      border-color: #818cf8;
+      box-shadow: 0 0 0 2px rgba(129, 140, 248, 0.15);
+    }
+
+    .search-icon {
+      color: var(--text-dim);
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
+    }
+
+    .search-input {
+      border: none;
+      background: transparent;
+      outline: none;
+      color: var(--text);
+      font-size: 12px;
+      flex: 1;
+      width: 100%;
+      font-family: inherit;
+    }
+
+    .search-input::placeholder {
+      color: var(--text-dim);
+    }
+
+    /* Filter row */
+    .filter-row {
+      display: flex;
+      gap: 6px;
+    }
+
+    .filter-select {
+      flex: 1;
+      height: 28px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background-color: var(--bg-secondary);
+      color: var(--text);
+      font-size: 11px;
+      padding: 0 8px;
+      outline: none;
+      cursor: pointer;
+      font-family: inherit;
+      transition: border-color 0.15s;
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 8px center;
+      background-size: 10px;
+      padding-right: 24px;
+    }
+
+    .filter-select:focus {
+      border-color: #818cf8;
+    }
+
+    .filter-select option {
+      background-color: var(--bg);
+      color: var(--text);
+    }
+
+    /* ===== SCROLL CONTAINER ===== */
+    .scroll-container {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 0;
+    }
+
+    .scroll-container::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .scroll-container::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .scroll-container::-webkit-scrollbar-thumb {
+      background-color: rgba(0,0,0,0.15);
+      border-radius: 3px;
+    }
+
+    /* ===== LIBRARY SET SECTION ===== */
+    .lib-section {
+      padding: 0 12px;
+      margin-bottom: 4px;
+    }
+
+    .lib-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0 6px;
+      position: sticky;
+      top: 0;
+      background: var(--bg);
+      z-index: 2;
+    }
+
+    .lib-name {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.1px;
+    }
+
+    .lib-count {
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--text-dim);
+      background: var(--bg-secondary);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .lib-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 0 12px;
+    }
+
+    /* ===== ICON GRID ===== */
+    .icon-grid {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 2px;
+      padding-bottom: 4px;
+    }
+
+    .icon-item {
+      aspect-ratio: 1;
+      border-radius: 6px;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      background: transparent;
+      border: 1.5px solid transparent;
+      transition: all 0.12s ease;
+      position: relative;
+    }
+
+    .icon-item:hover {
+      background-color: var(--bg-secondary);
+      border-color: var(--border);
+    }
+
+    .icon-item.selected {
+      background-color: #eef2ff;
+      border-color: #818cf8;
+    }
+
+    .icon-item img {
+      width: 20px;
+      height: 20px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .icon-item img.loaded {
+      opacity: 1;
+    }
+
+    /* ===== LOADING SKELETON ===== */
+    .skeleton-grid {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 2px;
+      padding: 0 12px 8px;
+    }
+
+    .skeleton-item {
+      aspect-ratio: 1;
+      border-radius: 6px;
+      background: linear-gradient(110deg, var(--bg-secondary) 30%, #ececec 50%, var(--bg-secondary) 70%);
+      background-size: 200% 100%;
+      animation: shimmer 1.2s ease-in-out infinite;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* ===== EMPTY STATE ===== */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      text-align: center;
+      color: var(--text-dim);
+    }
+
+    .empty-state-icon {
+      width: 40px;
+      height: 40px;
+      margin-bottom: 12px;
+      opacity: 0.3;
+    }
+
+    .empty-state h3 {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+
+    .empty-state p {
+      font-size: 11px;
+      line-height: 1.5;
+      max-width: 200px;
+    }
+
+    /* ===== PREVIEW CARD ===== */
+    .preview-card {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.06);
+      transform: translateY(100%);
+      transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 10;
+    }
+
+    .preview-card.show {
+      transform: translateY(0);
+    }
+
+    .preview-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .preview-icon-box {
+      width: 32px;
+      height: 32px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      background: var(--bg-secondary);
+    }
+
+    .preview-icon-box img {
+      width: 18px;
+      height: 18px;
+    }
+
+    .preview-details {
+      min-width: 0;
+    }
+
+    .preview-name {
+      font-size: 11px;
+      font-weight: 700;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: var(--text);
+    }
+
+    .preview-pack {
+      font-size: 9.5px;
+      color: var(--text-dim);
+      margin-top: 1px;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+
+    .btn {
+      height: 28px;
+      padding: 0 10px;
+      border-radius: 6px;
+      font-size: 10.5px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s ease;
+      font-family: inherit;
+    }
+
+    .btn-insert {
+      background: var(--accent);
+      color: white;
+    }
+
+    .btn-insert:hover {
+      background: var(--accent-hover);
+    }
+
+    .btn-save {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .btn-save:hover {
+      background: var(--border);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* ===== STATUS BAR ===== */
+    .status-bar {
+      padding: 4px 12px;
+      font-size: 9.5px;
+      color: var(--text-dim);
+      border-top: 1px solid var(--border);
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #22c55e;
+    }
+
+    .status-dot.loading {
+      background: #f59e0b;
+      animation: pulse 1s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">IS</div>
+    <button class="nav-btn active" data-tab="search" title="Browse Icons">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+    </button>
+    <button class="nav-btn" data-tab="saved" title="Saved Icons">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
+    </button>
+    <button class="nav-btn" data-tab="info" title="About">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+    </button>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="content-area">
+    <!-- Header -->
+    <header class="header" id="searchHeader">
+      <div class="search-wrapper">
+        <svg class="search-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <input type="text" id="searchInput" class="search-input" placeholder="Search 350,000+ Open Source Icons" autocomplete="off">
+      </div>
+      <div class="filter-row">
+        <select id="libraryFilter" class="filter-select">
+          <option value="all">All Libraries</option>
+        </select>
+        <select id="styleFilter" class="filter-select">
+          <option value="all">All Styles</option>
+          <option value="stroke">Outline</option>
+          <option value="solid">Solid</option>
+          <option value="duotone">Duotone</option>
+          <option value="twotone">Two Tone</option>
+          <option value="sharp">Sharp</option>
+        </select>
+      </div>
+    </header>
+
+    <!-- Scrollable content -->
+    <div class="scroll-container" id="scrollContainer">
+      <!-- Search tab -->
+      <section id="tab-search">
+        <div id="searchResults"></div>
+      </section>
+
+      <!-- Saved tab -->
+      <section id="tab-saved" class="hidden">
+        <div class="lib-section">
+          <div class="lib-header">
+            <span class="lib-name">Saved Icons</span>
+          </div>
+          <div class="icon-grid" id="savedGrid"></div>
+        </div>
+        <div class="empty-state" id="savedEmptyState">
+          <svg class="empty-state-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
+          <h3>No saved icons</h3>
+          <p>Click "Save" on any icon to bookmark it here for quick access.</p>
+        </div>
+      </section>
+
+      <!-- Info tab -->
+      <section id="tab-info" class="hidden">
+        <div class="empty-state" style="padding-top: 24px;">
+          <div class="sidebar-logo" style="width: 40px; height: 40px; font-size: 15px; margin-bottom: 12px;">IS</div>
+          <h3 style="font-size: 14px; margin-bottom: 8px;">IconSearch for Figma</h3>
+          <p style="max-width: 240px; margin-bottom: 16px;">Browse and insert 350,000+ open source vector icons directly into your Figma designs.</p>
+          <div style="text-align: left; font-size: 10.5px; background: var(--bg-secondary); padding: 10px 12px; border-radius: 8px; line-height: 1.7; color: var(--text-secondary);">
+            <strong style="color: var(--text);">Features</strong><br>
+            • Insert as native Figma vectors<br>
+            • 20+ icon libraries<br>
+            • Search by name or keyword<br>
+            • Filter by library and style<br>
+            • Bookmark favorite icons
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Status bar -->
+    <div class="status-bar" id="statusBar">
+      <span class="status-dot" id="statusDot"></span>
+      <span id="statusText">Ready</span>
+    </div>
+
+    <!-- Preview/Action Card -->
+    <footer class="preview-card" id="previewCard">
+      <div class="preview-meta">
+        <div class="preview-icon-box" id="previewIconBox">
+          <img src="" alt="" id="previewImg">
+        </div>
+        <div class="preview-details">
+          <div class="preview-name" id="previewName"></div>
+          <div class="preview-pack" id="previewPack"></div>
+        </div>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-save" id="saveBtn">Save</button>
+        <button class="btn btn-insert" id="insertBtn">Insert</button>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    // ===== CONFIGURATION =====
+    let currentBaseUrl = 'http://localhost:3000';
+
+    // Automatic API fetcher with fallback
+    async function apiFetch(queryParams) {
+      try {
+        const res = await fetch(`http://localhost:3000/api/icon-search${queryParams}`);
+        if (res.ok) {
+          currentBaseUrl = 'http://localhost:3000';
+          return res;
+        }
+      } catch (err) {
+        console.warn('Localhost API failed, trying production fallback...', err);
+      }
+
+      currentBaseUrl = 'https://iconsearch.info';
+      return await fetch(`https://iconsearch.info/api/icon-search${queryParams}`);
+    }
+
+    // All icon library sets — matches Sidebar.tsx + iconify sets
+    const ALL_LIBRARIES = [
+      { id: 'lucide-icons',     name: 'Lucide Icons',        color: '#818cf8' },
+      { id: 'heroicons',        name: 'Heroicons',           color: '#38bdf8' },
+      { id: 'tabler-icons',     name: 'Tabler Icons',        color: '#34d399' },
+      { id: 'phosphor-icons',   name: 'Phosphor Icons',      color: '#f472b6' },
+      { id: 'remix-icon',       name: 'Remix Icon',          color: '#fb923c' },
+      { id: 'feather-icons',    name: 'Feather Icons',       color: '#a78bfa' },
+      { id: 'bootstrap-icons',  name: 'Bootstrap Icons',     color: '#a855f7' },
+      { id: 'radix-icons',      name: 'Radix Icons',         color: '#fbbf24' },
+      { id: 'iconoir',          name: 'Iconoir',             color: '#f87171' },
+      { id: 'ionicons',         name: 'IonIcons',            color: '#2dd4bf' },
+      { id: 'octicons',         name: 'Octicons',            color: '#94a3b8' },
+      { id: 'ant-design-icons', name: 'Ant Design Icons',    color: '#60a5fa' },
+      { id: 'iconify-mage',     name: 'Mage Icons',          color: '#e879f9' },
+      { id: 'iconify-la',       name: 'Line Awesome',        color: '#22d3ee' },
+      { id: 'iconify-solar',    name: 'Solar Icons',         color: '#fbbf24' },
+      { id: 'iconify-fluent',   name: 'Fluent UI Icons',     color: '#38bdf8' },
+      { id: 'iconify-material-symbols', name: 'Material Symbols', color: '#4ade80' },
+      { id: 'iconify-carbon',   name: 'Carbon Icons',        color: '#94a3b8' },
+      { id: 'iconify-ic',       name: 'Google Material',     color: '#34d399' },
+      { id: 'iconify-bi',       name: 'BoxIcons',            color: '#fb923c' },
+      { id: 'devicons',          name: 'Devicons',            color: '#60a5fa' },
+      { id: 'teenyicons',        name: 'Teenyicons',          color: '#fb7185' },
+      { id: 'circum-icons',      name: 'Circum Icons',        color: '#818cf8' },
+      { id: 'elusive-icons',     name: 'Elusive Icons',       color: '#38bdf8' },
+    ];
+
+    const STARTUP_SETS = [
+      { id: 'iconify-mage',      name: 'Mage Icons',          count: 1042,   color: '#e879f9' },
+      { id: 'heroicons',         name: 'Heroicons',           count: 1176,   color: '#38bdf8' },
+      { id: 'iconify-la',        name: 'Line Awesome',        count: 1554,   color: '#22d3ee' },
+      { id: 'lucide-icons',      name: 'Lucide Icons',        count: 1959,   color: '#818cf8' },
+      { id: 'tabler-icons',      name: 'Tabler Icons',        count: 6146,   color: '#34d399' },
+      { id: 'remix-icon',        name: 'Remix Icon',          count: 3229,   color: '#fb923c' },
+      { id: 'phosphor-icons',    name: 'Phosphor Icons',      count: 1533,   color: '#f472b6' },
+      { id: 'feather-icons',     name: 'Feather Icons',       count: 287,    color: '#a78bfa' },
+      { id: 'bootstrap-icons',   name: 'Bootstrap Icons',     count: 2078,   color: '#a855f7' },
+      { id: 'radix-icons',       name: 'Radix Icons',         count: 318,    color: '#fbbf24' },
+      { id: 'iconoir',           name: 'Iconoir',             count: 1384,   color: '#f87171' },
+      { id: 'ionicons',          name: 'IonIcons',            count: 1300,   color: '#2dd4bf' },
+      { id: 'octicons',          name: 'Octicons',            count: 280,    color: '#94a3b8' },
+      { id: 'ant-design-icons',  name: 'Ant Design Icons',    count: 840,    color: '#60a5fa' },
+      { id: 'iconify-solar',     name: 'Solar Icons',         count: 7400,   color: '#fbbf24' },
+      { id: 'iconify-fluent',    name: 'Fluent UI Icons',     count: 4000,   color: '#38bdf8' },
+      { id: 'iconify-material-symbols', name: 'Material Symbols', count: 3000, color: '#4ade80' },
+      { id: 'iconify-carbon',    name: 'Carbon Icons',        count: 2000,   color: '#94a3b8' },
+      { id: 'iconify-ic',        name: 'Google Material',     count: 2100,   color: '#34d399' },
+      { id: 'iconify-bi',        name: 'BoxIcons',            count: 1600,   color: '#fb923c' },
+      { id: 'devicons',           name: 'Devicons',            count: 800,    color: '#60a5fa' },
+      { id: 'teenyicons',         name: 'Teenyicons',          count: 1200,   color: '#fb7185' },
+      { id: 'circum-icons',       name: 'Circum Icons',        count: 288,    color: '#818cf8' },
+      { id: 'elusive-icons',      name: 'Elusive Icons',       count: 304,    color: '#38bdf8' },
+    ];
+
+    const BATCH_SIZE = 48; // Render progressively to keep it extremely fast
+
+    // ===== DOM REFERENCES =====
+    const searchInput = document.getElementById('searchInput');
+    const searchResults = document.getElementById('searchResults');
+    const scrollContainer = document.getElementById('scrollContainer');
+    const previewCard = document.getElementById('previewCard');
+    const previewImg = document.getElementById('previewImg');
+    const previewName = document.getElementById('previewName');
+    const previewPack = document.getElementById('previewPack');
+    const insertBtn = document.getElementById('insertBtn');
+    const saveBtn = document.getElementById('saveBtn');
+    const libraryFilter = document.getElementById('libraryFilter');
+    const styleFilter = document.getElementById('styleFilter');
+    const savedGrid = document.getElementById('savedGrid');
+    const savedEmptyState = document.getElementById('savedEmptyState');
+    const statusDot = document.getElementById('statusDot');
+    const statusText = document.getElementById('statusText');
+
+    // ===== STATE =====
+    let debounceTimer;
+    let selectedIcon = null;
+    let savedIcons = [];
+    let isLoading = false;
+    let libraryCounts = {};
+
+    // Progressive rendering state
+    let allGroupedData = {};
+    let groupKeysOrder = [];
+
+    // Load saved icons
+    try {
+      savedIcons = JSON.parse(localStorage.getItem('saved_icons') || '[]');
+    } catch (e) {
+      console.warn('localStorage blocked in sandbox.');
+    }
+
+    // ===== POPULATE LIBRARY FILTER =====
+    ALL_LIBRARIES.forEach(lib => {
+      const opt = document.createElement('option');
+      opt.value = lib.id;
+      opt.textContent = lib.name;
+      libraryFilter.appendChild(opt);
+    });
+
+    // ===== TAB SWITCHING =====
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const tab = btn.dataset.tab;
+        document.getElementById('tab-search').classList.toggle('hidden', tab !== 'search');
+        document.getElementById('tab-saved').classList.toggle('hidden', tab !== 'saved');
+        document.getElementById('tab-info').classList.toggle('hidden', tab !== 'info');
+        document.getElementById('searchHeader').classList.toggle('hidden', tab !== 'search');
+
+        if (tab === 'saved') renderSavedIcons();
+      });
+    });
+
+    // ===== STATUS HELPERS =====
+    function setStatus(text, loading = false) {
+      statusText.textContent = text;
+      statusDot.className = loading ? 'status-dot loading' : 'status-dot';
+    }
+
+    // ===== LOADING SKELETON =====
+    function showLoadingSkeleton(count = 4) {
+      let html = '';
+      for (let i = 0; i < count; i++) {
+        html += `
+          <div class="lib-section">
+            <div class="lib-header">
+              <span class="lib-name" style="background: var(--bg-secondary); color: transparent; border-radius: 4px; padding: 2px 40px;">Loading...</span>
+            </div>
+            <div class="skeleton-grid">
+              ${'<div class="skeleton-item"></div>'.repeat(16)}
+            </div>
+          </div>
+          <div class="lib-divider"></div>
+        `;
+      }
+      searchResults.innerHTML = html;
+    }
+
+    // ===== SEARCH LOGIC =====
+    searchInput.addEventListener('input', () => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => performSearch(), 300);
+    });
+
+    libraryFilter.addEventListener('change', () => performSearch());
+    styleFilter.addEventListener('change', () => performSearch());
+
+    // Scroll listener for progressive/lazy DOM rendering
+    scrollContainer.addEventListener('scroll', () => {
+      if (scrollContainer.scrollHeight - scrollContainer.scrollTop - scrollContainer.clientHeight < 240) {
+        renderNextBatch();
+      }
+    });
+
+    async function performSearch() {
+      if (isLoading) return;
+      isLoading = true;
+
+      const q = searchInput.value.trim();
+      const lib = libraryFilter.value;
+      const style = styleFilter.value;
+
+      if (q && q.length < 2) {
+        isLoading = false;
+        return;
+      }
+
+      showLoadingSkeleton(q ? 2 : 4);
+      setStatus('Searching...', true);
+
+      try {
+        let icons = [];
+
+        if (!q && lib === 'all') {
+          // ===== POPULAR BROWSE (Startup Mode) =====
+          // Batch 5 libraries at a time, render progressively as batches arrive
+          const BATCH_FETCH = 5;
+          // Initialize progressive rendering state early
+          allGroupedData = {};
+          groupKeysOrder = [];
+          searchResults.innerHTML = '';
+          scrollContainer.scrollTop = 0;
+
+          for (let b = 0; b < STARTUP_SETS.length; b += BATCH_FETCH) {
+            const batch = STARTUP_SETS.slice(b, b + BATCH_FETCH);
+            const batchResults = await Promise.all(batch.map(async (set) => {
+              let params = `?limit=24&lib=${set.id}&legalOnly=0`;
+              if (style !== 'all') params += `&style=${style}`;
+              try {
+                const res = await apiFetch(params);
+                const data = await res.json();
+                if (data.total) libraryCounts[set.id] = data.total;
+                return (data.icons || []).map(icon => ({
+                  ...icon,
+                  _setId: set.id,
+                  _setName: set.name,
+                  _setColor: set.color,
+                  _setTotal: set.count
+                }));
+              } catch (e) {
+                console.warn(`Failed to load ${set.name}:`, e);
+                return [];
+              }
+            }));
+
+            // Immediately group & render this batch
+            batchResults.forEach(list => {
+              list.forEach(icon => {
+                const key = icon._setId || icon.library;
+                if (!allGroupedData[key]) {
+                  const libInfo = ALL_LIBRARIES.find(l => l.id === key);
+                  const startupInfo = STARTUP_SETS.find(s => s.id === key);
+                  allGroupedData[key] = {
+                    icons: [],
+                    name: libInfo ? libInfo.name : (icon.libraryName || key),
+                    color: libInfo ? libInfo.color : '#818cf8',
+                    total: startupInfo ? startupInfo.count : (icon._setTotal || 0),
+                    renderedCount: 0,
+                    domGrid: null
+                  };
+                  groupKeysOrder.push(key);
+                }
+                allGroupedData[key].icons.push(icon);
+              });
+            });
+
+            // Render what we have so far
+            renderNextBatch();
+            setStatus(`Loaded ${Math.min(b + BATCH_FETCH, STARTUP_SETS.length)}/${STARTUP_SETS.length} libraries...`, b + BATCH_FETCH < STARTUP_SETS.length);
+          }
+
+          setStatus('Ready');
+          isLoading = false;
+          return;
+        } else {
+          // ===== TARGETED SEARCH / FILTER BROWSE =====
+          let params = `?limit=1500&sort=relevance&legalOnly=0`;
+          if (q) params += `&q=${encodeURIComponent(q)}`;
+          if (lib !== 'all') params += `&lib=${lib}`;
+          if (style !== 'all') params += `&style=${style}`;
+
+          const res = await apiFetch(params);
+          const data = await res.json();
+          icons = (data.icons || []).map(icon => {
+            const libInfo = ALL_LIBRARIES.find(l => l.id === icon.library);
+            return {
+              ...icon,
+              _setId: icon.library,
+              _setName: libInfo ? libInfo.name : (icon.libraryName || icon.library),
+              _setColor: libInfo ? libInfo.color : '#818cf8',
+              _setTotal: 0
+            };
+          });
+        }
+
+        if (icons.length === 0) {
+          searchResults.innerHTML = `
+            <div class="empty-state">
+              <svg class="empty-state-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+              <h3>No results found</h3>
+              <p>Try a different keyword or check your filters.</p>
+            </div>
+          `;
+          setStatus('No results');
+          isLoading = false;
+          return;
+        }
+
+        // Initialize progressive rendering state
+        allGroupedData = {};
+        groupKeysOrder = [];
+        searchResults.innerHTML = '';
+        scrollContainer.scrollTop = 0;
+
+        // Group icons in memory
+        icons.forEach(icon => {
+          const key = icon._setId || icon.library;
+          if (!allGroupedData[key]) {
+            const libInfo = ALL_LIBRARIES.find(l => l.id === key);
+            const startupInfo = STARTUP_SETS.find(s => s.id === key);
+            allGroupedData[key] = {
+              icons: [],
+              name: libInfo ? libInfo.name : (icon.libraryName || key),
+              color: libInfo ? libInfo.color : '#818cf8',
+              total: startupInfo ? startupInfo.count : (icon._setTotal || 0),
+              renderedCount: 0,
+              domGrid: null
+            };
+            groupKeysOrder.push(key);
+          }
+          allGroupedData[key].icons.push(icon);
+        });
+
+        // Run the first rendering pass
+        renderNextBatch();
+        setStatus('Ready');
+      } catch (err) {
+        console.error('Search error:', err);
+        searchResults.innerHTML = `
+          <div class="empty-state">
+            <svg class="empty-state-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+            <h3>Connection Error</h3>
+            <p>Please check your internet connection or verify the server.</p>
+          </div>
+        `;
+        setStatus('Error loading icons');
+      } finally {
+        isLoading = false;
+      }
+    }
+
+    // ===== PROGRESSIVE BATCH RENDERER =====
+    function renderNextBatch() {
+      let renderedSomething = false;
+      const q = searchInput.value.trim();
+
+      groupKeysOrder.forEach(key => {
+        const group = allGroupedData[key];
+        if (group.renderedCount >= group.icons.length) return;
+
+        let section = document.getElementById(`sec-${key}`);
+        let grid = group.domGrid;
+
+        if (!section) {
+          section = document.createElement('div');
+          section.className = 'lib-section';
+          section.id = `sec-${key}`;
+
+          // Section header
+          const header = document.createElement('div');
+          header.className = 'lib-header';
+          header.style.cursor = 'pointer';
+
+          const nameEl = document.createElement('span');
+          nameEl.className = 'lib-name';
+          nameEl.textContent = group.name;
+
+          const countEl = document.createElement('span');
+          countEl.className = 'lib-count';
+
+          const isSearching = !!q;
+          const displayCount = isSearching ? group.icons.length : (group.total || group.icons.length);
+          countEl.textContent = displayCount.toLocaleString();
+
+          header.appendChild(nameEl);
+          header.appendChild(countEl);
+          section.appendChild(header);
+
+          // Add hover and click interactions to navigate to library
+          header.addEventListener('mouseover', () => {
+            nameEl.style.textDecoration = 'underline';
+          });
+          header.addEventListener('mouseout', () => {
+            nameEl.style.textDecoration = 'none';
+          });
+          header.addEventListener('click', () => {
+            libraryFilter.value = key;
+            performSearch();
+          });
+
+          grid = document.createElement('div');
+          grid.className = 'icon-grid';
+          group.domGrid = grid;
+          section.appendChild(grid);
+
+          searchResults.appendChild(section);
+
+          // Divider
+          const divider = document.createElement('div');
+          divider.className = 'lib-divider';
+          divider.id = `div-${key}`;
+          searchResults.appendChild(divider);
+        }
+
+        // Render next slice of icons
+        const start = group.renderedCount;
+        const end = Math.min(start + BATCH_SIZE, group.icons.length);
+
+        for (let i = start; i < end; i++) {
+          const icon = group.icons[i];
+          const item = document.createElement('div');
+          item.className = 'icon-item';
+          item.title = icon.name;
+
+          const svgUrl = icon.svgUrl || (icon.previewUrls && icon.previewUrls[0]) || '';
+
+          const img = document.createElement('img');
+          img.src = svgUrl;
+          img.loading = 'lazy';
+          img.alt = icon.name;
+          img.onload = function() { this.classList.add('loaded'); };
+          img.onerror = function() { this.style.display = 'none'; };
+          item.appendChild(img);
+
+          item.addEventListener('click', (e) => {
+            e.stopPropagation();
+            document.querySelectorAll('.icon-item.selected').forEach(el => el.classList.remove('selected'));
+            item.classList.add('selected');
+            selectIcon(icon, svgUrl);
+          });
+
+          grid.appendChild(item);
+        }
+
+        group.renderedCount = end;
+        renderedSomething = true;
+      });
+
+      return renderedSomething;
+    }
+
+    // Initial load
+    performSearch();
+
+    // ===== PREVIEW CARD CONTROL =====
+    function selectIcon(icon, url) {
+      selectedIcon = { ...icon, resolvedUrl: url };
+
+      previewImg.src = url;
+      previewName.textContent = icon.name;
+      previewPack.textContent = `${icon._setName || icon.libraryName || icon.library}`;
+
+      const isSaved = savedIcons.some(item => item.name === icon.name && item.library === icon.library);
+      saveBtn.textContent = isSaved ? '✓ Saved' : 'Save';
+
+      previewCard.classList.add('show');
+    }
+
+    document.addEventListener('click', (e) => {
+      if (!previewCard.contains(e.target) && !e.target.closest('.icon-item')) {
+        previewCard.classList.remove('show');
+        document.querySelectorAll('.icon-item.selected').forEach(el => el.classList.remove('selected'));
+        selectedIcon = null;
+      }
+    });
+
+    // ===== SAVING FAVORITES =====
+    saveBtn.addEventListener('click', () => {
+      if (!selectedIcon) return;
+
+      const index = savedIcons.findIndex(item => item.name === selectedIcon.name && item.library === selectedIcon.library);
+      if (index === -1) {
+        savedIcons.push(selectedIcon);
+        saveBtn.textContent = '✓ Saved';
+      } else {
+        savedIcons.splice(index, 1);
+        saveBtn.textContent = 'Save';
+      }
+
+      try {
+        localStorage.setItem('saved_icons', JSON.stringify(savedIcons));
+      } catch (e) {
+        console.warn('Could not write to localStorage:', e);
+      }
+      if (document.querySelector('.nav-btn[data-tab="saved"]').classList.contains('active')) {
+        renderSavedIcons();
+      }
+    });
+
+    function renderSavedIcons() {
+      savedGrid.innerHTML = '';
+      if (savedIcons.length === 0) {
+        savedEmptyState.classList.remove('hidden');
+        return;
+      }
+
+      savedEmptyState.classList.add('hidden');
+      savedIcons.forEach(icon => {
+        const item = document.createElement('div');
+        item.className = 'icon-item';
+        item.title = icon.name;
+
+        const img = document.createElement('img');
+        img.src = icon.resolvedUrl;
+        img.onload = function() { this.classList.add('loaded'); };
+        item.appendChild(img);
+
+        item.addEventListener('click', (e) => {
+          e.stopPropagation();
+          document.querySelectorAll('.icon-item.selected').forEach(el => el.classList.remove('selected'));
+          item.classList.add('selected');
+          selectIcon(icon, icon.resolvedUrl);
+        });
+
+        savedGrid.appendChild(item);
+      });
+    }
+
+    // ===== INSERT TO FIGMA =====
+    insertBtn.addEventListener('click', async () => {
+      if (!selectedIcon) return;
+
+      insertBtn.disabled = true;
+      insertBtn.textContent = '...';
+      setStatus('Inserting icon...', true);
+
+      try {
+        let targetUrl = selectedIcon.resolvedUrl;
+        if (targetUrl.startsWith('http://localhost:3000') && currentBaseUrl !== 'http://localhost:3000') {
+          targetUrl = targetUrl.replace('http://localhost:3000', currentBaseUrl);
+        } else if (targetUrl.startsWith('https://iconsearch.info') && currentBaseUrl !== 'https://iconsearch.info') {
+          targetUrl = targetUrl.replace('https://iconsearch.info', currentBaseUrl);
+        }
+
+        const response = await fetch(targetUrl);
+        if (!response.ok) throw new Error('Failed to fetch SVG');
+
+        const svgText = await response.text();
+
+        parent.postMessage({
+          pluginMessage: {
+            type: 'insert-icon',
+            svg: svgText.trim(),
+            name: selectedIcon.name
+          }
+        }, '*');
+
+        setStatus(`Inserted "${selectedIcon.name}"`);
+      } catch (err) {
+        console.error('Insert error:', err);
+        setStatus('Insert failed');
+      } finally {
+        insertBtn.disabled = false;
+        insertBtn.textContent = 'Insert';
+      }
+    });
+  </script>
+</body>
+</html>

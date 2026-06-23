@@ -2,6 +2,8 @@ import { icons } from '../lib/icons'
 import { getAllPosts } from '../lib/blog'
 import { staticPages } from '../data/static-pages'
 import DynamicHome from './components/DynamicHome'
+import Link from 'next/link'
+import { internalLinkGroups } from '../data/internal-links'
 
 export const metadata = {
   title: 'IconSearch — Find & Compare Free SVG Icon Libraries (2026)',
@@ -38,7 +40,7 @@ export default function HomePage() {
     .slice(0, 5)
 
   return (
-    <div>
+    <div suppressHydrationWarning>
       {/* FAQ Schema Markup for Search Crawlers */}
       <script
         type="application/ld+json"
@@ -56,6 +58,57 @@ export default function HomePage() {
 
       {/* Render the core visual and interactive premium layout */}
       <DynamicHome initialLibraries={icons} recentItems={allRecentItems} />
+
+      <section
+        aria-labelledby="site-links-heading"
+        style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 24px 80px' }}
+      >
+        <div style={{ borderTop: '1px solid var(--border)', paddingTop: '60px' }}>
+          <div style={{ color: 'var(--accent)', fontSize: '12px', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '2px', marginBottom: '12px', textTransform: 'uppercase' }}>
+            // Site links
+          </div>
+          <h2 id="site-links-heading" style={{ fontSize: '28px', fontWeight: 800, fontFamily: 'Inter, sans-serif', marginBottom: '16px', letterSpacing: '-0.02em' }}>
+            Explore IconSearch
+          </h2>
+          <p style={{ color: 'var(--text-muted)', fontSize: '14px', lineHeight: 1.7, maxWidth: '640px', marginBottom: '36px' }}>
+            Jump into the main library guides, framework pages, use-case pages, and resource indexes from one internal link map.
+          </p>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+            gap: '28px'
+          }}>
+            {internalLinkGroups.map(group => (
+              <nav key={group.title} aria-label={group.title} style={{
+                background: 'rgba(24,24,27,0.3)',
+                border: '1px solid var(--border)',
+                borderRadius: '12px',
+                padding: '22px',
+              }}>
+                <h3 style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '2px', marginBottom: '14px' }}>
+                  {group.title}
+                </h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  {group.links.map(link => (
+                    <Link key={link.href} href={link.href} style={{
+                      color: 'var(--text-muted)',
+                      textDecoration: 'none',
+                      fontSize: '13px',
+                      fontFamily: 'JetBrains Mono, monospace',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      gap: '12px',
+                    }}>
+                      <span>{link.label}</span>
+                      <span style={{ color: 'var(--accent)' }}>-&gt;</span>
+                    </Link>
+                  ))}
+                </div>
+              </nav>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* Statically Rendered FAQ Section for Crawler Discovery */}
       <section style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 24px 80px' }}>

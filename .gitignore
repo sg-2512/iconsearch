@@ -13,6 +13,9 @@
 # testing
 /coverage
 
+# local scratch/debug scripts
+/scratch/
+
 # next.js
 /.next/
 /out/

@@ -1,10 +1,12 @@
 import type { Metadata } from 'next'
 import './globals.css'
-import Navbar from './components/Navbar'
+import Sidebar from './components/Sidebar'
+import CartDrawer from './components/CartDrawer'
 import { JetBrains_Mono, Inter } from 'next/font/google'
 import Link from 'next/link'
 import Script from 'next/script'
 import { Analytics } from "@vercel/analytics/next"
+import { footerLegalLinks, internalLinkGroups } from '../data/internal-links'
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
@@ -73,10 +75,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </Script>
       </head>
       <body suppressHydrationWarning>
-        <Navbar />
-        <div style={{ minHeight: 'calc(100vh - 60px - 80px)' }}>
+        <Sidebar />
+        <div className="app-main">
           {children}
-        </div>
 
         <footer style={{
           borderTop: '1px solid var(--border)',
@@ -86,7 +87,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
 
             {/* Footer Grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '40px', marginBottom: '48px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(170px, 1fr))', gap: '40px', marginBottom: '48px' }}>
 
               {/* Brand */}
               <div>
@@ -98,82 +99,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 </p>
               </div>
 
-              {/* Libraries */}
-              <div>
-                <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '2px', marginBottom: '12px' }}>
-                  LIBRARIES
+              {internalLinkGroups.map(group => (
+                <div key={group.title}>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '2px', marginBottom: '12px' }}>
+                    {group.title}
+                  </div>
+                  {group.links.map(link => (
+                    <Link key={link.href} href={link.href} style={{ display: 'block', color: 'var(--text-muted)', textDecoration: 'none', fontSize: '13px', marginBottom: '8px', fontFamily: 'JetBrains Mono, monospace' }}>
+                      {link.label}
+                    </Link>
+                  ))}
                 </div>
-                {[
-                  { label: 'Lucide Icons', href: '/icons/lucide-icons' },
-                  { label: 'Heroicons', href: '/icons/heroicons' },
-                  { label: 'Tabler Icons', href: '/icons/tabler-icons' },
-                  { label: 'Phosphor Icons', href: '/icons/phosphor-icons' },
-                  { label: 'All Libraries', href: '/free-svg-icons' },
-                ].map(link => (
-                  <Link key={link.href} href={link.href} style={{ display: 'block', color: 'var(--text-muted)', textDecoration: 'none', fontSize: '13px', marginBottom: '8px', fontFamily: 'JetBrains Mono, monospace' }}>
-                    {link.label}
-                  </Link>
-                ))}
-              </div>
-
-              {/* Frameworks */}
-              <div>
-                <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '2px', marginBottom: '12px' }}>
-                  FRAMEWORKS
-                </div>
-                {[
-                  { label: 'React Icons', href: '/react-icons' },
-                  { label: 'Next.js Icons', href: '/nextjs-icons' },
-                  { label: 'Vue Icons', href: '/vue-icons' },
-                  { label: 'Svelte Icons', href: '/svelte-icons' },
-                  { label: 'Tailwind Icons', href: '/tailwind-icons' },
-                ].map(link => (
-                  <Link key={link.href} href={link.href} style={{ display: 'block', color: 'var(--text-muted)', textDecoration: 'none', fontSize: '13px', marginBottom: '8px', fontFamily: 'JetBrains Mono, monospace' }}>
-                    {link.label}
-                  </Link>
-                ))}
-              </div>
-
-              {/* Use Cases */}
-              <div>
-                <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '2px', marginBottom: '12px' }}>
-                  USE CASES
-                </div>
-                {[
-                  { label: 'Icons for SaaS', href: '/use-cases/icons-for-saas' },
-                  { label: 'Icons for Dashboards', href: '/use-cases/icons-for-dashboards' },
-                  { label: 'Icons for Mobile', href: '/use-cases/icons-for-mobile-apps' },
-                  { label: 'Icons for Dark Mode', href: '/use-cases/icons-for-dark-mode' },
-                  { label: 'All Use Cases', href: '/use-cases' },
-                ].map(link => (
-                  <Link key={link.href} href={link.href} style={{ display: 'block', color: 'var(--text-muted)', textDecoration: 'none', fontSize: '13px', marginBottom: '8px', fontFamily: 'JetBrains Mono, monospace' }}>
-                    {link.label}
-                  </Link>
-                ))}
-              </div>
-
-              {/* Resources */}
-              <div>
-                <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '2px', marginBottom: '12px' }}>
-                  RESOURCES
-                </div>
-                {[
-                  { label: 'Browse', href: '/free-svg-icons' },
-                  { label: 'Compare', href: '/compare' },
-                  { label: 'Site Directory', href: '/directory' },
-                  { label: 'Best For You', href: '/best-for-you' },
-                  { label: 'Categories', href: '/icons/category' },
-                  { label: 'License Guide', href: '/licenses' },
-                  { label: 'Use Cases', href: '/use-cases' },
-                  { label: 'Stats', href: '/stats' },
-                  { label: 'Blog', href: '/blog' },
-                  { label: 'TypeScript Icons', href: '/typescript-icons' },
-                ].map(link => (
-                  <Link key={link.href} href={link.href} style={{ display: 'block', color: 'var(--text-muted)', textDecoration: 'none', fontSize: '13px', marginBottom: '8px', fontFamily: 'JetBrains Mono, monospace' }}>
-                    {link.label}
-                  </Link>
-                ))}
-              </div>
+              ))}
 
             </div>
 
@@ -183,14 +120,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <span style={{ color: 'var(--accent)' }}>// </span>
                 IconSearch is an independent resource not affiliated with any icon library project.
               </span>
-              <div style={{ display: 'flex', gap: '20px' }}>
-                {[
-                  { label: 'About', href: '/about' },
-                  { label: 'Best For You', href: '/best-for-you' },
-                  { label: 'Privacy Policy', href: '/privacy-policy' },
-                  { label: 'Terms', href: '/terms' },
-                  { label: 'Contact', href: '/contact' },
-                ].map(link => (
+              <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
+                {footerLegalLinks.map(link => (
                   <Link key={link.href} href={link.href} style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '12px', fontFamily: 'JetBrains Mono, monospace' }}>
                     {link.label}
                   </Link>
@@ -200,7 +131,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
           </div>
         </footer>
+        </div>
         <Analytics />
+        <CartDrawer />
       </body>
     </html>
   )

@@ -104,6 +104,27 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.8,
   }))
 
+  const individualIconPages: MetadataRoute.Sitemap = []
+  const POPULAR_ICON_NAMES = [
+    'home', 'settings', 'user', 'bell', 'heart', 'search', 'edit', 'trash', 'lock', 'key',
+    'eye', 'download', 'upload', 'share', 'mail', 'message', 'chat', 'phone', 'play', 'camera',
+    'folder', 'calendar', 'clock', 'plus', 'minus', 'check', 'info', 'alert-triangle', 'help-circle',
+    'arrow-right', 'arrow-left', 'arrow-up', 'arrow-down', 'chevron-right', 'chevron-left',
+    'shopping-cart', 'credit-card', 'map-pin', 'star', 'file', 'code', 'copy', 'menu', 'close'
+  ]
+  const POPULAR_ICON_LIBS = ['lucide-icons', 'heroicons', 'tabler-icons', 'phosphor-icons', 'bootstrap-icons', 'radix-icons']
+
+  for (const lib of POPULAR_ICON_LIBS) {
+    for (const name of POPULAR_ICON_NAMES) {
+      individualIconPages.push({
+        url: `${base}/icons/${lib}/${name}`,
+        lastModified: now,
+        changeFrequency: 'weekly' as const,
+        priority: 0.7,
+      })
+    }
+  }
+
   return [
     ...staticPages,
     ...libraryPages,
@@ -112,5 +133,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...categoryPages,
     ...useCasePages,
     ...collectionPages,
+    ...individualIconPages,
   ]
 }

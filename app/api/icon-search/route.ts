@@ -4,6 +4,28 @@ import { join } from 'path'
 import { gunzipSync } from 'zlib'
 
 let cachedIcons: any[] | null = null
+let cachedPopular: any[] | null = null
+let cachedLegal: any[] | null = null
+let cachedLegalPopular: any[] | null = null
+let cachedLegalSafeCount: number = 0
+
+// Library popularity weights used for 'popular' sort order
+const LIBRARY_POPULARITY: Record<string, number> = {
+  'lucide-icons': 10,
+  'heroicons': 9,
+  'ant-design-icons': 8.5,
+  'tabler-icons': 8,
+  'phosphor-icons': 7,
+  'remix-icon': 6,
+  'bootstrap-icons': 5,
+  'radix-icons': 4,
+  'feather-icons': 3,
+  'iconoir': 2,
+  'devicons': 1,
+  'teenyicons': 1,
+  'circum-icons': 1,
+  'elusive-icons': 1,
+}
 
 type Facets = {
   libraries: string[]
@@ -39,7 +61,7 @@ function isRateLimited(ip: string): boolean {
 }
 
 
-function loadIcons() {
+export function loadIcons() {
   if (cachedIcons) return cachedIcons
   const start = Date.now()
   console.log('Loading 350,000+ Icon database into server memory cache...')
@@ -125,6 +147,23 @@ function loadIcons() {
         legal: { libraries: legalLibs, licenses: legalLics, iconifySets: legalSets }
       }
 
+      // Pre-compute popularity-sorted and legal-safe subsets to eliminate per-request sorting
+      console.log('Pre-computing popularity-sorted and legal-safe cached subsets...')
+      cachedPopular = [...parsedList].sort((a, b) => {
+        const pa = LIBRARY_POPULARITY[a.library] || 0
+        const pb = LIBRARY_POPULARITY[b.library] || 0
+        if (pa !== pb) return pb - pa
+        return a.name.localeCompare(b.name)
+      })
+      cachedLegal = legalList // already alphabetically sorted (filtered from sorted parsedList)
+      cachedLegalPopular = [...legalList].sort((a, b) => {
+        const pa = LIBRARY_POPULARITY[a.library] || 0
+        const pb = LIBRARY_POPULARITY[b.library] || 0
+        if (pa !== pb) return pb - pa
+        return a.name.localeCompare(b.name)
+      })
+      cachedLegalSafeCount = legalList.length
+
       console.log(`Successfully compiled in-memory index: ${cachedIcons.length} icons in ${Date.now() - start}ms`)
       return cachedIcons
     } catch (e) {
@@ -177,6 +216,51 @@ export async function GET(request: Request) {
   const sort = searchParams.get('sort') || 'relevance'
 
   const allIcons = loadIcons()
+
+  // Fast-path: when no filters are active, serve directly from pre-computed cached arrays
+  const noFilters = !query && !idsParam && lib === 'all' && style === 'all' && category === 'all' && iconifySet === 'all'
+  if (noFilters) {
+    let source: any[]
+    if (legalOnly && sort === 'popular') {
+      source = cachedLegalPopular!
+    } else if (legalOnly) {
+      source = cachedLegal!
+    } else if (sort === 'popular') {
+      source = cachedPopular!
+    } else {
+      source = allIcons
+    }
+
+    const total = source.length
+    const paginated = source.slice((page - 1) * limit, page * limit)
+    const legalSafeCount = legalOnly ? total : cachedLegalSafeCount
+    const facets = legalOnly ? cachedFacets?.legal : cachedFacets?.all
+
+    const elapsed = (performance.now() - startTime).toFixed(2)
+    console.log(`[API Search] query: "(fast-path)", results: ${total}, taken: ${elapsed}ms`)
+
+    return NextResponse.json({
+      icons: paginated,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+      facets: {
+        libraries: facets?.libraries || [],
+        licenses: facets?.licenses || [],
+        iconifySets: facets?.iconifySets || [],
+        legalSafeCount,
+        legalOnlyApplied: legalOnly,
+      }
+    }, {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'X-Response-Time': `${elapsed}ms`
+      }
+    })
+  }
   
   let filtered = allIcons
 
@@ -293,18 +377,6 @@ export async function GET(request: Request) {
       return aName.localeCompare(bName)
     })
   } else if (sort === 'popular') {
-    const LIBRARY_POPULARITY: Record<string, number> = {
-      'lucide-icons': 10,
-      'heroicons': 9,
-      'ant-design-icons': 8.5,
-      'tabler-icons': 8,
-      'phosphor-icons': 7,
-      'remix-icon': 6,
-      'bootstrap-icons': 5,
-      'radix-icons': 4,
-      'feather-icons': 3,
-      'iconoir': 2,
-    }
     // Since we are sorting, prevent mutating the global memory cache if no filters were applied
     const toSort = filtered === allIcons ? [...filtered] : filtered
     toSort.sort((a, b) => {
@@ -346,8 +418,22 @@ export async function GET(request: Request) {
     }
   }, {
     headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
       'X-Response-Time': `${elapsed}ms`
     }
+  })
+}
+
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 204,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+    },
   })
 }
 

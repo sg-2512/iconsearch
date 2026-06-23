@@ -1,8 +1,11 @@
 'use client'
 
 import { useEffect, useMemo, useRef, useState, useCallback, memo } from 'react'
+import { useSearchParams } from 'next/navigation'
+import Link from 'next/link'
 import { generateZipPackage } from '../../lib/exporter'
 import { createClient, isSupabaseConfigured } from '@/lib/supabase'
+import { trackSearch, trackAddToCart, trackExport } from '@/lib/analytics'
 import AuthModal from '../components/AuthModal'
 
 type Icon = {
@@ -74,8 +77,60 @@ type ApiResponse = {
   }
 }
 
+type SortOption = 'relevance' | 'popular' | 'alphabetical'
+
+type SearchParamReader = {
+  get(name: string): string | null
+}
+
 function formatNumber(num: number): string {
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+}
+
+function readSearchState(params: SearchParamReader | null) {
+  const query = (params?.get('q') || '').trim()
+  const rawLib = params?.get('lib') || 'all'
+  const rawIconifySet = params?.get('iconifySet') || 'all'
+  const rawCategory = params?.get('category') || 'all'
+  const rawStyle = params?.get('style') || 'all'
+  const rawSort = params?.get('sort') as SortOption | null
+  const page = Math.max(1, Number(params?.get('page') || '1') || 1)
+
+  let selectedLib = 'all'
+  let selectedIconifySet = 'all'
+
+  if (rawLib === 'iconify') {
+    selectedLib = 'iconify'
+    selectedIconifySet = rawIconifySet || 'all'
+  } else if (rawLib.startsWith('iconify:')) {
+    selectedLib = 'iconify'
+    selectedIconifySet = rawLib.replace('iconify:', '') || 'all'
+  } else if (rawLib.startsWith('iconify-')) {
+    selectedLib = 'iconify'
+    selectedIconifySet = rawLib.replace(/^iconify-/, '') || 'all'
+  } else if (rawLib) {
+    selectedLib = rawLib
+  }
+
+  const validCategory = CATEGORIES.some((cat) => cat.id === rawCategory) ? rawCategory : 'all'
+  const validStyle = ['all', 'stroke', 'solid', 'duotone', 'twotone', 'sharp'].includes(rawStyle) ? rawStyle : 'all'
+  const sortBy: SortOption = ['relevance', 'popular', 'alphabetical'].includes(rawSort || '')
+    ? rawSort!
+    : query
+      ? 'relevance'
+      : 'popular'
+
+  return {
+    query,
+    selectedLib,
+    selectedIconifySet,
+    selectedCategory: validCategory,
+    selectedStyle: validStyle,
+    sortBy,
+    legalOnly: params?.get('legalOnly') !== '0',
+    currentPage: page,
+    hasExplicitSort: Boolean(rawSort),
+  }
 }
 
 function getCleanSvgUrl(url: string, library: string): string {
@@ -161,43 +216,92 @@ function getPreviewCandidates(icon: Icon): string[] {
   return Array.from(candidates)
 }
 
+function getSlugForLibrary(library: string): string {
+  if (library === 'lucide-icons') return 'lucide-icons'
+  if (library === 'heroicons') return 'heroicons'
+  if (library === 'tabler-icons') return 'tabler-icons'
+  if (library === 'phosphor-icons') return 'phosphor-icons'
+  if (library === 'remix-icon') return 'remix-icon'
+  if (library === 'feather-icons') return 'feather-icons'
+  if (library === 'bootstrap-icons') return 'bootstrap-icons'
+  if (library === 'radix-icons') return 'radix-icons'
+
+  if (library.startsWith('iconify-fa')) return 'font-awesome'
+  if (library.startsWith('iconify-material') || library === 'iconify-ic') return 'material-icons'
+  if (library === 'iconify-simple-icons') return 'simple-icons'
+  if (library === 'iconoir' || library === 'iconify-iconoir') return 'iconoir'
+  if (library === 'ionicons' || library === 'iconify-ion') return 'ionicons'
+  if (library === 'octicons' || library === 'iconify-octicon') return 'octicons'
+  if (library === 'ant-design-icons' || library === 'iconify-ant-design') return 'ant-design-icons'
+
+  if (library.startsWith('iconify-')) return library.replace(/^iconify-/, '')
+  return library
+}
+
+const workingUrlCache = new Map<string, string>()
+const failedIconCache = new Set<string>()
+
 const IconCard = memo(({
   icon,
-  color,
-  isSelected,
-  onSelect
+  color
 }: {
   icon: Icon
   color: string
-  isSelected: boolean
-  onSelect: () => void
 }) => {
   const [fallbackIndex, setFallbackIndex] = useState(0)
   const [failed, setFailed] = useState(false)
 
   const candidates = useMemo(() => getPreviewCandidates(icon), [icon])
-  const src = candidates[fallbackIndex] || getCleanSvgUrl(icon.svgUrl, icon.library)
+
+  const src = useMemo(() => {
+    if (workingUrlCache.has(icon.id)) {
+      return workingUrlCache.get(icon.id)!
+    }
+    return candidates[fallbackIndex] || getCleanSvgUrl(icon.svgUrl, icon.library)
+  }, [icon.id, candidates, fallbackIndex])
+
+  const librarySlug = useMemo(() => getSlugForLibrary(icon.library), [icon.library])
 
   const onError = useCallback(() => {
+    if (workingUrlCache.has(icon.id)) {
+      workingUrlCache.delete(icon.id)
+      setFallbackIndex(0)
+      return
+    }
+
     if (fallbackIndex < candidates.length - 1) {
       setFallbackIndex((prev) => prev + 1)
     } else {
       setFailed(true)
+      failedIconCache.add(icon.id)
     }
-  }, [fallbackIndex, candidates.length])
+  }, [fallbackIndex, candidates.length, icon.id])
 
   // Reset local state if icon changes
   useEffect(() => {
-    setFallbackIndex(0)
-    setFailed(false)
+    if (workingUrlCache.has(icon.id)) {
+      setFallbackIndex(0)
+      setFailed(false)
+    } else if (failedIconCache.has(icon.id)) {
+      setFailed(true)
+    } else {
+      setFallbackIndex(0)
+      setFailed(false)
+    }
   }, [icon.id])
 
+  const handleLoad = useCallback(() => {
+    if (!failed && src) {
+      workingUrlCache.set(icon.id, src)
+    }
+  }, [icon.id, src, failed])
+
   return (
-    <button
-      onClick={onSelect}
+    <Link
+      href={`/icons/${librarySlug}/${icon.name}`}
       style={{
-        background: isSelected ? 'rgba(129, 140, 248, 0.15)' : 'rgba(24,24,27,0.8)',
-        border: isSelected ? `2.5px solid ${color}` : '1px solid var(--border)',
+        background: 'rgba(24,24,27,0.8)',
+        border: '1px solid var(--border)',
         borderRadius: '12px',
         padding: '14px',
         cursor: 'pointer',
@@ -205,6 +309,7 @@ const IconCard = memo(({
         flexDirection: 'column',
         gap: '10px',
         alignItems: 'center',
+        textDecoration: 'none',
         transition: 'all 0.16s ease',
       }}
       onMouseEnter={(e) => {
@@ -213,7 +318,7 @@ const IconCard = memo(({
         e.currentTarget.style.boxShadow = `0 8px 24px ${color}1f`
       }}
       onMouseLeave={(e) => {
-        e.currentTarget.style.borderColor = isSelected ? color : 'var(--border)'
+        e.currentTarget.style.borderColor = 'var(--border)'
         e.currentTarget.style.transform = 'none'
         e.currentTarget.style.boxShadow = 'none'
       }}
@@ -234,6 +339,7 @@ const IconCard = memo(({
             decoding="async"
             style={{ filter: 'invert(1) brightness(0.95)', opacity: 0.9 }}
             onError={onError}
+            onLoad={handleLoad}
           />
         )}
       </div>
@@ -256,20 +362,23 @@ const IconCard = memo(({
           {icon.legalSafe ? 'legal-safe' : 'restricted'}
         </div>
       </div>
-    </button>
+    </Link>
   )
 })
 IconCard.displayName = 'IconCard'
 
 export default function IconSearchClient({ initialData }: { initialData?: ApiResponse }) {
-  const [query, setQuery] = useState('')
-  const [selectedLib, setSelectedLib] = useState('all')
-  const [selectedIconifySet, setSelectedIconifySet] = useState('all')
-  const [selectedCategory, setSelectedCategory] = useState('all')
-  const [selectedStyle, setSelectedStyle] = useState('all')
-  const [sortBy, setSortBy] = useState<'relevance' | 'popular' | 'alphabetical'>('alphabetical')
-  const [legalOnly, setLegalOnly] = useState(true)
-  const [currentPage, setCurrentPage] = useState(1)
+  const searchParams = useSearchParams()
+  const initialSearchState = readSearchState(searchParams)
+  const [query, setQuery] = useState(initialSearchState.query)
+  const [selectedLib, setSelectedLib] = useState(initialSearchState.selectedLib)
+  const [selectedIconifySet, setSelectedIconifySet] = useState(initialSearchState.selectedIconifySet)
+  const [selectedCategory, setSelectedCategory] = useState(initialSearchState.selectedCategory)
+  const [selectedStyle, setSelectedStyle] = useState(initialSearchState.selectedStyle)
+  const [sortBy, setSortBy] = useState<SortOption>(initialSearchState.sortBy)
+  const [sortTouched, setSortTouched] = useState(initialSearchState.hasExplicitSort)
+  const [legalOnly, setLegalOnly] = useState(initialSearchState.legalOnly)
+  const [currentPage, setCurrentPage] = useState(initialSearchState.currentPage)
   const [loading, setLoading] = useState(!initialData)
   const [results, setResults] = useState<ApiResponse>(initialData || { icons: [], total: 0, page: 1, limit: 80, totalPages: 1 })
   const [selectedIcon, setSelectedIcon] = useState<Icon | null>(null)
@@ -278,9 +387,13 @@ export default function IconSearchClient({ initialData }: { initialData?: ApiRes
   const [customStroke, setCustomStroke] = useState(1.5)
   const [customColor, setCustomColor] = useState('#818cf8')
   const [cart, setCart] = useState<CartItem[]>([])
+  const [isLoaded, setIsLoaded] = useState(false)
   const [copied, setCopied] = useState(false)
   const [exportNotice, setExportNotice] = useState('')
+  const [workspaceOpen, setWorkspaceOpen] = useState(false)
   const searchRef = useRef<HTMLInputElement>(null)
+  const lastSearchParamStringRef = useRef(searchParams?.toString() || '')
+  const lastQueryRef = useRef(query)
 
   // Exporter Upgrades (Phase 2)
   const [isExportModalOpen, setIsExportModalOpen] = useState(false)
@@ -328,7 +441,7 @@ export default function IconSearchClient({ initialData }: { initialData?: ApiRes
   // Cloud sync helper: push packs to Supabase
   const syncPacksToCloud = useCallback(async (packsData: any[]) => {
     if (!user || !isSupabaseConfigured()) return
-    const supabase = createClient()
+    const supabase = await createClient()
     if (!supabase) return
     try {
       // Upsert each pack
@@ -356,7 +469,7 @@ export default function IconSearchClient({ initialData }: { initialData?: ApiRes
   // Cloud sync helper: push presets to Supabase
   const syncPresetsToCloud = useCallback(async (presetsData: any[]) => {
     if (!user || !isSupabaseConfigured()) return
-    const supabase = createClient()
+    const supabase = await createClient()
     if (!supabase) return
     try {
       for (const preset of presetsData) {
@@ -380,7 +493,7 @@ export default function IconSearchClient({ initialData }: { initialData?: ApiRes
   // Fetch cloud data on login
   const fetchCloudData = useCallback(async (userId: string) => {
     if (!isSupabaseConfigured()) return
-    const supabase = createClient()
+    const supabase = await createClient()
     if (!supabase) return
     try {
       setCloudSyncStatus('Syncing from cloud...')
@@ -435,37 +548,42 @@ export default function IconSearchClient({ initialData }: { initialData?: ApiRes
 
   // Auth session listener
   useEffect(() => {
-    if (!isSupabaseConfigured()) return
-    const supabase = createClient()
-    if (!supabase) return
+    let subscription: any = null
 
-    // Check existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    async function initAuth() {
+      const supabase = await createClient()
+      if (!supabase) return
+
+      // Check existing session
+      const { data: { session } } = await supabase.auth.getSession()
       if (session?.user) {
         setUser(session.user)
         fetchCloudData(session.user.id)
       }
-    })
 
-    // Listen for auth state changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        if (session?.user) {
-          setUser(session.user)
-          fetchCloudData(session.user.id)
-        } else {
-          setUser(null)
+      // Listen for auth state changes
+      const { data } = supabase.auth.onAuthStateChange(
+        (_event, session) => {
+          if (session?.user) {
+            setUser(session.user)
+            fetchCloudData(session.user.id)
+          } else {
+            setUser(null)
+          }
         }
-      }
-    )
+      )
+      subscription = data.subscription
+    }
 
-    return () => subscription.unsubscribe()
+    initAuth()
+
+    return () => subscription?.unsubscribe()
   }, [fetchCloudData])
 
   // Handle sign out
   async function handleSignOut() {
     if (!isSupabaseConfigured()) return
-    const supabase = createClient()
+    const supabase = await createClient()  // 👈 add await here
     if (!supabase) return
     await supabase.auth.signOut()
     setUser(null)
@@ -493,6 +611,16 @@ export default function IconSearchClient({ initialData }: { initialData?: ApiRes
         presetColor: exportPresetColor
       }, setExportStatus)
       setIsExportModalOpen(false)
+
+      // Track ZIP export (fire-and-forget)
+      const libSet = [...new Set(cart.map(i => i.icon.library))].join(',')
+      const names = cart.map(i => i.icon.name).join(',')
+      trackExport({
+        format: 'zip',
+        iconCount: cart.length,
+        libraries: libSet,
+        iconNames: names,
+      })
     } catch (e) {
       console.error('Failed to generate package', e)
       setExportStatus('Failed to generate package. Try again.')
@@ -572,6 +700,52 @@ export default function IconSearchClient({ initialData }: { initialData?: ApiRes
     setTimeout(() => setExportNotice(''), 2200)
   }
 
+  function handleQueryChange(value: string) {
+    setQuery(value)
+    setCurrentPage(1)
+    if (!sortTouched) {
+      setSortBy(value.trim() ? 'relevance' : 'popular')
+    }
+  }
+
+  function handleLibraryChange(value: string) {
+    if (value === 'all') {
+      setSelectedLib('all')
+      setSelectedIconifySet('all')
+    } else if (value === 'iconify') {
+      setSelectedLib('iconify')
+      setSelectedIconifySet('all')
+    } else if (value.startsWith('iconify:')) {
+      setSelectedLib('iconify')
+      setSelectedIconifySet(value.replace('iconify:', ''))
+    } else {
+      setSelectedLib(value)
+      setSelectedIconifySet('all')
+    }
+    setCurrentPage(1)
+  }
+
+  function handleSortChange(value: SortOption) {
+    setSortTouched(true)
+    setSortBy(value)
+    setCurrentPage(1)
+  }
+
+  function handleCategoryChange(value: string) {
+    setSelectedCategory(value)
+    setCurrentPage(1)
+  }
+
+  function handleStyleChange(value: string) {
+    setSelectedStyle(value)
+    setCurrentPage(1)
+  }
+
+  function handleLegalOnlyChange(value: boolean) {
+    setLegalOnly(value)
+    setCurrentPage(1)
+  }
+
 
 
   useEffect(() => {
@@ -586,12 +760,9 @@ export default function IconSearchClient({ initialData }: { initialData?: ApiRes
   }, [])
 
   useEffect(() => {
-    setCurrentPage(1)
-  }, [query, selectedLib, selectedIconifySet, selectedCategory, selectedStyle, sortBy, legalOnly])
-
-  useEffect(() => {
     const controller = new AbortController()
-    const timer = setTimeout(async () => {
+
+    const fetchResults = async () => {
       try {
         setLoading(true)
         const params = new URLSearchParams({
@@ -605,10 +776,23 @@ export default function IconSearchClient({ initialData }: { initialData?: ApiRes
           limit: '80',
           sort: sortBy,
         })
-        const res = await fetch(`/api/icon-search?${params.toString()}`, { signal: controller.signal })
+        const res = await fetch(`/api/icons?${params.toString()}`, { signal: controller.signal })
         const data = await res.json()
         const icons: Icon[] = Array.isArray(data?.icons) ? data.icons : []
         setResults({ ...data, icons })
+
+        // Track search analytics (fire-and-forget)
+        if (query.trim()) {
+          trackSearch({
+            query,
+            library: selectedLib,
+            category: selectedCategory,
+            style: selectedStyle,
+            sort: sortBy,
+            legalOnly: legalOnly,
+            resultCount: data?.total ?? icons.length,
+          })
+        }
       } catch (error) {
         if ((error as Error).name !== 'AbortError') {
           console.error('API search failed', error)
@@ -616,13 +800,61 @@ export default function IconSearchClient({ initialData }: { initialData?: ApiRes
       } finally {
         setLoading(false)
       }
-    }, 180)
+    }
+
+    let timer: NodeJS.Timeout | null = null
+    if (query !== lastQueryRef.current) {
+      lastQueryRef.current = query
+      timer = setTimeout(fetchResults, 180)
+    } else {
+      fetchResults()
+    }
 
     return () => {
       controller.abort()
-      clearTimeout(timer)
+      if (timer) clearTimeout(timer)
     }
   }, [query, selectedLib, selectedIconifySet, selectedCategory, selectedStyle, currentPage, sortBy, legalOnly])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const url = new URL(window.location.href)
+
+    if (query.trim()) url.searchParams.set('q', query.trim())
+    else url.searchParams.delete('q')
+
+    if (selectedLib === 'all') {
+      url.searchParams.delete('lib')
+      url.searchParams.delete('iconifySet')
+    } else if (selectedLib === 'iconify') {
+      url.searchParams.set('lib', 'iconify')
+      if (selectedIconifySet !== 'all') url.searchParams.set('iconifySet', selectedIconifySet)
+      else url.searchParams.delete('iconifySet')
+    } else {
+      url.searchParams.set('lib', selectedLib)
+      url.searchParams.delete('iconifySet')
+    }
+
+    if (selectedCategory !== 'all') url.searchParams.set('category', selectedCategory)
+    else url.searchParams.delete('category')
+
+    if (selectedStyle !== 'all') url.searchParams.set('style', selectedStyle)
+    else url.searchParams.delete('style')
+
+    if (!legalOnly) url.searchParams.set('legalOnly', '0')
+    else url.searchParams.delete('legalOnly')
+
+    const defaultSort = query.trim() ? 'relevance' : 'popular'
+    if (sortBy !== defaultSort) url.searchParams.set('sort', sortBy)
+    else url.searchParams.delete('sort')
+
+    if (currentPage > 1) url.searchParams.set('page', String(currentPage))
+    else url.searchParams.delete('page')
+
+    const nextSearch = url.searchParams.toString()
+    lastSearchParamStringRef.current = nextSearch
+    window.history.replaceState({}, '', url.toString())
+  }, [query, selectedLib, selectedIconifySet, selectedCategory, selectedStyle, sortBy, legalOnly, currentPage])
 
   // Load packs, presets, and check URL params on startup (Phase 3)
   useEffect(() => {
@@ -670,7 +902,7 @@ export default function IconSearchClient({ initialData }: { initialData?: ApiRes
         if (parsedItems.length > 0) {
           const ids = parsedItems.map(p => p.id).join(',')
           setLoading(true)
-          fetch(`/api/icon-search?ids=${ids}&limit=100`)
+          fetch(`/api/icons?ids=${ids}&limit=100`)
             .then(res => res.json())
             .then(data => {
               const fetchedIcons = data.icons || []
@@ -691,32 +923,87 @@ export default function IconSearchClient({ initialData }: { initialData?: ApiRes
                 // Also update the active pack with these loaded items
                 setPacks(prev => prev.map(p => p.id === activeId ? { ...p, items: cartItems } : p))
               }
+              setIsLoaded(true)
             })
-            .catch(e => console.error('Failed to restore cart from URL', e))
+            .catch(e => {
+              console.error('Failed to restore cart from URL', e)
+              setIsLoaded(true)
+            })
             .finally(() => setLoading(false))
+        } else {
+          setIsLoaded(true)
         }
       } else {
         // No URL params, load active pack's items
         const activePack = initialPacks.find((p: any) => p.id === activeId)
         if (activePack) setCart(activePack.items)
+        setIsLoaded(true)
       }
     } catch (e) {
       console.error('Failed to initialize workspace data', e)
+      setIsLoaded(true)
     }
   }, [])
 
   // Persist packs, active pack, and presets to local storage + cloud
   useEffect(() => {
+    if (!isLoaded) return
     localStorage.setItem('icon-hub-workspace-packs', JSON.stringify(packs))
-  }, [packs])
+    window.dispatchEvent(new CustomEvent('cart-updated', { detail: { source: 'icon-search' } }))
+  }, [packs, isLoaded])
 
   useEffect(() => {
+    if (!isLoaded) return
     localStorage.setItem('icon-hub-workspace-active-pack', activePackId)
-  }, [activePackId])
+    window.dispatchEvent(new CustomEvent('cart-updated', { detail: { source: 'icon-search' } }))
+  }, [activePackId, isLoaded])
 
   useEffect(() => {
+    if (!isLoaded) return
     localStorage.setItem('icon-hub-style-presets', JSON.stringify(presets))
-  }, [presets])
+  }, [presets, isLoaded])
+
+  // Sync workspace states back when changed externally (from global CartDrawer or detail page)
+  useEffect(() => {
+    const handleCartUpdate = (event: Event) => {
+      if (event instanceof CustomEvent && event.detail?.source === 'icon-search') return
+
+      try {
+        const rawPacks = localStorage.getItem('icon-hub-workspace-packs')
+        const rawActiveId = localStorage.getItem('icon-hub-workspace-active-pack')
+
+        let currentPacks = [
+          { id: 'default', name: 'Dashboard Pack', items: [], createdAt: new Date().toISOString() }
+        ]
+        let activeId = 'default'
+
+        if (rawPacks) {
+          const parsed = JSON.parse(rawPacks)
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            currentPacks = parsed
+            activeId = rawActiveId || parsed[0].id
+          }
+        }
+
+        setPacks(currentPacks)
+        setActivePackId(activeId)
+
+        const activePack = currentPacks.find((p: any) => p.id === activeId)
+        if (activePack) {
+          setCart(activePack.items)
+        }
+      } catch (e) {
+        console.error('Failed to sync workspace states', e)
+      }
+    }
+
+    window.addEventListener('cart-updated', handleCartUpdate)
+    window.addEventListener('storage', handleCartUpdate)
+    return () => {
+      window.removeEventListener('cart-updated', handleCartUpdate)
+      window.removeEventListener('storage', handleCartUpdate)
+    }
+  }, [])
 
   // Cloud sync: push packs when modified (debounced)
   useEffect(() => {
@@ -753,9 +1040,16 @@ export default function IconSearchClient({ initialData }: { initialData?: ApiRes
 
   // Keep packs array in sync whenever active pack's cart items are altered
   useEffect(() => {
-    setPacks((prev) =>
-      prev.map((p) => (p.id === activePackId ? { ...p, items: cart } : p))
-    )
+    setPacks((prev) => {
+      let changed = false
+      const next = prev.map((pack) => {
+        if (pack.id !== activePackId || pack.items === cart) return pack
+        changed = true
+        return { ...pack, items: cart }
+      })
+
+      return changed ? next : prev
+    })
   }, [cart, activePackId])
 
 
@@ -812,6 +1106,13 @@ export default function IconSearchClient({ initialData }: { initialData?: ApiRes
       color: customColor,
     }
     setCart((prev) => [item, ...prev])
+
+    // Track add-to-cart (fire-and-forget)
+    trackAddToCart({
+      iconId: selectedIcon.id,
+      iconName: selectedIcon.name,
+      library: selectedIcon.library,
+    })
   }
 
   function removeFromCart(key: string) {
@@ -945,6 +1246,16 @@ import { Icon } from '@iconify/vue'
       setExportNotice('Downloaded CSV export')
     }
     setTimeout(() => setExportNotice(''), 2200)
+
+    // Track code-format export (fire-and-forget)
+    const libSet = [...new Set(cart.map(i => i.icon.library))].join(',')
+    const names = cart.map(i => i.icon.name).join(',')
+    trackExport({
+      format,
+      iconCount: cart.length,
+      libraries: libSet,
+      iconNames: names,
+    })
   }
 
   return (
@@ -955,19 +1266,14 @@ import { Icon } from '@iconify/vue'
       <section style={{ position: 'relative', zIndex: 1, marginBottom: '24px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
-            <div style={{ fontSize: '11px', color: 'var(--accent)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '2px', marginBottom: '12px' }}>
-              // HUGE ICON REGISTRY
-            </div>
             <h1 style={{ fontSize: 'clamp(34px, 5vw, 56px)', fontWeight: 900, lineHeight: 1.1, marginBottom: '12px' }}>
               Search 350,000+ Icons
             </h1>
             <p style={{ color: 'var(--text-muted)', fontSize: '16px', maxWidth: '760px', lineHeight: 1.7 }}>
-              Hugeicons-style explorer with lightning-fast API search, clean cards, rich filters, and polished dark UI.
+              explorer with lightning-fast API search, clean cards, rich filters, and polished dark UI.
             </p>
             <p style={{ color: 'var(--green)', fontSize: '12px', marginTop: '8px', fontFamily: 'JetBrains Mono, monospace' }}>
-              {loading
-                ? 'Checking license safety...'
-                : `Legal-safe icons in current scope: ${formatNumber(results.facets?.legalSafeCount || 0)}`}
+              Legal-safe icons in current scope: {loading ? 'loading...' : formatNumber(results.facets?.legalSafeCount || 0)}
             </p>
           </div>
 
@@ -1078,34 +1384,19 @@ import { Icon } from '@iconify/vue'
             type="text"
             placeholder="Try: home, settings, arrow-right, cloud..."
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => handleQueryChange(e.target.value)}
             style={{ flex: 1, background: 'transparent', border: 'none', color: 'var(--text)', fontSize: '15px', outline: 'none' }}
           />
-          <span style={{ fontSize: '11px', color: 'var(--text-dim)', border: '1px solid var(--border)', borderRadius: '6px', padding: '3px 8px', fontFamily: 'JetBrains Mono, monospace' }}>/ focus</span>
+          <span className="icon-search-focus-hint" style={{ fontSize: '11px', color: 'var(--text-dim)', border: '1px solid var(--border)', borderRadius: '6px', padding: '3px 8px', fontFamily: 'JetBrains Mono, monospace' }}>/ focus</span>
         </div>
       </section>
 
-      <section style={{ position: 'relative', zIndex: 2, marginBottom: '20px', background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: '12px', padding: '12px', display: 'grid', gridTemplateColumns: 'repeat(6, minmax(0, 1fr))', gap: '10px' }}>
+      <section className="icon-search-filter-bar" style={{ position: 'relative', zIndex: 2, marginBottom: '20px', background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: '12px', padding: '12px', display: 'grid', gridTemplateColumns: 'repeat(6, minmax(0, 1fr))', gap: '10px' }}>
         <select
           aria-label="Filter by library"
           title="Filter by library"
           value={selectedLibraryValue}
-          onChange={(e) => {
-            const value = e.target.value
-            if (value === 'all') {
-              setSelectedLib('all')
-              setSelectedIconifySet('all')
-            } else if (value === 'iconify') {
-              setSelectedLib('iconify')
-              setSelectedIconifySet('all')
-            } else if (value.startsWith('iconify:')) {
-              setSelectedLib('iconify')
-              setSelectedIconifySet(value.replace('iconify:', ''))
-            } else {
-              setSelectedLib(value)
-              setSelectedIconifySet('all')
-            }
-          }}
+          onChange={(e) => handleLibraryChange(e.target.value)}
           className="icon-search-select"
         >
           <option value="all">All libraries</option>
@@ -1121,10 +1412,10 @@ import { Icon } from '@iconify/vue'
             </option>
           ))}
         </select>
-        <select aria-label="Filter by category" title="Filter by category" value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)} className="icon-search-select">
+        <select aria-label="Filter by category" title="Filter by category" value={selectedCategory} onChange={(e) => handleCategoryChange(e.target.value)} className="icon-search-select">
           {CATEGORIES.map((cat) => <option key={cat.id} value={cat.id}>{cat.icon} {cat.name}</option>)}
         </select>
-        <select aria-label="Filter by icon style" title="Filter by icon style" value={selectedStyle} onChange={(e) => setSelectedStyle(e.target.value)} className="icon-search-select">
+        <select aria-label="Filter by icon style" title="Filter by icon style" value={selectedStyle} onChange={(e) => handleStyleChange(e.target.value)} className="icon-search-select">
           <option value="all">All styles</option>
           <option value="stroke">Outline/Stroke</option>
           <option value="solid">Solid/Filled</option>
@@ -1132,22 +1423,22 @@ import { Icon } from '@iconify/vue'
           <option value="twotone">Two-Tone</option>
           <option value="sharp">Sharp</option>
         </select>
-        <select aria-label="Sort search results" title="Sort search results" value={sortBy} onChange={(e) => setSortBy(e.target.value as 'relevance' | 'popular' | 'alphabetical')} className="icon-search-select">
+        <select aria-label="Sort search results" title="Sort search results" value={sortBy} onChange={(e) => handleSortChange(e.target.value as SortOption)} className="icon-search-select">
           <option value="alphabetical">Sort: A → Z</option>
           <option value="relevance">Sort: Relevance</option>
           <option value="popular">Sort: Popular</option>
         </select>
         <label className="icon-search-legal-toggle" title="Show only legally safer icon licenses">
-          <input type="checkbox" checked={legalOnly} onChange={(e) => setLegalOnly(e.target.checked)} />
+          <input type="checkbox" checked={legalOnly} onChange={(e) => handleLegalOnlyChange(e.target.checked)} />
           Legal-safe only
         </label>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', fontSize: '13px', border: '1px solid var(--border)', borderRadius: '8px', background: 'var(--bg-card)' }}>
-          {loading ? 'Searching...' : `${formatNumber(results.total)} results`}
+          {loading ? 'loading...' : `${formatNumber(results.total)} results`}
         </div>
       </section>
 
       <section style={{ position: 'relative', zIndex: 2 }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(132px, 1fr))', gap: '12px' }}>
+        <div className="icon-search-results-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(132px, 1fr))', gap: '12px' }}>
           {results.icons.map((icon) => {
             const color = LIBRARY_COLORS[icon.library] || 'var(--accent)'
             return (
@@ -1155,8 +1446,6 @@ import { Icon } from '@iconify/vue'
                 key={icon.id}
                 icon={icon}
                 color={color}
-                isSelected={selectedIcon?.id === icon.id}
-                onSelect={() => setSelectedIcon(icon)}
               />
             )
           })}
@@ -1180,7 +1469,7 @@ import { Icon } from '@iconify/vue'
       {selectedIcon && (
         <>
           <div onClick={() => setSelectedIcon(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 99 }} />
-          <aside style={{ position: 'fixed', top: 0, right: 0, bottom: 0, width: '420px', background: 'var(--bg-secondary)', borderLeft: '1px solid var(--border)', zIndex: 100, padding: '20px', overflowY: 'auto' }}>
+          <aside className="icon-search-detail-panel" style={{ position: 'fixed', top: 0, right: 0, bottom: 0, width: '420px', background: 'var(--bg-secondary)', borderLeft: '1px solid var(--border)', zIndex: 100, padding: '20px', overflowY: 'auto' }}>
             <button onClick={() => setSelectedIcon(null)} className="icon-search-btn icon-search-btn-small icon-search-close-btn">✕</button>
             <h3 style={{ fontSize: '22px', marginBottom: '8px' }}>{selectedIcon.displayName || selectedIcon.name}</h3>
             <p style={{ color: 'var(--text-muted)', fontSize: '13px', marginBottom: '8px' }}>{selectedIcon.libraryName}</p>
@@ -1334,145 +1623,7 @@ import { Icon } from '@iconify/vue'
         </>
       )}
 
-      <aside style={{
-        position: 'fixed',
-        left: '20px',
-        bottom: '20px',
-        width: '340px',
-        maxHeight: '55vh',
-        overflowY: 'auto',
-        background: 'rgba(18,18,21,0.95)',
-        border: '1px solid var(--border)',
-        borderRadius: '14px',
-        padding: '14px',
-        zIndex: 90,
-        backdropFilter: 'blur(8px)',
-      }}>
-        {/* Workspace Pack Manager dropdown (Phase 3 Upgrade) */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '12px', borderBottom: '1px solid var(--border)', paddingBottom: '12px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace' }}>// ACTIVE WORKSPACE PACK</span>
-            <div style={{ display: 'flex', gap: '4px' }}>
-              <button 
-                onClick={() => {
-                  const pack = packs.find(p => p.id === activePackId)
-                  if (pack) {
-                    setRenamePackName(pack.name)
-                    setIsRenamePackOpen(true)
-                  }
-                }} 
-                className="icon-search-btn icon-search-btn-small" 
-                title="Rename active pack"
-                style={{ padding: '2px 6px', fontSize: '10px' }}
-              >
-                ✏️
-              </button>
-              <button 
-                onClick={() => {
-                  setCreatePackName('')
-                  setIsCreatePackOpen(true)
-                }} 
-                className="icon-search-btn icon-search-btn-small" 
-                title="Create new pack"
-                style={{ padding: '2px 6px', fontSize: '10px' }}
-              >
-                ➕
-              </button>
-              {packs.length > 1 && (
-                <button 
-                  onClick={handleDeleteActivePack} 
-                  className="icon-search-btn icon-search-btn-small" 
-                  title="Delete active pack"
-                  style={{ padding: '2px 6px', fontSize: '10px', color: 'var(--red)' }}
-                >
-                  🗑️
-                </button>
-              )}
-            </div>
-          </div>
-          <select 
-            aria-label="Active workspace pack selection selector"
-            value={activePackId} 
-            onChange={(e) => handleSwitchPack(e.target.value)} 
-            className="icon-search-select" 
-            style={{ width: '100%', fontSize: '12px', padding: '6px 8px' }}
-          >
-            {packs.map((pack) => (
-              <option key={pack.id} value={pack.id}>{pack.name} ({pack.items.length})</option>
-            ))}
-          </select>
-        </div>
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-          <h4 style={{ fontSize: '14px', fontWeight: 800 }}>Workspace Cart ({cart.length})</h4>
-          {cart.length > 0 && (
-            <button onClick={copyCartExport} className="icon-search-btn icon-search-btn-small" style={{ fontSize: '10px' }}>
-              {copied ? 'Copied!' : 'Copy JSON'}
-            </button>
-          )}
-        </div>
-
-        
-        {cart.length > 0 && (
-          <button 
-            onClick={() => setIsExportModalOpen(true)} 
-            className="icon-search-btn"
-            style={{ 
-              width: '100%', 
-              marginBottom: '12px', 
-              background: 'var(--accent)', 
-              borderColor: 'var(--accent)', 
-              color: '#fff',
-              fontWeight: 'bold',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '6px'
-            }}
-          >
-            📦 Export Pack ({cart.length})
-          </button>
-        )}
-
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '4px', marginBottom: '12px' }}>
-          <button onClick={() => exportCart('json')} className="icon-search-btn icon-search-btn-small" style={{ fontSize: '9px', padding: '4px 2px' }}>JSON</button>
-          <button onClick={() => exportCart('react')} className="icon-search-btn icon-search-btn-small" style={{ fontSize: '9px', padding: '4px 2px', position: 'relative' }}>
-            React
-          </button>
-          <button onClick={() => exportCart('vue')} className="icon-search-btn icon-search-btn-small" style={{ fontSize: '9px', padding: '4px 2px', position: 'relative' }}>
-            Vue
-          </button>
-          <button onClick={() => exportCart('tailwind')} className="icon-search-btn icon-search-btn-small" style={{ fontSize: '9px', padding: '4px 2px', position: 'relative' }}>
-            Tailwind
-          </button>
-          <button onClick={() => exportCart('csv')} className="icon-search-btn icon-search-btn-small" style={{ fontSize: '9px', padding: '4px 2px' }}>CSV</button>
-          {cart.length > 0 && (
-            <button onClick={handleClearActivePack} className="icon-search-btn icon-search-btn-small" style={{ fontSize: '9px', padding: '4px 2px', color: 'var(--red)' }} title="Clear current pack items">Clear All</button>
-          )}
-        </div>
-
-        {exportNotice ? (
-          <p style={{ color: 'var(--green)', fontSize: '10px', marginBottom: '10px', fontFamily: 'JetBrains Mono, monospace' }}>{exportNotice}</p>
-        ) : null}
-        {cart.length === 0 ? (
-          <p style={{ color: 'var(--text-muted)', fontSize: '12px' }}>No icons yet. Open any icon and add it to cart.</p>
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            {cart.map((item) => (
-              <div key={item.key} style={{ border: '1px solid var(--border)', borderRadius: '8px', padding: '8px', display: 'grid', gridTemplateColumns: '1fr auto', gap: '8px', alignItems: 'center' }}>
-                <div>
-                  <div style={{ fontSize: '11px', color: 'var(--text)' }}>{item.icon.name}</div>
-                  <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>{item.icon.libraryName}</div>
-                  <div style={{ fontSize: '9px', color: item.icon.legalSafe ? '#34d399' : '#f87171' }}>
-                    {item.icon.legalSafe ? 'legal-safe' : 'restricted'}
-                  </div>
-                </div>
-                <button onClick={() => removeFromCart(item.key)} className="icon-search-btn icon-search-btn-small">Remove</button>
-              </div>
-            ))}
-          </div>
-        )}
-      </aside>
 
       {/* Workspace Dialog Modals (Phase 3 Upgrade) */}
       {isCreatePackOpen && (

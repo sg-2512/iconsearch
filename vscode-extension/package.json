@@ -1,0 +1,93 @@
+{
+  "name": "iconsearch-integration",
+  "displayName": "IconSearch Integration",
+  "description": "Search and insert 350,000+ free online SVG, React, Vue, Svelte, and Tailwind icons directly inside VS Code.",
+  "version": "1.0.0",
+  "publisher": "iconsearch",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Other"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SanchitGupta/icon-hub.git"
+  },
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "iconsearch-explorer",
+          "title": "IconSearch",
+          "icon": "$(search)"
+        }
+      ]
+    },
+    "views": {
+      "iconsearch-explorer": [
+        {
+          "type": "webview",
+          "id": "iconsearch.sidebar",
+          "name": "Search & Insert"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "iconsearch-integration.search",
+        "title": "Focus IconSearch",
+        "category": "IconSearch"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "iconsearch-integration.search",
+        "key": "ctrl+shift+i",
+        "mac": "cmd+shift+i",
+        "when": "editorTextFocus"
+      }
+    ],
+    "configuration": {
+      "title": "IconSearch Integration",
+      "properties": {
+        "iconSearch.defaultFormat": {
+          "type": "string",
+          "enum": [
+            "ask",
+            "react",
+            "svg",
+            "vue",
+            "svelte",
+            "tailwind"
+          ],
+          "default": "ask",
+          "description": "The default format to insert icons. 'ask' shows a selection menu each time."
+        },
+        "iconSearch.tailwindClasses": {
+          "type": "string",
+          "default": "w-5 h-5",
+          "description": "Tailwind CSS classes to automatically append to class/className attributes."
+        },
+        "iconSearch.apiUrl": {
+          "type": "string",
+          "default": "https://iconsearch.info/api/icon-search",
+          "description": "The live IconSearch API URL used for online-only search queries."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.85.0",
+    "typescript": "^5.0.0"
+  }
+}

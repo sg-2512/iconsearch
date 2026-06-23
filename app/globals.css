@@ -100,6 +100,7 @@ code, pre, .mono {
 .icon-ticker-container {
   display: flex;
   overflow: hidden;
+  -webkit-user-select: none;
   user-select: none;
   position: relative;
   width: 100%;
@@ -445,4 +446,70 @@ select:focus-visible {
 .search-input-focus:focus-within {
   box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.4), 0 8px 32px rgba(139, 92, 246, 0.15);
   border-color: #8b5cf6 !important;
+}
+
+/* ===== Sidebar Layout ===== */
+.app-sidebar {
+  width: 260px;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  border-right: 1px solid var(--border);
+  background: var(--bg);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  z-index: 200;
+  transition: transform 0.25s ease;
+}
+
+.app-sidebar a:hover {
+  background: var(--bg-card) !important;
+  color: var(--text) !important;
+}
+
+.app-main {
+  margin-left: 260px;
+  min-height: 100vh;
+}
+
+.sidebar-mobile-toggle {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 300;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.sidebar-overlay {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .app-sidebar {
+    transform: translateX(-100%);
+  }
+  .app-sidebar.open {
+    transform: translateX(0);
+  }
+  .app-main {
+    margin-left: 0;
+  }
+  .sidebar-mobile-toggle {
+    display: flex;
+  }
+  .sidebar-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 150;
+  }
 }
