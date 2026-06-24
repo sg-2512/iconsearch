@@ -1,5 +1,5 @@
 ---
-title: "Iconify in React — The Complete Guide for 2026 (294,000+ Icons, One API)"
+title: "Iconify in React — The Complete Guide for 2026 (326,602 Icons, One API)"
 slug: iconify-react-complete-guide-2026
 date: "2026-05-25"
 author: IconSearch Team
@@ -17,14 +17,14 @@ tags:
   - bundle-size
 canonical: https://iconsearch.info/blog/iconify-react-complete-guide-2026
 meta-og:title: "Iconify in React — The Complete Guide for 2026"
-meta-og:description: "294,000+ icons, one API. Learn how to install, configure, and ship Iconify in React and Next.js with zero render-blocking, offline support, and full TypeScript coverage."
+meta-og:description: "326,602 icons, one API. Learn how to install, configure, and ship Iconify in React and Next.js with zero render-blocking, offline support, and full TypeScript coverage."
 ---
 
-# Iconify in React — The Complete Guide for 2026 (294,000+ Icons, One API)
+# Iconify in React — The Complete Guide for 2026 (326,602 Icons, One API)
 
 Most React developers pick one icon library and live with its limitations. Heroicons gives you 292 clean icons but nothing else. Tabler gives you 5,500 but a single visual style. react-icons bundles everything into one enormous package that requires discipline to keep lean.
 
-Iconify takes a different position entirely: **294,000+ icons from 211 open-source sets, accessed through a single unified component, with no lock-in to any one visual style.**
+Iconify takes a different position entirely: **326,602 icons from 224 open-source collections, accessed through a single unified component, with no lock-in to any one visual style.**
 
 This guide covers everything — how Iconify works under the hood, the four different ways to install it, how to avoid the runtime API fetch pitfall that kills offline apps, real bundle-size numbers, SSR behaviour in Next.js App Router, and when Iconify is the wrong choice. No filler, no padding.
 
@@ -351,7 +351,7 @@ Both solve the multi-library problem. The differences matter.
 | | Iconify | react-icons |
 |---|---|---|
 | Icon sets | 211 | 40+ |
-| Total icons | 294,000+ | 40,000+ |
+| Total icons | 326,602 | 40,000+ |
 | Default loading | Runtime API fetch | All bundled |
 | Tree-shaking | Excellent (icon-level) | Good (named exports) |
 | SSR support | Yes (offline mode) | Yes |
@@ -514,7 +514,7 @@ import cameraIcon from "@iconify-json/lucide/icons/camera.json";
 
 ## Summary
 
-Iconify is the most versatile icon solution available for React in 2026. Its 294,000-icon breadth and unified `prefix:name` API eliminate the library-switching overhead that fragments large codebases. The catch is setup discipline: use offline bundles or per-icon imports, register collections at app entry rather than in components, and pick icon sets intentionally rather than mixing them arbitrarily.
+Iconify is the most versatile icon solution available for React in 2026. Its 326,602-icon breadth and unified `prefix:name` API eliminate the library-switching overhead that fragments large codebases. The catch is setup discipline: use offline bundles or per-icon imports, register collections at app entry rather than in components, and pick icon sets intentionally rather than mixing them arbitrarily.
 
 For projects that need one well-curated set, `lucide-react` or `@heroicons/react` remain leaner choices. For everything else — multi-style design systems, icon-heavy dashboards, component libraries meant to be shared — Iconify is the right tool and worth the additional setup investment.
 

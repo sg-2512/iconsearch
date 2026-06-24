@@ -40,7 +40,7 @@ function getCleanSvgUrl(url: string, library: string): string {
   return url
 }
 
-// In-memory cache for loading the 350,000+ icons
+// In-memory cache for loading the 351,639 icons
 let cachedIcons: any[] | null = null
 
 function loadIconsDatabase(): any[] {

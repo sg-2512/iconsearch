@@ -25,6 +25,7 @@ type WebviewIcon = ApiIcon & {
 type ApiResponse = {
   icons?: unknown;
   total?: unknown;
+  facets?: unknown;
 };
 
 type IconActionFormat = 'react' | 'svg' | 'vue' | 'svelte' | 'tailwind';
@@ -58,6 +59,25 @@ const DEFAULT_API_URL = 'https://iconsearch.info/api/icon-search';
 const ACCESS_KEY = 'iconsearch.freeAccess';
 const RECENT_KEY = 'iconsearch.recentIcons';
 const MAX_RECENT_ICONS = 12;
+const SEARCHABLE_ICON_COUNT = 351_639;
+const NAMED_LIBRARIES = [
+  'lucide-icons',
+  'heroicons',
+  'tabler-icons',
+  'phosphor-icons',
+  'remix-icon',
+  'feather-icons',
+  'bootstrap-icons',
+  'radix-icons',
+  'iconoir',
+  'ionicons',
+  'octicons',
+  'ant-design-icons',
+  'devicons',
+  'teenyicons',
+  'circum-icons',
+  'elusive-icons',
+] as const;
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
   private _view?: vscode.WebviewView;
@@ -80,6 +100,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
       switch (data.type) {
         case 'ready':
           this.postAccessState();
+          void this.loadCatalog();
           break;
         case 'unlockAccess':
           await this.unlockAccess(data.value);
@@ -147,6 +168,35 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     this.postAccessState();
   }
 
+  private async loadCatalog() {
+    try {
+      const url = new URL(DEFAULT_API_URL);
+      url.searchParams.set('limit', '1');
+      url.searchParams.set('legalOnly', '0');
+
+      const response = await fetch(url.toString(), {
+        headers: { accept: 'application/json' },
+      });
+      if (!response.ok) throw new Error(`IconSearch catalog returned ${response.status}`);
+
+      const payload = (await response.json()) as ApiResponse;
+      const facets = isRecord(payload.facets) ? payload.facets : {};
+      const iconifySets = stringArrayFrom(facets.iconifySets);
+
+      this.post({
+        type: 'catalog',
+        namedLibraries: NAMED_LIBRARIES,
+        iconifySets,
+        total: typeof payload.total === 'number'
+          ? Math.max(SEARCHABLE_ICON_COUNT, payload.total)
+          : SEARCHABLE_ICON_COUNT,
+      });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Could not load library catalog.';
+      this.post({ type: 'catalogError', value: message });
+    }
+  }
+
   private async handleSearch(request: SearchRequest) {
     const access = this.context.globalState.get<FreeAccess>(ACCESS_KEY);
     if (!access) {
@@ -155,21 +205,25 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     }
 
     const query = request.query.trim();
-    if (query.length < 2) {
+    const hasActiveFilter = request.library !== 'all' || request.style !== 'all';
+    if (query.length === 1 || (!query && !hasActiveFilter)) {
       this.post({ type: 'searchResults', value: [], total: 0, query });
       return;
     }
 
     try {
-      const config = vscode.workspace.getConfiguration('iconSearch');
-      const configuredApiUrl = config.get<string>('apiUrl') || DEFAULT_API_URL;
-      const url = new URL(configuredApiUrl);
-      url.searchParams.set('q', query);
+      const url = new URL(DEFAULT_API_URL);
+      if (query) url.searchParams.set('q', query);
       url.searchParams.set('limit', '60');
       url.searchParams.set('sort', 'relevance');
       url.searchParams.set('legalOnly', request.legalOnly ? '1' : '0');
 
-      if (request.library !== 'all') url.searchParams.set('lib', request.library);
+      if (request.library.startsWith('iconify:')) {
+        url.searchParams.set('lib', 'iconify');
+        url.searchParams.set('iconifySet', request.library.replace(/^iconify:/, ''));
+      } else if (request.library !== 'all') {
+        url.searchParams.set('lib', request.library);
+      }
       if (request.style !== 'all') url.searchParams.set('style', request.style);
 
       const response = await fetch(url.toString(), {
@@ -441,7 +495,15 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
                   <option value="remix-icon">Remix</option>
                   <option value="feather-icons">Feather</option>
                   <option value="iconoir">Iconoir</option>
-                  <option value="iconify">Iconify</option>
+                  <option value="radix-icons">Radix Icons</option>
+                  <option value="ionicons">Ionicons</option>
+                  <option value="octicons">Octicons</option>
+                  <option value="ant-design-icons">Ant Design Icons</option>
+                  <option value="devicons">Devicons</option>
+                  <option value="teenyicons">Teenyicons</option>
+                  <option value="circum-icons">Circum Icons</option>
+                  <option value="elusive-icons">Elusive Icons</option>
+                  <option value="iconify">All Iconify collections</option>
                 </select>
                 <select id="styleFilter" class="select" aria-label="Style filter">
                   <option value="all">All styles</option>
@@ -509,6 +571,71 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
             return escapeHtml(value).replace(/\\n/g, ' ');
           }
 
+          function formatCatalogName(value) {
+            const names = {
+              'lucide-icons': 'Lucide Icons',
+              'heroicons': 'Heroicons',
+              'tabler-icons': 'Tabler Icons',
+              'phosphor-icons': 'Phosphor Icons',
+              'remix-icon': 'Remix Icon',
+              'feather-icons': 'Feather Icons',
+              'bootstrap-icons': 'Bootstrap Icons',
+              'radix-icons': 'Radix Icons',
+              'iconoir': 'Iconoir',
+              'ionicons': 'Ionicons',
+              'octicons': 'Octicons',
+              'ant-design-icons': 'Ant Design Icons',
+              'devicons': 'Devicons',
+              'teenyicons': 'Teenyicons',
+              'circum-icons': 'Circum Icons',
+              'elusive-icons': 'Elusive Icons',
+            };
+            if (names[value]) return names[value];
+
+            const acronyms = new Set(['ai', 'bi', 'fa', 'gis', 'ic', 'mdi', 'svg', 'ui']);
+            return String(value)
+              .replace(/^iconify-/, '')
+              .split('-')
+              .map((part) => acronyms.has(part) ? part.toUpperCase() : part.charAt(0).toUpperCase() + part.slice(1))
+              .join(' ');
+          }
+
+          function appendCatalogOption(parent, value, label) {
+            const option = document.createElement('option');
+            option.value = value;
+            option.textContent = label;
+            parent.appendChild(option);
+          }
+
+          function renderCatalog(namedLibraries, iconifySets, total) {
+            const selectedValue = libraryFilter.value;
+            libraryFilter.innerHTML = '';
+            appendCatalogOption(
+              libraryFilter,
+              'all',
+              total ? 'All libraries - ' + Number(total).toLocaleString('en-US') + ' icons' : 'All libraries'
+            );
+
+            const namedGroup = document.createElement('optgroup');
+            namedGroup.label = 'Named libraries (' + namedLibraries.length + ')';
+            namedLibraries.forEach((library) => {
+              appendCatalogOption(namedGroup, library, formatCatalogName(library));
+            });
+            libraryFilter.appendChild(namedGroup);
+
+            const iconifyGroup = document.createElement('optgroup');
+            iconifyGroup.label = 'Iconify collections (' + iconifySets.length + ')';
+            appendCatalogOption(iconifyGroup, 'iconify', 'All Iconify collections');
+            iconifySets.forEach((set) => {
+              appendCatalogOption(iconifyGroup, 'iconify:' + set, formatCatalogName(set));
+            });
+            libraryFilter.appendChild(iconifyGroup);
+
+            if (Array.from(libraryFilter.options).some((option) => option.value === selectedValue)) {
+              libraryFilter.value = selectedValue;
+            }
+          }
+
           function currentSearchRequest() {
             return {
               query: searchInput.value.trim(),
@@ -520,7 +647,8 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
           function searchNow() {
             const request = currentSearchRequest();
-            if (request.query.length < 2) {
+            const hasActiveFilter = request.library !== 'all' || request.style !== 'all';
+            if (request.query.length === 1 || (!request.query && !hasActiveFilter)) {
               renderRecentOrEmpty();
               return;
             }
@@ -610,7 +738,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
             }
 
             emptyState.style.display = 'none';
-            statusEl.textContent = label || (icons.length + ' shown' + (total ? ' from ' + total.toLocaleString() + ' online results' : ''));
+            statusEl.textContent = label || (icons.length + ' shown' + (total ? ' from ' + total.toLocaleString('en-US') + ' online results' : ''));
 
             icons.forEach((icon, index) => {
               const card = document.createElement('article');
@@ -719,6 +847,16 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
               emptyState.style.display = 'block';
               emptyState.textContent = 'Live API error: ' + message.value;
               statusEl.textContent = 'Online search failed.';
+            }
+            if (message.type === 'catalog') {
+              renderCatalog(
+                Array.isArray(message.namedLibraries) ? message.namedLibraries : [],
+                Array.isArray(message.iconifySets) ? message.iconifySets : [],
+                message.total || 0
+              );
+            }
+            if (message.type === 'catalogError') {
+              console.warn('Using fallback library list:', message.value);
             }
           });
 
@@ -1062,6 +1200,10 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function stringFrom(value: unknown): string {
   return typeof value === 'string' ? value : '';
+}
+
+function stringArrayFrom(value: unknown): string[] {
+  return Array.isArray(value) ? value.filter((item): item is string => typeof item === 'string') : [];
 }
 
 function isHttpUrl(value: string): boolean {

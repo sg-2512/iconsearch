@@ -1,9 +1,10 @@
 import { icons } from '../../lib/icons'
 import Link from 'next/link'
+import { ICONIFY_COLLECTION_COUNT, SEARCHABLE_ICON_COUNT } from '../../data/library-catalog'
 
 export const metadata = {
   title: 'Free SVG Icons for Web Projects (2026) — Open Source Collections',
-  description: 'Browse the best free SVG icon libraries for web projects. Search 350,000+ icons or compare 16 open source icon libraries like Lucide, Heroicons, and Tabler.',
+  description: `Browse 16 named SVG icon libraries for web projects, search ${SEARCHABLE_ICON_COUNT.toLocaleString('en-US')} icons across ${ICONIFY_COLLECTION_COUNT} Iconify collections, or compare libraries like Lucide, Heroicons, and Tabler.`,
 }
 
 export default function FreeSvgIconsPage() {
@@ -20,7 +21,7 @@ export default function FreeSvgIconsPage() {
           <span style={{ color: 'var(--accent)' }}>for Web Projects</span>
         </h1>
         <p style={{ color: 'var(--text-muted)', fontSize: '18px', maxWidth: '560px', marginBottom: '24px' }}>
-          {icons.reduce((sum, i) => sum + i.iconCount, 0).toLocaleString()}+ free SVG icons across {icons.length} open source libraries. All free for commercial use.
+          {icons.reduce((sum, i) => sum + i.iconCount, 0).toLocaleString('en-US')}+ free SVG icons across {icons.length} open source libraries. All free for commercial use.
         </p>
         <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
           {['MIT License', 'ISC License', 'Apache 2.0', 'TypeScript', 'React', 'Next.js', 'Vue', 'Svelte'].map(tag => (
@@ -43,7 +44,7 @@ export default function FreeSvgIconsPage() {
       <section style={{ marginBottom: '48px' }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1px', background: 'var(--border)', border: '1px solid var(--border)', borderRadius: '12px', overflow: 'hidden' }}>
           {[
-            { label: 'Total Icons', value: icons.reduce((sum, i) => sum + i.iconCount, 0).toLocaleString() + '+' },
+            { label: 'Total Icons', value: icons.reduce((sum, i) => sum + i.iconCount, 0).toLocaleString('en-US') + '+' },
             { label: 'Libraries', value: icons.length.toString() },
             { label: 'All Free', value: '100%' },
             { label: 'Commercial Use', value: '✓ Yes' },
@@ -81,8 +82,8 @@ export default function FreeSvgIconsPage() {
                 {icon.description}
               </p>
               <div style={{ display: 'flex', gap: '16px', marginBottom: '12px' }}>
-                <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace' }}>⭐ {icon.stars.toLocaleString()}</span>
-                <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace' }}>◆ {icon.iconCount.toLocaleString()} icons</span>
+                <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace' }}>⭐ {icon.stars.toLocaleString('en-US')}</span>
+                <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace' }}>◆ {icon.iconCount.toLocaleString('en-US')} icons</span>
               </div>
               <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                 {icon.frameworks.map(f => (

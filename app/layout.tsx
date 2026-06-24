@@ -7,6 +7,7 @@ import Link from 'next/link'
 import Script from 'next/script'
 import { Analytics } from "@vercel/analytics/next"
 import { footerLegalLinks, internalLinkGroups } from '../data/internal-links'
+import { SEARCHABLE_ICON_COUNT } from '../data/library-catalog'
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
@@ -23,7 +24,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL('https://iconsearch.info'),
   title: 'IconSearch — Find & Compare 16 Free SVG Icon Libraries (2026)',
-  description: 'Search 350,000+ free SVG icons across Lucide, Heroicons, Tabler, Phosphor, Bootstrap, Remix, Feather, Radix, Iconoir, IonIcons, Octicons, and Iconify. Compare 16 React icon libraries by size, stars, and license.',
+  description: `Search ${SEARCHABLE_ICON_COUNT.toLocaleString('en-US')} free SVG icons from 16 named libraries and 224 Iconify collections. Compare 16 React icon libraries by size, stars, and license.`,
 }
 
 export const viewport = {

@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { SEARCHABLE_ICON_COUNT } from '../../data/library-catalog'
 
 export default function HomeSearch() {
   const [query, setQuery] = useState('')
@@ -19,7 +20,7 @@ export default function HomeSearch() {
         <div style={{ position: 'relative', maxWidth: '680px' }}>
           <input
             type="text"
-            placeholder="Search 350,000+ icons — try 'camera', 'home', 'arrow'..."
+            placeholder={`Search ${SEARCHABLE_ICON_COUNT.toLocaleString('en-US')} icons — try 'camera', 'home', 'arrow'...`}
             value={query}
             onChange={e => setQuery(e.target.value)}
             style={{

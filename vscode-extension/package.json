@@ -1,7 +1,7 @@
 {
   "name": "iconsearch-integration",
   "displayName": "IconSearch Integration",
-  "description": "Search and insert 350,000+ free online SVG, React, Vue, Svelte, and Tailwind icons directly inside VS Code.",
+  "description": "Search and insert 351,639 free online icons from 16 named libraries and 224 Iconify collections directly inside VS Code.",
   "version": "1.0.0",
   "publisher": "iconsearch",
   "engines": {
@@ -71,11 +71,6 @@
           "type": "string",
           "default": "w-5 h-5",
           "description": "Tailwind CSS classes to automatically append to class/className attributes."
-        },
-        "iconSearch.apiUrl": {
-          "type": "string",
-          "default": "https://iconsearch.info/api/icon-search",
-          "description": "The live IconSearch API URL used for online-only search queries."
         }
       }
     }

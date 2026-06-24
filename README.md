@@ -261,9 +261,9 @@ The search API reads **`data/canonical-icon-search.json.gz`** — a deduplicated
 
 | Metric | Value |
 |--------|-------|
-| Total icons | 349,269 |
-| Legal-safe icons | 252,925 |
-| Compressed index size | ~8.5 MB |
+| Total icons | 351,639 |
+| Legal-safe icons | 255,007 |
+| Compressed index size | ~8.6 MB |
 
 ### Pipeline overview
 

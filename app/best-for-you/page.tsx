@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { namedLibraries } from '../../data/library-catalog'
 
 const questions = [
   {
@@ -111,6 +112,21 @@ type Result = {
   } | null
   summary: string
   warning?: string
+}
+
+const namedLibrarySlugs = new Set(namedLibraries.map((library) => library.slug))
+
+function getResultHref(slug: string): string {
+  if (namedLibrarySlugs.has(slug)) return `/icons/${slug}`
+  if (slug === 'react-icons') return '/react-icons'
+  if (slug === 'material-icons') return '/icon-search?lib=iconify&iconifySet=material-symbols'
+  if (slug === 'simple-icons') return '/icon-search?lib=iconify&iconifySet=simple-icons'
+  if (slug === 'font-awesome') return '/icon-search?lib=iconify&iconifySet=fa6-solid'
+  return '/icon-search'
+}
+
+function canCompareResults(first: string, second: string): boolean {
+  return namedLibrarySlugs.has(first) && namedLibrarySlugs.has(second)
 }
 
 function getResult(answers: Answers): Result {
@@ -808,7 +824,7 @@ export default function BestForYouPage() {
 
             <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
               <Link
-                href={`/icons/${result.primary.slug}`}
+                href={getResultHref(result.primary.slug)}
                 style={{
                   background: 'var(--accent)',
                   color: 'white',
@@ -820,9 +836,9 @@ export default function BestForYouPage() {
                   fontWeight: 600,
                 }}
               >
-                Full Guide →
+                {namedLibrarySlugs.has(result.primary.slug) ? 'Full Guide →' : 'Explore Icons →'}
               </Link>
-              {result.secondary && (
+              {result.secondary && canCompareResults(result.primary.slug, result.secondary.slug) && (
                 <Link
                   href={`/compare/${result.primary.slug}-vs-${result.secondary.slug}`}
                   style={{
@@ -865,10 +881,10 @@ export default function BestForYouPage() {
                 {result.secondary.reason}
               </p>
               <Link
-                href={`/icons/${result.secondary.slug}`}
+                href={getResultHref(result.secondary.slug)}
                 style={{ color: 'var(--accent)', textDecoration: 'none', fontSize: '13px', fontFamily: 'JetBrains Mono, monospace' }}
               >
-                View {result.secondary.name} guide →
+                {namedLibrarySlugs.has(result.secondary.slug) ? `View ${result.secondary.name} guide →` : `Explore ${result.secondary.name} →`}
               </Link>
             </div>
           )}
@@ -896,10 +912,10 @@ export default function BestForYouPage() {
                 {result.tertiary.reason}
               </p>
               <Link
-                href={`/icons/${result.tertiary.slug}`}
+                href={getResultHref(result.tertiary.slug)}
                 style={{ color: 'var(--accent)', textDecoration: 'none', fontSize: '13px', fontFamily: 'JetBrains Mono, monospace' }}
               >
-                View {result.tertiary.name} guide →
+                {namedLibrarySlugs.has(result.tertiary.slug) ? `View ${result.tertiary.name} guide →` : `Explore ${result.tertiary.name} →`}
               </Link>
             </div>
           )}

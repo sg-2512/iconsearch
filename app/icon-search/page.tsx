@@ -2,9 +2,10 @@ import { Suspense } from 'react'
 import fs from 'fs'
 import path from 'path'
 import IconSearchClient from './IconSearchClient'
+import { SEARCHABLE_ICON_COUNT } from '../../data/library-catalog'
 
 export const metadata = {
-  title: 'Icon Search Engine — 350,000+ Free SVG Icons (2026)',
+  title: `Icon Search Engine — ${SEARCHABLE_ICON_COUNT.toLocaleString('en-US')} Free SVG Icons (2026)`,
   description: 'Search across Lucide, Heroicons, Phosphor, Tabler, Iconoir and Iconify. Copy SVG, export to React, Vue, Svelte, or generate SVG sprites dynamically.',
 }
 

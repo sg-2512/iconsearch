@@ -2,6 +2,7 @@ import { useCases } from '../../../data/usecases'
 import { icons } from '../../../lib/icons'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { SEARCHABLE_ICON_COUNT } from '../../../data/library-catalog'
 
 export async function generateStaticParams() {
   return useCases.map(uc => ({ slug: uc.slug }))
@@ -86,8 +87,8 @@ export default async function UseCasePage({ params }: { params: Promise<{ slug: 
                   <h3 style={{ fontSize: '20px', fontWeight: 700 }}>{lib.name}</h3>
                 </div>
                 <div style={{ display: 'flex', gap: '12px' }}>
-                  <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace' }}>⭐ {lib.stars.toLocaleString()}</span>
-                  <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace' }}>◆ {lib.iconCount.toLocaleString()} icons</span>
+                  <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace' }}>⭐ {lib.stars.toLocaleString('en-US')}</span>
+                  <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace' }}>◆ {lib.iconCount.toLocaleString('en-US')} icons</span>
                   <span style={{ fontSize: '11px', color: 'var(--green)', background: '#4ade8015', border: '1px solid var(--green)', padding: '2px 8px', borderRadius: '4px', fontFamily: 'JetBrains Mono, monospace' }}>{lib.license}</span>
                 </div>
               </div>
@@ -164,7 +165,7 @@ export default async function UseCasePage({ params }: { params: Promise<{ slug: 
                 <span style={{ fontSize: '11px', color: 'var(--green)', fontFamily: 'JetBrains Mono, monospace' }}>{lib.license}</span>
               </div>
               <div style={{ display: 'flex', gap: '12px' }}>
-                <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace' }}>◆ {lib.iconCount.toLocaleString()} icons</span>
+                <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace' }}>◆ {lib.iconCount.toLocaleString('en-US')} icons</span>
               </div>
             </Link>
           ))}
@@ -202,7 +203,7 @@ export default async function UseCasePage({ params }: { params: Promise<{ slug: 
           <div>
             <h3 style={{ fontSize: '12px', color: 'var(--text)', fontFamily: 'JetBrains Mono, monospace', marginBottom: '12px' }}>Resources</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <Link href="/icon-search" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '14px' }}>Search All 350,000+ Icons</Link>
+              <Link href="/icon-search" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '14px' }}>Search All {SEARCHABLE_ICON_COUNT.toLocaleString('en-US')} Icons</Link>
               <Link href="/licenses" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '14px' }}>Icon Library License Guide</Link>
               <Link href="/directory" style={{ color: 'var(--accent)', textDecoration: 'none', fontSize: '14px', marginTop: '4px' }}>View Full Site Directory →</Link>
             </div>

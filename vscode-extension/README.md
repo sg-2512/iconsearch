@@ -18,7 +18,8 @@ Open VS Code settings and search for `IconSearch Integration`.
 
 - `iconSearch.defaultFormat`: Default insert format. Supported values are `ask`, `react`, `svg`, `vue`, `svelte`, and `tailwind`.
 - `iconSearch.tailwindClasses`: Classes appended to generated snippets. Default: `w-5 h-5`.
-- `iconSearch.apiUrl`: Live IconSearch API URL. Default: `https://iconsearch.info/api/icon-search`.
+
+Search and catalog requests always use the production API at `https://iconsearch.info/api/icon-search`.
 
 ## Local Development
 

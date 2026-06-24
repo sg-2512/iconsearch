@@ -2,34 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-
-const libraries = [
-  { name: 'Lucide Icons', slug: 'lucide-icons', color: '#818cf8' },
-  { name: 'Heroicons', slug: 'heroicons', color: '#38bdf8' },
-  { name: 'Tabler Icons', slug: 'tabler-icons', color: '#34d399' },
-  { name: 'Phosphor Icons', slug: 'phosphor-icons', color: '#f472b6' },
-  { name: 'Remix Icon', slug: 'remix-icon', color: '#fb923c' },
-  { name: 'Feather Icons', slug: 'feather-icons', color: '#a78bfa' },
-  { name: 'Bootstrap Icons', slug: 'bootstrap-icons', color: '#a855f7' },
-  { name: 'Radix Icons', slug: 'radix-icons', color: '#fbbf24' },
-  { name: 'Iconoir', slug: 'iconoir', color: '#f87171' },
-  { name: 'IonIcons', slug: 'ionicons', color: '#2dd4bf' },
-  { name: 'Octicons', slug: 'octicons', color: '#94a3b8' },
-  { name: 'Material Icons', slug: 'material-icons', color: '#4ade80' },
-  { name: 'Simple Icons', slug: 'simple-icons', color: '#e879f9' },
-  { name: 'Mage Icons', slug: 'iconify-mage', color: '#e879f9' },
-  { name: 'Line Awesome', slug: 'iconify-la', color: '#22d3ee' },
-  { name: 'Solar Icons', slug: 'iconify-solar', color: '#fbbf24' },
-  { name: 'Fluent UI Icons', slug: 'iconify-fluent', color: '#38bdf8' },
-  { name: 'Carbon Icons', slug: 'iconify-carbon', color: '#94a3b8' },
-  { name: 'Material Symbols', slug: 'iconify-material-symbols', color: '#4ade80' },
-  { name: 'BoxIcons', slug: 'iconify-bi', color: '#fb923c' },
-  { name: 'Devicons', slug: 'devicons', color: '#60a5fa' },
-  { name: 'Teenyicons', slug: 'teenyicons', color: '#fb7185' },
-  { name: 'Circum Icons', slug: 'circum-icons', color: '#818cf8' },
-  { name: 'Elusive Icons', slug: 'elusive-icons', color: '#38bdf8' },
-]
+import { usePathname, useRouter } from 'next/navigation'
+import { formatIconifyCollectionName, namedLibraries } from '../../data/library-catalog'
 
 const navLinks = [
   { label: 'Home', href: '/', icon: 'M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z' },
@@ -41,11 +15,32 @@ const navLinks = [
 
 export default function Sidebar() {
   const pathname = usePathname()
+  const router = useRouter()
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [iconifySets, setIconifySets] = useState<string[]>([])
 
   useEffect(() => {
-    setMobileOpen(false)
+    const timer = window.setTimeout(() => setMobileOpen(false), 0)
+    return () => window.clearTimeout(timer)
   }, [pathname])
+
+  useEffect(() => {
+    const controller = new AbortController()
+
+    fetch('/api/icon-search?limit=1&legalOnly=0', { signal: controller.signal })
+      .then((response) => response.ok ? response.json() : Promise.reject(new Error(`Catalog returned ${response.status}`)))
+      .then((data) => {
+        const sets = Array.isArray(data?.facets?.iconifySets) ? data.facets.iconifySets : []
+        setIconifySets(sets)
+      })
+      .catch((error) => {
+        if ((error as Error).name !== 'AbortError') {
+          console.error('Could not load Iconify collections', error)
+        }
+      })
+
+    return () => controller.abort()
+  }, [])
 
   return (
     <>
@@ -174,7 +169,7 @@ export default function Sidebar() {
             </span>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1px' }}>
-            {libraries.map(lib => {
+            {namedLibraries.map(lib => {
               const isActive = pathname === `/icons/${lib.slug}`
               return (
                 <Link
@@ -199,6 +194,50 @@ export default function Sidebar() {
                 </Link>
               )
             })}
+          </div>
+
+          <div style={{ borderTop: '1px solid var(--border)', marginTop: '12px', padding: '14px 8px 4px' }}>
+            <label htmlFor="sidebar-iconify-collection" style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1.3px', marginBottom: '8px' }}>
+              Iconify Collections
+            </label>
+            <select
+              id="sidebar-iconify-collection"
+              aria-label="Browse Iconify collections"
+              defaultValue=""
+              onChange={(event) => {
+                const collection = event.target.value
+                if (!collection) return
+                router.push(`/icon-search?lib=iconify&iconifySet=${encodeURIComponent(collection)}`)
+                setMobileOpen(false)
+              }}
+              style={{
+                width: '100%',
+                minWidth: 0,
+                border: '1px solid var(--border)',
+                borderRadius: '7px',
+                padding: '8px 9px',
+                color: 'var(--text)',
+                background: 'var(--bg-card)',
+                fontSize: '12px',
+                fontFamily: 'var(--font-inter), Inter, sans-serif',
+                cursor: 'pointer',
+              }}
+            >
+              <option value="">
+                {iconifySets.length ? `${iconifySets.length} collections` : 'Loading collections...'}
+              </option>
+              {iconifySets.map((set) => (
+                <option key={set} value={set}>
+                  {formatIconifyCollectionName(set)}
+                </option>
+              ))}
+            </select>
+            <Link
+              href="/icon-search?lib=iconify"
+              style={{ display: 'block', marginTop: '8px', color: 'var(--accent)', textDecoration: 'none', fontSize: '12px', padding: '4px 2px' }}
+            >
+              Browse all Iconify icons
+            </Link>
           </div>
         </div>
 

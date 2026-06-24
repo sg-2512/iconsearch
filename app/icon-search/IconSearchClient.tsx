@@ -7,6 +7,12 @@ import { generateZipPackage } from '../../lib/exporter'
 import { createClient, isSupabaseConfigured } from '@/lib/supabase'
 import { trackSearch, trackAddToCart, trackExport } from '@/lib/analytics'
 import AuthModal from '../components/AuthModal'
+import {
+  formatIconifyCollectionName,
+  getNamedLibraryName,
+  namedLibraries,
+  SEARCHABLE_ICON_COUNT,
+} from '../../data/library-catalog'
 
 type Icon = {
   id: string
@@ -381,6 +387,10 @@ export default function IconSearchClient({ initialData }: { initialData?: ApiRes
   const [currentPage, setCurrentPage] = useState(initialSearchState.currentPage)
   const [loading, setLoading] = useState(!initialData)
   const [results, setResults] = useState<ApiResponse>(initialData || { icons: [], total: 0, page: 1, limit: 80, totalPages: 1 })
+  const [catalog, setCatalog] = useState({
+    libraries: namedLibraries.map((library) => library.id),
+    iconifySets: initialData?.facets?.iconifySets || [],
+  })
   const [selectedIcon, setSelectedIcon] = useState<Icon | null>(null)
   const [svgContent, setSvgContent] = useState('')
   const [customSize, setCustomSize] = useState(32)
@@ -762,6 +772,30 @@ export default function IconSearchClient({ initialData }: { initialData?: ApiRes
   useEffect(() => {
     const controller = new AbortController()
 
+    fetch('/api/icon-search?limit=1&legalOnly=0', { signal: controller.signal })
+      .then((response) => response.ok ? response.json() : Promise.reject(new Error(`Catalog returned ${response.status}`)))
+      .then((data) => {
+        const libraries = Array.isArray(data?.facets?.libraries)
+          ? data.facets.libraries.filter((library: unknown): library is string => typeof library === 'string' && !library.startsWith('iconify-'))
+          : namedLibraries.map((library) => library.id)
+        const iconifySets = Array.isArray(data?.facets?.iconifySets)
+          ? data.facets.iconifySets.filter((set: unknown): set is string => typeof set === 'string')
+          : []
+
+        setCatalog({ libraries, iconifySets })
+      })
+      .catch((error) => {
+        if ((error as Error).name !== 'AbortError') {
+          console.error('Could not load full library catalog', error)
+        }
+      })
+
+    return () => controller.abort()
+  }, [])
+
+  useEffect(() => {
+    const controller = new AbortController()
+
     const fetchResults = async () => {
       try {
         setLoading(true)
@@ -1067,14 +1101,12 @@ export default function IconSearchClient({ initialData }: { initialData?: ApiRes
   }, [selectedIcon])
 
   const libraryOptions = useMemo(() => {
-    const libraries = results.facets?.libraries || []
-    const nonIconify = libraries.filter((library) => !library.startsWith('iconify-'))
-    return ['all', ...nonIconify, 'iconify']
-  }, [results.facets?.libraries])
+    return ['all', ...catalog.libraries, 'iconify']
+  }, [catalog.libraries])
 
   const iconifySetOptions = useMemo(() => {
-    return ['all', ...(results.facets?.iconifySets || [])]
-  }, [results.facets?.iconifySets])
+    return ['all', ...catalog.iconifySets]
+  }, [catalog.iconifySets])
 
   const selectedLibraryValue = useMemo(() => {
     if (selectedLib !== 'iconify') return selectedLib
@@ -1267,7 +1299,7 @@ import { Icon } from '@iconify/vue'
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
             <h1 style={{ fontSize: 'clamp(34px, 5vw, 56px)', fontWeight: 900, lineHeight: 1.1, marginBottom: '12px' }}>
-              Search 350,000+ Icons
+              Search {SEARCHABLE_ICON_COUNT.toLocaleString('en-US')} Icons
             </h1>
             <p style={{ color: 'var(--text-muted)', fontSize: '16px', maxWidth: '760px', lineHeight: 1.7 }}>
               explorer with lightning-fast API search, clean cards, rich filters, and polished dark UI.
@@ -1400,17 +1432,21 @@ import { Icon } from '@iconify/vue'
           className="icon-search-select"
         >
           <option value="all">All libraries</option>
-          {libraryOptions.filter((lib) => lib !== 'all' && lib !== 'iconify').map((lib) => (
-            <option key={lib} value={lib}>
-              {lib}
-            </option>
-          ))}
-          <option value="iconify">Iconify (all sets)</option>
-          {iconifySetOptions.filter((set) => set !== 'all').map((set) => (
-            <option key={`iconify:${set}`} value={`iconify:${set}`}>
-              {`Iconify / ${set}`}
-            </option>
-          ))}
+          <optgroup label="Named libraries (16)">
+            {libraryOptions.filter((lib) => lib !== 'all' && lib !== 'iconify').map((lib) => (
+              <option key={lib} value={lib}>
+                {getNamedLibraryName(lib)}
+              </option>
+            ))}
+          </optgroup>
+          <optgroup label={`Iconify collections (${Math.max(0, iconifySetOptions.length - 1)})`}>
+            <option value="iconify">All Iconify collections</option>
+            {iconifySetOptions.filter((set) => set !== 'all').map((set) => (
+              <option key={`iconify:${set}`} value={`iconify:${set}`}>
+                {formatIconifyCollectionName(set)}
+              </option>
+            ))}
+          </optgroup>
         </select>
         <select aria-label="Filter by category" title="Filter by category" value={selectedCategory} onChange={(e) => handleCategoryChange(e.target.value)} className="icon-search-select">
           {CATEGORIES.map((cat) => <option key={cat.id} value={cat.id}>{cat.icon} {cat.name}</option>)}

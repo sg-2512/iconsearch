@@ -4,6 +4,7 @@ import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { IconLibrary } from '../../lib/icons'
+import { SEARCHABLE_ICON_COUNT } from '../../data/library-catalog'
 
 // Hardcoded sample SVGs for the Customizer Sandbox (Lucide/Heroicons standard outlines)
 const sandboxIcons = [
@@ -491,7 +492,7 @@ export default function DynamicHome({ initialLibraries, recentItems }: DynamicHo
             marginBottom: '32px',
             lineHeight: '1.6'
           }}>
-            Instant search across <span style={{ color: 'var(--text)', fontWeight: 600 }}>350,000+ free SVG icons</span> across Lucide, Heroicons, Tabler, Phosphor, Iconoir, and the Iconify registry. Zero packages required to customize and export.
+            Instant search across <span style={{ color: 'var(--text)', fontWeight: 600 }}>{SEARCHABLE_ICON_COUNT.toLocaleString('en-US')} free SVG icons</span> from 16 named libraries and 224 Iconify collections. Zero packages required to customize and export.
           </p>
 
           {/* Core Search Form */}
@@ -499,7 +500,7 @@ export default function DynamicHome({ initialLibraries, recentItems }: DynamicHo
             <div style={{ position: 'relative' }} className="search-input-focus">
               <input
                 type="text"
-                placeholder="Search 350,000+ icons — try 'settings', 'bell', 'arrow'..."
+                placeholder={`Search ${SEARCHABLE_ICON_COUNT.toLocaleString('en-US')} icons — try 'settings', 'bell', 'arrow'...`}
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 style={{
@@ -616,7 +617,7 @@ export default function DynamicHome({ initialLibraries, recentItems }: DynamicHo
                 e.currentTarget.style.boxShadow = '0 8px 32px rgba(139, 92, 246, 0.4)';
               }}
             >
-              Explore 350,000+ Icons →
+              Explore {SEARCHABLE_ICON_COUNT.toLocaleString('en-US')} Icons →
             </Link>
             <Link href="/compare" style={{
               background: 'rgba(255, 255, 255, 0.03)',

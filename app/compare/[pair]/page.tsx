@@ -1,5 +1,7 @@
 import { icons } from '../../../lib/icons'
 import Link from 'next/link'
+import { notFound } from 'next/navigation'
+import { SEARCHABLE_ICON_COUNT } from '../../../data/library-catalog'
 
 export async function generateStaticParams() {
   const pairs = []
@@ -19,7 +21,7 @@ export async function generateMetadata({ params }: { params: Promise<{ pair: str
   if (!libA || !libB) return {}
   return {
     title: `${libA.name} vs ${libB.name} — Detailed Comparison for React (2026)`,
-    description: `Comprehensive comparison of ${libA.name} (${libA.iconCount.toLocaleString()} icons) and ${libB.name} (${libB.iconCount.toLocaleString()} icons). We compare licenses, bundle sizes, tree-shaking, TypeScript support, and React import syntax to help you decide.`,
+    description: `Comprehensive comparison of ${libA.name} (${libA.iconCount.toLocaleString('en-US')} icons) and ${libB.name} (${libB.iconCount.toLocaleString('en-US')} icons). We compare licenses, bundle sizes, tree-shaking, TypeScript support, and React import syntax to help you decide.`,
   }
 }
 
@@ -38,20 +40,13 @@ export default async function ComparisonPage({ params }: { params: Promise<{ pai
   const a = icons.find(i => i.slug === slugA)
   const b = icons.find(i => i.slug === slugB)
 
-  if (!a || !b) {
-    return (
-      <main style={{ maxWidth: '1200px', margin: '0 auto', padding: '40px 48px' }}>
-        <h1 style={{ color: 'var(--text)' }}>Comparison not found</h1>
-        <Link href="/" style={{ color: 'var(--accent)' }}>← Back to home</Link>
-      </main>
-    )
-  }
+  if (!a || !b) notFound()
 
   const hasLucide = a.slug === 'lucide-icons' || b.slug === 'lucide-icons'
 
   const rows = [
-    { label: 'Total Icons', a: a.iconCount.toLocaleString(), b: b.iconCount.toLocaleString(), winner: a.iconCount > b.iconCount ? 'a' : a.iconCount < b.iconCount ? 'b' : 'none' },
-    { label: 'GitHub Stars', a: a.stars.toLocaleString(), b: b.stars.toLocaleString(), winner: a.stars > b.stars ? 'a' : a.stars < b.stars ? 'b' : 'none' },
+    { label: 'Total Icons', a: a.iconCount.toLocaleString('en-US'), b: b.iconCount.toLocaleString('en-US'), winner: a.iconCount > b.iconCount ? 'a' : a.iconCount < b.iconCount ? 'b' : 'none' },
+    { label: 'GitHub Stars', a: a.stars.toLocaleString('en-US'), b: b.stars.toLocaleString('en-US'), winner: a.stars > b.stars ? 'a' : a.stars < b.stars ? 'b' : 'none' },
     { label: 'License', a: a.license, b: b.license, winner: 'none' },
     { label: 'TypeScript', a: a.typescript ? '✓ Yes' : '✗ No', b: b.typescript ? '✓ Yes' : '✗ No', winner: a.typescript && !b.typescript ? 'a' : !a.typescript && b.typescript ? 'b' : 'none' },
     { label: 'Tree Shakable', a: a.treeshakable ? '✓ Yes' : '✗ No', b: b.treeshakable ? '✓ Yes' : '✗ No', winner: a.treeshakable && !b.treeshakable ? 'a' : !a.treeshakable && b.treeshakable ? 'b' : 'none' },
@@ -69,7 +64,7 @@ export default async function ComparisonPage({ params }: { params: Promise<{ pai
         "name": `Which is better: ${a.name} or ${b.name}?`,
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": `Choosing between ${a.name} and ${b.name} depends entirely on your project's technical requirements and design aesthetic. ${a.name} provides ${a.iconCount.toLocaleString()} icons and is notable for ${a.pros[0].toLowerCase()}, while ${b.name} offers ${b.iconCount.toLocaleString()} icons and is best known for ${b.pros[0].toLowerCase()}.`
+          "text": `Choosing between ${a.name} and ${b.name} depends entirely on your project's technical requirements and design aesthetic. ${a.name} provides ${a.iconCount.toLocaleString('en-US')} icons and is notable for ${a.pros[0].toLowerCase()}, while ${b.name} offers ${b.iconCount.toLocaleString('en-US')} icons and is best known for ${b.pros[0].toLowerCase()}.`
         }
       },
       {
@@ -137,7 +132,7 @@ export default async function ComparisonPage({ params }: { params: Promise<{ pai
             When building modern web applications, choosing the right icon library can significantly impact both your application's aesthetic and its performance. In this comprehensive comparison, we pit <strong>{a.name}</strong> against <strong>{b.name}</strong> to help you make an informed decision for your React, Next.js, Vue, or Svelte project.
           </p>
           <p>
-            Together, these libraries represent some of the most popular open-source UI assets available today. {a.name} boasts an impressive {a.iconCount.toLocaleString()} icons (licensed under {a.license}), while {b.name} counters with {b.iconCount.toLocaleString()} highly-polished icons (licensed under {b.license}).
+            Together, these libraries represent some of the most popular open-source UI assets available today. {a.name} boasts an impressive {a.iconCount.toLocaleString('en-US')} icons (licensed under {a.license}), while {b.name} counters with {b.iconCount.toLocaleString('en-US')} highly-polished icons (licensed under {b.license}).
           </p>
           <p>
             Below, we dive into the technical details: bundle size impacts, tree-shaking capabilities, TypeScript support, explicit commercial licensing rules, and real-world implementation examples.
@@ -176,9 +171,9 @@ export default async function ComparisonPage({ params }: { params: Promise<{ pai
           <Link href={`/icons/${a.slug}`} style={{ textDecoration: 'none', color: 'inherit' }}>
             <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', padding: '28px', textAlign: 'center', transition: 'border-color 0.2s' }}>
               <div style={{ fontSize: '13px', color: 'var(--accent)', fontFamily: 'JetBrains Mono, monospace', marginBottom: '12px' }}>{a.name}</div>
-              <div style={{ fontSize: '36px', fontWeight: 800, fontFamily: 'JetBrains Mono, monospace', color: 'var(--text)', marginBottom: '4px' }}>{a.iconCount.toLocaleString()}</div>
+              <div style={{ fontSize: '36px', fontWeight: 800, fontFamily: 'JetBrains Mono, monospace', color: 'var(--text)', marginBottom: '4px' }}>{a.iconCount.toLocaleString('en-US')}</div>
               <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>icons</div>
-              <div style={{ marginTop: '16px', fontSize: '13px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace' }}>⭐ {a.stars.toLocaleString()} stars · {a.license}</div>
+              <div style={{ marginTop: '16px', fontSize: '13px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace' }}>⭐ {a.stars.toLocaleString('en-US')} stars · {a.license}</div>
               <div style={{ marginTop: '8px', fontSize: '11px', color: 'var(--accent)' }}>View full guide →</div>
             </div>
           </Link>
@@ -186,9 +181,9 @@ export default async function ComparisonPage({ params }: { params: Promise<{ pai
           <Link href={`/icons/${b.slug}`} style={{ textDecoration: 'none', color: 'inherit' }}>
             <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', padding: '28px', textAlign: 'center', transition: 'border-color 0.2s' }}>
               <div style={{ fontSize: '13px', color: 'var(--accent)', fontFamily: 'JetBrains Mono, monospace', marginBottom: '12px' }}>{b.name}</div>
-              <div style={{ fontSize: '36px', fontWeight: 800, fontFamily: 'JetBrains Mono, monospace', color: 'var(--text)', marginBottom: '4px' }}>{b.iconCount.toLocaleString()}</div>
+              <div style={{ fontSize: '36px', fontWeight: 800, fontFamily: 'JetBrains Mono, monospace', color: 'var(--text)', marginBottom: '4px' }}>{b.iconCount.toLocaleString('en-US')}</div>
               <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>icons</div>
-              <div style={{ marginTop: '16px', fontSize: '13px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace' }}>⭐ {b.stars.toLocaleString()} stars · {b.license}</div>
+              <div style={{ marginTop: '16px', fontSize: '13px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace' }}>⭐ {b.stars.toLocaleString('en-US')} stars · {b.license}</div>
               <div style={{ marginTop: '8px', fontSize: '11px', color: 'var(--accent)' }}>View full guide →</div>
             </div>
           </Link>
@@ -235,10 +230,10 @@ export default async function ComparisonPage({ params }: { params: Promise<{ pai
             Beyond the code, the visual identity of your application is heavily influenced by your choice of iconography. <strong>{a.name}</strong> primarily features a {a.style.length > 0 ? a.style[0].toLowerCase() : 'clean'} aesthetic, whereas <strong>{b.name}</strong> leans toward a {b.style.length > 0 ? b.style[0].toLowerCase() : 'versatile'} look.
           </p>
           <p style={{ marginBottom: '16px' }}>
-            {a.name} is designed with strict geometric rules and a consistent grid, ensuring that all {a.iconCount.toLocaleString()} icons share the same visual weight. This makes it particularly well-suited for professional dashboards, enterprise SaaS products, and minimal user interfaces. 
+            {a.name} is designed with strict geometric rules and a consistent grid, ensuring that all {a.iconCount.toLocaleString('en-US')} icons share the same visual weight. This makes it particularly well-suited for professional dashboards, enterprise SaaS products, and minimal user interfaces.
           </p>
           <p>
-            On the other hand, {b.name} offers a more distinct personality. With its {b.iconCount.toLocaleString()} carefully crafted icons, it can bring warmth and character to consumer-facing mobile apps, marketing websites, and creative portfolios.
+            On the other hand, {b.name} offers a more distinct personality. With its {b.iconCount.toLocaleString('en-US')} carefully crafted icons, it can bring warmth and character to consumer-facing mobile apps, marketing websites, and creative portfolios.
           </p>
         </div>
       </section>
@@ -297,7 +292,7 @@ export default async function ComparisonPage({ params }: { params: Promise<{ pai
           </p>
           <ul style={{ paddingLeft: '24px', marginBottom: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
             <li>
-              <strong>{a.name} Performance:</strong> {a.treeshakable ? `Because ${a.name} supports tree-shaking, importing a single icon will only add a tiny fraction of a kilobyte to your final bundle. You can safely install the entire package without performance concerns.` : `Note that ${a.name} does not natively support tree-shaking out of the box in all environments. This means you must be careful with your import syntax to avoid accidentally bundling all ${a.iconCount.toLocaleString()} icons.`}
+              <strong>{a.name} Performance:</strong> {a.treeshakable ? `Because ${a.name} supports tree-shaking, importing a single icon will only add a tiny fraction of a kilobyte to your final bundle. You can safely install the entire package without performance concerns.` : `Note that ${a.name} does not natively support tree-shaking out of the box in all environments. This means you must be careful with your import syntax to avoid accidentally bundling all ${a.iconCount.toLocaleString('en-US')} icons.`}
             </li>
             <li>
               <strong>{b.name} Performance:</strong> {b.treeshakable ? `Similarly, ${b.name} is fully tree-shakable. Your Webpack or Turbopack build step will strip out any unused icons, ensuring your First Contentful Paint (FCP) metrics remain exceptional.` : `Conversely, ${b.name} lacks complete tree-shaking support. To maintain high performance, consider importing individual SVG files directly rather than using the main package export.`}
@@ -379,7 +374,7 @@ export default async function ComparisonPage({ params }: { params: Promise<{ pai
           <div>
             <h3 style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text)', marginBottom: '8px' }}>Which is better: {a.name} or {b.name}?</h3>
             <p style={{ color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.7 }}>
-              Choosing between {a.name} and {b.name} depends entirely on your project's technical requirements and design aesthetic. {a.name} provides {a.iconCount.toLocaleString()} icons and is notable for {a.pros[0].toLowerCase()}, while {b.name} offers {b.iconCount.toLocaleString()} icons and is best known for {b.pros[0].toLowerCase()}.
+              Choosing between {a.name} and {b.name} depends entirely on your project's technical requirements and design aesthetic. {a.name} provides {a.iconCount.toLocaleString('en-US')} icons and is notable for {a.pros[0].toLowerCase()}, while {b.name} offers {b.iconCount.toLocaleString('en-US')} icons and is best known for {b.pros[0].toLowerCase()}.
             </p>
           </div>
           <div>
@@ -406,7 +401,7 @@ export default async function ComparisonPage({ params }: { params: Promise<{ pai
           <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', padding: '24px' }}>
             <div style={{ fontSize: '12px', color: 'var(--green)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '1px', marginBottom: '12px' }}>✓ CHOOSE {a.name.toUpperCase()} IF YOU...</div>
             <ul style={{ paddingLeft: '16px', margin: 0, fontSize: '14px', color: 'var(--text-muted)', lineHeight: 1.8 }}>
-              <li>Need a library with {a.iconCount.toLocaleString()} icons and {a.style.join('/')} style options</li>
+              <li>Need a library with {a.iconCount.toLocaleString('en-US')} icons and {a.style.join('/')} style options</li>
               <li>{a.treeshakable ? 'Want tree-shakable imports to keep bundles small' : 'Prioritize icon variety over bundle optimization'}</li>
               <li>{a.typescript ? 'Require first-class TypeScript support in your codebase' : 'Are working with a JavaScript-only project'}</li>
               <li>Are building with {a.frameworks.join(', ')}</li>
@@ -421,7 +416,7 @@ export default async function ComparisonPage({ params }: { params: Promise<{ pai
           <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', padding: '24px' }}>
             <div style={{ fontSize: '12px', color: 'var(--green)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '1px', marginBottom: '12px' }}>✓ CHOOSE {b.name.toUpperCase()} IF YOU...</div>
             <ul style={{ paddingLeft: '16px', margin: 0, fontSize: '14px', color: 'var(--text-muted)', lineHeight: 1.8 }}>
-              <li>Need a library with {b.iconCount.toLocaleString()} icons and {b.style.join('/')} style options</li>
+              <li>Need a library with {b.iconCount.toLocaleString('en-US')} icons and {b.style.join('/')} style options</li>
               <li>{b.treeshakable ? 'Want tree-shakable imports to keep bundles small' : 'Prioritize icon variety over bundle optimization'}</li>
               <li>{b.typescript ? 'Require first-class TypeScript support in your codebase' : 'Are working with a JavaScript-only project'}</li>
               <li>Are building with {b.frameworks.join(', ')}</li>
@@ -435,7 +430,7 @@ export default async function ComparisonPage({ params }: { params: Promise<{ pai
           </div>
         </div>
         <p style={{ color: 'var(--text-muted)', fontSize: '14px', lineHeight: 1.7, marginTop: '20px' }}>
-          Still unsure? Try our <Link href="/best-for-you" style={{ color: 'var(--accent)', textDecoration: 'none' }}>interactive quiz</Link> to get a personalized recommendation, or <Link href="/icon-search" style={{ color: 'var(--accent)', textDecoration: 'none' }}>search 350,000+ icons</Link> from both libraries side by side. You can also check our <Link href="/stats" style={{ color: 'var(--accent)', textDecoration: 'none' }}>live stats dashboard</Link> for real-time download and GitHub star trends.
+          Still unsure? Try our <Link href="/best-for-you" style={{ color: 'var(--accent)', textDecoration: 'none' }}>interactive quiz</Link> to get a personalized recommendation, or <Link href="/icon-search" style={{ color: 'var(--accent)', textDecoration: 'none' }}>search {SEARCHABLE_ICON_COUNT.toLocaleString('en-US')} icons</Link> from both libraries side by side. You can also check our <Link href="/stats" style={{ color: 'var(--accent)', textDecoration: 'none' }}>live stats dashboard</Link> for real-time download and GitHub star trends.
         </p>
       </section>
 

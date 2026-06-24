@@ -2,8 +2,21 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { loadIcons } from '../../../api/icon-search/route'
 import IconDetailClient from './IconDetailClient'
+import { namedLibraries } from '../../../../data/library-catalog'
 
 export const dynamic = 'force-dynamic'
+
+const namedLibrarySlugs = new Set(namedLibraries.map((library) => library.slug))
+
+function getLibraryHref(slug: string): string {
+  if (namedLibrarySlugs.has(slug)) return `/icons/${slug}`
+  if (slug.startsWith('iconify-')) {
+    return `/icon-search?lib=iconify&iconifySet=${encodeURIComponent(slug.replace(/^iconify-/, ''))}`
+  }
+  if (slug === 'material-icons') return '/icon-search?lib=iconify&iconifySet=material-symbols'
+  if (slug === 'simple-icons') return '/icon-search?lib=iconify&iconifySet=simple-icons'
+  return '/icon-search'
+}
 
 function getDbLibrariesForSlug(slug: string): string[] {
   switch (slug) {
@@ -131,6 +144,7 @@ export default async function IconDetailPage({ params }: { params: Promise<{ slu
   const finalRelated = relatedIcons.slice(0, 12)
 
   const displayName = icon.displayName || icon.name
+  const libraryHref = getLibraryHref(slug)
 
   // JSON-LD Structured Data
   const jsonLdBreadcrumb = {
@@ -139,7 +153,7 @@ export default async function IconDetailPage({ params }: { params: Promise<{ slu
     "itemListElement": [
       { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://iconsearch.info" },
       { "@type": "ListItem", "position": 2, "name": "Icon Libraries", "item": "https://iconsearch.info/free-svg-icons" },
-      { "@type": "ListItem", "position": 3, "name": icon.libraryName, "item": `https://iconsearch.info/icons/${slug}` },
+      { "@type": "ListItem", "position": 3, "name": icon.libraryName, "item": `https://iconsearch.info${libraryHref}` },
       { "@type": "ListItem", "position": 4, "name": `${displayName} Icon`, "item": `https://iconsearch.info/icons/${slug}/${iconName}` }
     ]
   }
@@ -173,7 +187,7 @@ export default async function IconDetailPage({ params }: { params: Promise<{ slu
           <span style={{ color: 'var(--text-dim)' }}>/</span>
           <Link href="/free-svg-icons" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>Libraries</Link>
           <span style={{ color: 'var(--text-dim)' }}>/</span>
-          <Link href={`/icons/${slug}`} style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>{icon.libraryName}</Link>
+          <Link href={libraryHref} style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>{icon.libraryName}</Link>
           <span style={{ color: 'var(--text-dim)' }}>/</span>
           <span style={{ color: 'var(--accent)' }}>{iconName}</span>
         </div>

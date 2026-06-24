@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { ICONIFY_COLLECTION_COUNT, NAMED_LIBRARY_COUNT, SEARCHABLE_ICON_COUNT } from '../../data/library-catalog'
 
 export default function VSCodeExtensionPage() {
   return (
@@ -14,7 +15,7 @@ export default function VSCodeExtensionPage() {
           IconSearch <span style={{ color: 'var(--accent)' }}>VS Code Extension</span>
         </h1>
         <p style={{ color: 'var(--text-muted)', fontSize: '18px', lineHeight: 1.7, maxWidth: '600px', marginBottom: '24px' }}>
-          Search and insert 350,000+ open-source SVG icons directly inside your code editor. Write cleaner code and speed up your workflow with inline previews.
+          Search and insert {SEARCHABLE_ICON_COUNT.toLocaleString('en-US')} open-source SVG icons from {NAMED_LIBRARY_COUNT} named libraries and {ICONIFY_COLLECTION_COUNT} Iconify collections directly inside your code editor.
         </p>
 
         {/* Launching Soon Badge */}
@@ -70,7 +71,7 @@ export default function VSCodeExtensionPage() {
             {[
               {
                 title: 'Instant Command Palette Search',
-                desc: 'Access the entire 350,000+ icon database from any file using simple VS Code command palette keystrokes.',
+                desc: `Access the entire ${SEARCHABLE_ICON_COUNT.toLocaleString('en-US')} icon database from any file using simple VS Code command palette keystrokes.`,
               },
               {
                 title: 'React / Next.js Component Imports',

@@ -7,20 +7,11 @@ import { remixIconData } from '../../../data/libraries/remix-icon'
 import { featherIconsData } from '../../../data/libraries/feather-icons'
 import { bootstrapIconsData } from '../../../data/libraries/bootstrap-icons'
 import { radixIconsData } from '../../../data/libraries/radix-icons'
-import { reactIconsData } from '../../../data/libraries/react-icons'
-import { materialIconsData } from '../../../data/libraries/material-icons'
-import { simpleIconsData } from '../../../data/libraries/simple-icons'
 import { iconoirData } from '../../../data/libraries/iconoir'
 import { ioniconsData } from '../../../data/libraries/ionicons'
 import { octiconsData } from '../../../data/libraries/octicons'
 import { antDesignIconsData } from '../../../data/libraries/ant-design-icons'
-import { mageIconsData } from '../../../data/libraries/mage-icons'
-import { solarIconsData } from '../../../data/libraries/solar-icons'
-import { carbonIconsData } from '../../../data/libraries/carbon-icons'
-import { materialSymbolsData } from '../../../data/libraries/material-symbols'
-import { boxIconsData } from '../../../data/libraries/box-icons'
 import { deviconsData } from '../../../data/libraries/devicons'
-import { fluentUiData } from '../../../data/libraries/fluent-ui'
 import { teenyiconsData } from '../../../data/libraries/teenyicons'
 import { circumIconsData } from '../../../data/libraries/circum-icons'
 import { elusiveIconsData } from '../../../data/libraries/elusive-icons'
@@ -37,20 +28,11 @@ const libraryData: Record<string, any> = {
   'feather-icons': featherIconsData,
   'bootstrap-icons': bootstrapIconsData,
   'radix-icons': radixIconsData,
-  'react-icons': reactIconsData,
-  'material-icons': materialIconsData,
-  'simple-icons': simpleIconsData,
   'iconoir': iconoirData,
   'ionicons': ioniconsData,
   'octicons': octiconsData,
   'ant-design-icons': antDesignIconsData,
-  'iconify-mage': mageIconsData,
-  'iconify-solar': solarIconsData,
-  'iconify-carbon': carbonIconsData,
-  'iconify-material-symbols': materialSymbolsData,
-  'iconify-bi': boxIconsData,
   'devicons': deviconsData,
-  'iconify-fluent': fluentUiData,
   'teenyicons': teenyiconsData,
   'circum-icons': circumIconsData,
   'elusive-icons': elusiveIconsData,

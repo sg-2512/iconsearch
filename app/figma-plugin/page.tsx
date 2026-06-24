@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { ICONIFY_COLLECTION_COUNT, NAMED_LIBRARY_COUNT, SEARCHABLE_ICON_COUNT } from '../../data/library-catalog'
 
 export default function FigmaPluginPage() {
   return (
@@ -14,7 +15,7 @@ export default function FigmaPluginPage() {
           IconSearch <span style={{ color: 'var(--accent)' }}>Figma Plugin</span>
         </h1>
         <p style={{ color: 'var(--text-muted)', fontSize: '18px', lineHeight: 1.7, maxWidth: '600px', marginBottom: '24px' }}>
-          Bring the entire power of the IconSearch database directly into your design canvas. Search, filter, and insert 350,000+ free SVG icons instantly.
+          Bring the entire IconSearch database into your design canvas. Search, filter, and insert {SEARCHABLE_ICON_COUNT.toLocaleString('en-US')} free SVG icons from {NAMED_LIBRARY_COUNT} named libraries and {ICONIFY_COLLECTION_COUNT} Iconify collections.
         </p>
 
         {/* Launching Soon Badge */}
@@ -69,7 +70,7 @@ export default function FigmaPluginPage() {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '16px' }}>
             {[
               {
-                title: '350,000+ Vector SVGs',
+                title: `${SEARCHABLE_ICON_COUNT.toLocaleString('en-US')} Vector SVGs`,
                 desc: 'Access Lucide, Heroicons, Tabler, Phosphor, Bootstrap, Remix, Feather, Radix, Iconoir, IonIcons, Octicons, and the complete Iconify library directly from Figma.',
               },
               {

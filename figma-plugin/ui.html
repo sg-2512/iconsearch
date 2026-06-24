@@ -6,7 +6,7 @@
   <title>IconSearch</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: var(--figma-color-bg, #ffffff);
@@ -157,38 +157,61 @@
 
     /* Filter row */
     .filter-row {
-      display: flex;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 96px;
       gap: 6px;
+      width: 100%;
+      min-width: 0;
     }
 
     .filter-select {
-      flex: 1;
+      width: 100%;
+      min-width: 0;
+      max-width: 100%;
       height: 28px;
       border: 1px solid var(--border);
       border-radius: 6px;
       background-color: var(--bg-secondary);
       color: var(--text);
-      font-size: 11px;
+      font-size: 11.25px;
+      font-weight: 600;
+      letter-spacing: -0.12px;
       padding: 0 8px;
       outline: none;
       cursor: pointer;
-      font-family: inherit;
-      transition: border-color 0.15s;
+      font-family: 'Manrope', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      transition: border-color 0.15s, background-color 0.15s, box-shadow 0.15s;
       appearance: none;
       background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
       background-repeat: no-repeat;
       background-position: right 8px center;
       background-size: 10px;
       padding-right: 24px;
+      white-space: nowrap;
+      text-overflow: ellipsis;
     }
 
     .filter-select:focus {
       border-color: #818cf8;
+      background-color: var(--bg);
+      box-shadow: 0 0 0 2px rgba(129, 140, 248, 0.12);
     }
 
     .filter-select option {
       background-color: var(--bg);
       color: var(--text);
+      font-family: 'Manrope', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-weight: 600;
+    }
+
+    @media (max-width: 330px) {
+      .filter-row {
+        grid-template-columns: minmax(0, 1fr) 88px;
+      }
+
+      .filter-select {
+        font-size: 10.5px;
+      }
     }
 
     /* ===== SCROLL CONTAINER ===== */
@@ -488,13 +511,13 @@
   <aside class="sidebar">
     <div class="sidebar-logo">IS</div>
     <button class="nav-btn active" data-tab="search" title="Browse Icons">
-      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+      <svg aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
     </button>
     <button class="nav-btn" data-tab="saved" title="Saved Icons">
-      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
+      <svg aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
     </button>
     <button class="nav-btn" data-tab="info" title="About">
-      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      <svg aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
     </button>
   </aside>
 
@@ -503,14 +526,14 @@
     <!-- Header -->
     <header class="header" id="searchHeader">
       <div class="search-wrapper">
-        <svg class="search-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-        <input type="text" id="searchInput" class="search-input" placeholder="Search 350,000+ Open Source Icons" autocomplete="off">
+        <svg class="search-icon" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <input type="text" id="searchInput" class="search-input" aria-label="Search icons" placeholder="Search 351,639 Open Source Icons" autocomplete="off">
       </div>
       <div class="filter-row">
-        <select id="libraryFilter" class="filter-select">
-          <option value="all">All Libraries</option>
+        <select id="libraryFilter" class="filter-select" aria-label="Filter by icon library">
+          <option value="all">All Libraries — loading searchable catalog...</option>
         </select>
-        <select id="styleFilter" class="filter-select">
+        <select id="styleFilter" class="filter-select" aria-label="Filter by icon style">
           <option value="all">All Styles</option>
           <option value="stroke">Outline</option>
           <option value="solid">Solid</option>
@@ -537,7 +560,7 @@
           <div class="icon-grid" id="savedGrid"></div>
         </div>
         <div class="empty-state" id="savedEmptyState">
-          <svg class="empty-state-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
+          <svg class="empty-state-icon" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
           <h3>No saved icons</h3>
           <p>Click "Save" on any icon to bookmark it here for quick access.</p>
         </div>
@@ -548,11 +571,11 @@
         <div class="empty-state" style="padding-top: 24px;">
           <div class="sidebar-logo" style="width: 40px; height: 40px; font-size: 15px; margin-bottom: 12px;">IS</div>
           <h3 style="font-size: 14px; margin-bottom: 8px;">IconSearch for Figma</h3>
-          <p style="max-width: 240px; margin-bottom: 16px;">Browse and insert 350,000+ open source vector icons directly into your Figma designs.</p>
+          <p id="catalogSummary" style="max-width: 240px; margin-bottom: 16px;">Browse and insert 351,639 open source vector icons directly into your Figma designs.</p>
           <div style="text-align: left; font-size: 10.5px; background: var(--bg-secondary); padding: 10px 12px; border-radius: 8px; line-height: 1.7; color: var(--text-secondary);">
             <strong style="color: var(--text);">Features</strong><br>
             • Insert as native Figma vectors<br>
-            • 20+ icon libraries<br>
+            <span id="libraryCoverage">• 16 named libraries + 224 Iconify collections</span><br>
             • Search by name or keyword<br>
             • Filter by library and style<br>
             • Bookmark favorite icons
@@ -587,22 +610,12 @@
 
   <script>
     // ===== CONFIGURATION =====
-    let currentBaseUrl = 'http://localhost:3000';
+    const API_URL = 'https://iconsearch.info/api/icon-search';
 
-    // Automatic API fetcher with fallback
     async function apiFetch(queryParams) {
-      try {
-        const res = await fetch(`http://localhost:3000/api/icon-search${queryParams}`);
-        if (res.ok) {
-          currentBaseUrl = 'http://localhost:3000';
-          return res;
-        }
-      } catch (err) {
-        console.warn('Localhost API failed, trying production fallback...', err);
-      }
-
-      currentBaseUrl = 'https://iconsearch.info';
-      return await fetch(`https://iconsearch.info/api/icon-search${queryParams}`);
+      return fetch(`${API_URL}${queryParams}`, {
+        headers: { accept: 'application/json' }
+      });
     }
 
     // All icon library sets — matches Sidebar.tsx + iconify sets
@@ -635,7 +648,7 @@
 
     const STARTUP_SETS = [
       { id: 'iconify-mage',      name: 'Mage Icons',          count: 1042,   color: '#e879f9' },
-      { id: 'heroicons',         name: 'Heroicons',           count: 1176,   color: '#38bdf8' },
+      { id: 'heroicons',         name: 'Heroicons',           count: 324,    color: '#38bdf8' },
       { id: 'iconify-la',        name: 'Line Awesome',        count: 1554,   color: '#22d3ee' },
       { id: 'lucide-icons',      name: 'Lucide Icons',        count: 1959,   color: '#818cf8' },
       { id: 'tabler-icons',      name: 'Tabler Icons',        count: 6146,   color: '#34d399' },
@@ -644,23 +657,28 @@
       { id: 'feather-icons',     name: 'Feather Icons',       count: 287,    color: '#a78bfa' },
       { id: 'bootstrap-icons',   name: 'Bootstrap Icons',     count: 2078,   color: '#a855f7' },
       { id: 'radix-icons',       name: 'Radix Icons',         count: 318,    color: '#fbbf24' },
-      { id: 'iconoir',           name: 'Iconoir',             count: 1384,   color: '#f87171' },
-      { id: 'ionicons',          name: 'IonIcons',            count: 1300,   color: '#2dd4bf' },
-      { id: 'octicons',          name: 'Octicons',            count: 280,    color: '#94a3b8' },
-      { id: 'ant-design-icons',  name: 'Ant Design Icons',    count: 840,    color: '#60a5fa' },
+      { id: 'iconoir',           name: 'Iconoir',             count: 1383,   color: '#f87171' },
+      { id: 'ionicons',          name: 'IonIcons',            count: 2607,   color: '#2dd4bf' },
+      { id: 'octicons',          name: 'Octicons',            count: 933,    color: '#94a3b8' },
+      { id: 'ant-design-icons',  name: 'Ant Design Icons',    count: 1870,   color: '#60a5fa' },
       { id: 'iconify-solar',     name: 'Solar Icons',         count: 7400,   color: '#fbbf24' },
       { id: 'iconify-fluent',    name: 'Fluent UI Icons',     count: 4000,   color: '#38bdf8' },
       { id: 'iconify-material-symbols', name: 'Material Symbols', count: 3000, color: '#4ade80' },
       { id: 'iconify-carbon',    name: 'Carbon Icons',        count: 2000,   color: '#94a3b8' },
       { id: 'iconify-ic',        name: 'Google Material',     count: 2100,   color: '#34d399' },
       { id: 'iconify-bi',        name: 'BoxIcons',            count: 1600,   color: '#fb923c' },
-      { id: 'devicons',           name: 'Devicons',            count: 800,    color: '#60a5fa' },
+      { id: 'devicons',           name: 'Devicons',            count: 578,    color: '#60a5fa' },
       { id: 'teenyicons',         name: 'Teenyicons',          count: 1200,   color: '#fb7185' },
       { id: 'circum-icons',       name: 'Circum Icons',        count: 288,    color: '#818cf8' },
       { id: 'elusive-icons',      name: 'Elusive Icons',       count: 304,    color: '#38bdf8' },
     ];
 
     const BATCH_SIZE = 48; // Render progressively to keep it extremely fast
+    const COLLECTION_PAGE_SIZE = 5000;
+    const SEARCHABLE_ICON_COUNT = 351639;
+    const ICONIFY_ICON_COUNT = 326602;
+    const NAMED_LIBRARY_COUNT = 16;
+    const ICONIFY_COLLECTION_COUNT = 224;
 
     // ===== DOM REFERENCES =====
     const searchInput = document.getElementById('searchInput');
@@ -678,6 +696,8 @@
     const savedEmptyState = document.getElementById('savedEmptyState');
     const statusDot = document.getElementById('statusDot');
     const statusText = document.getElementById('statusText');
+    const catalogSummary = document.getElementById('catalogSummary');
+    const libraryCoverage = document.getElementById('libraryCoverage');
 
     // ===== STATE =====
     let debounceTimer;
@@ -685,6 +705,7 @@
     let savedIcons = [];
     let isLoading = false;
     let libraryCounts = {};
+    let viewportFillScheduled = false;
 
     // Progressive rendering state
     let allGroupedData = {};
@@ -698,12 +719,73 @@
     }
 
     // ===== POPULATE LIBRARY FILTER =====
-    ALL_LIBRARIES.forEach(lib => {
-      const opt = document.createElement('option');
-      opt.value = lib.id;
-      opt.textContent = lib.name;
-      libraryFilter.appendChild(opt);
-    });
+    function formatCollectionName(setId) {
+      const known = ALL_LIBRARIES.find(lib => lib.id === `iconify-${setId}`);
+      if (known) return known.name;
+
+      const acronyms = new Set(['ai', 'bi', 'fa', 'gis', 'ic', 'logos', 'mdi', 'svg', 'ui']);
+      return setId
+        .split('-')
+        .map(part => acronyms.has(part) ? part.toUpperCase() : part.charAt(0).toUpperCase() + part.slice(1))
+        .join(' ');
+    }
+
+    function appendLibraryOption(parent, value, label) {
+      const option = document.createElement('option');
+      option.value = value;
+      option.textContent = label;
+      parent.appendChild(option);
+    }
+
+    async function initializeLibraryFilter() {
+      libraryFilter.innerHTML = '';
+      appendLibraryOption(libraryFilter, 'all', `All Libraries — ${SEARCHABLE_ICON_COUNT.toLocaleString('en-US')} searchable icons`);
+
+      const featuredGroup = document.createElement('optgroup');
+      featuredGroup.label = `Named libraries (${NAMED_LIBRARY_COUNT})`;
+      ALL_LIBRARIES
+        .filter(lib => !lib.id.startsWith('iconify-'))
+        .forEach(lib => appendLibraryOption(featuredGroup, lib.id, lib.name));
+      libraryFilter.appendChild(featuredGroup);
+
+      let iconifySets = ALL_LIBRARIES
+        .filter(lib => lib.id.startsWith('iconify-'))
+        .map(lib => lib.id.replace(/^iconify-/, ''));
+      let totalIcons = SEARCHABLE_ICON_COUNT;
+      let iconifyIcons = ICONIFY_ICON_COUNT;
+
+      try {
+        const response = await apiFetch('?limit=1&legalOnly=0');
+        const data = await response.json();
+        const facetSets = Array.isArray(data.facets?.iconifySets) ? data.facets.iconifySets : [];
+
+        if (facetSets.length > 0) iconifySets = facetSets;
+        if (typeof data.total === 'number') totalIcons = Math.max(SEARCHABLE_ICON_COUNT, data.total);
+
+        const iconifyResponse = await apiFetch('?limit=1&lib=iconify&legalOnly=0');
+        const iconifyData = await iconifyResponse.json();
+        if (typeof iconifyData.total === 'number') iconifyIcons = Math.max(ICONIFY_ICON_COUNT, iconifyData.total);
+      } catch (error) {
+        console.warn('Could not load live library facets; using bundled fallback options.', error);
+      }
+
+      const iconifyGroup = document.createElement('optgroup');
+      iconifyGroup.label = `Iconify — ${iconifyIcons.toLocaleString('en-US')} icons / ${iconifySets.length.toLocaleString('en-US')} collections`;
+      iconifySets
+        .slice()
+        .sort((a, b) => formatCollectionName(a).localeCompare(formatCollectionName(b)))
+        .forEach(setId => {
+          appendLibraryOption(iconifyGroup, `iconify-${setId}`, formatCollectionName(setId));
+        });
+      libraryFilter.appendChild(iconifyGroup);
+
+      const allOption = libraryFilter.querySelector('option[value="all"]');
+      if (allOption) allOption.textContent = `All Libraries — ${totalIcons.toLocaleString('en-US')} searchable icons`;
+
+      searchInput.placeholder = `Search ${totalIcons.toLocaleString('en-US')} open source icons`;
+      catalogSummary.textContent = `Browse and insert ${totalIcons.toLocaleString('en-US')} open source vector icons directly into your Figma designs.`;
+      libraryCoverage.textContent = `• ${NAMED_LIBRARY_COUNT} named libraries + ${Math.max(ICONIFY_COLLECTION_COUNT, iconifySets.length)} Iconify collections`;
+    }
 
     // ===== TAB SWITCHING =====
     document.querySelectorAll('.nav-btn').forEach(btn => {
@@ -759,8 +841,35 @@
     scrollContainer.addEventListener('scroll', () => {
       if (scrollContainer.scrollHeight - scrollContainer.scrollTop - scrollContainer.clientHeight < 240) {
         renderNextBatch();
+        scheduleViewportFill();
       }
     });
+
+    async function fetchCompleteCollection(params) {
+      const firstResponse = await apiFetch(`${params}&limit=${COLLECTION_PAGE_SIZE}&page=1`);
+      const firstPage = await firstResponse.json();
+      const totalPages = Math.max(1, Number(firstPage.totalPages) || 1);
+      const total = typeof firstPage.total === 'number' ? firstPage.total : (firstPage.icons || []).length;
+
+      if (totalPages === 1) return firstPage;
+
+      setStatus(`Loading all ${total.toLocaleString('en-US')} icons...`, true);
+      const remainingPages = await Promise.all(
+        Array.from({ length: totalPages - 1 }, (_, index) => index + 2).map(async page => {
+          const response = await apiFetch(`${params}&limit=${COLLECTION_PAGE_SIZE}&page=${page}`);
+          const data = await response.json();
+          return Array.isArray(data.icons) ? data.icons : [];
+        })
+      );
+
+      return {
+        ...firstPage,
+        icons: [
+          ...(Array.isArray(firstPage.icons) ? firstPage.icons : []),
+          ...remainingPages.flat()
+        ]
+      };
+    }
 
     async function performSearch() {
       if (isLoading) return;
@@ -836,6 +945,7 @@
 
             // Render what we have so far
             renderNextBatch();
+            scheduleViewportFill();
             setStatus(`Loaded ${Math.min(b + BATCH_FETCH, STARTUP_SETS.length)}/${STARTUP_SETS.length} libraries...`, b + BATCH_FETCH < STARTUP_SETS.length);
           }
 
@@ -844,13 +954,18 @@
           return;
         } else {
           // ===== TARGETED SEARCH / FILTER BROWSE =====
-          let params = `?limit=1500&sort=relevance&legalOnly=0`;
+          let params = `?sort=relevance&legalOnly=0`;
           if (q) params += `&q=${encodeURIComponent(q)}`;
           if (lib !== 'all') params += `&lib=${lib}`;
           if (style !== 'all') params += `&style=${style}`;
 
-          const res = await apiFetch(params);
-          const data = await res.json();
+          let data;
+          if (!q && lib !== 'all') {
+            data = await fetchCompleteCollection(params);
+          } else {
+            const res = await apiFetch(`${params}&limit=1500`);
+            data = await res.json();
+          }
           icons = (data.icons || []).map(icon => {
             const libInfo = ALL_LIBRARIES.find(l => l.id === icon.library);
             return {
@@ -866,7 +981,7 @@
         if (icons.length === 0) {
           searchResults.innerHTML = `
             <div class="empty-state">
-              <svg class="empty-state-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+              <svg class="empty-state-icon" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
               <h3>No results found</h3>
               <p>Try a different keyword or check your filters.</p>
             </div>
@@ -903,12 +1018,13 @@
 
         // Run the first rendering pass
         renderNextBatch();
+        scheduleViewportFill();
         setStatus('Ready');
       } catch (err) {
         console.error('Search error:', err);
         searchResults.innerHTML = `
           <div class="empty-state">
-            <svg class="empty-state-icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+            <svg class="empty-state-icon" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
             <h3>Connection Error</h3>
             <p>Please check your internet connection or verify the server.</p>
           </div>
@@ -950,7 +1066,7 @@
 
           const isSearching = !!q;
           const displayCount = isSearching ? group.icons.length : (group.total || group.icons.length);
-          countEl.textContent = displayCount.toLocaleString();
+          countEl.textContent = displayCount.toLocaleString('en-US');
 
           header.appendChild(nameEl);
           header.appendChild(countEl);
@@ -1019,8 +1135,26 @@
       return renderedSomething;
     }
 
+    function scheduleViewportFill() {
+      if (viewportFillScheduled) return;
+      viewportFillScheduled = true;
+
+      requestAnimationFrame(() => {
+        viewportFillScheduled = false;
+        let renderedBatches = 0;
+
+        while (
+          scrollContainer.scrollHeight <= scrollContainer.clientHeight + 240 &&
+          renderedBatches < 20 &&
+          renderNextBatch()
+        ) {
+          renderedBatches += 1;
+        }
+      });
+    }
+
     // Initial load
-    performSearch();
+    initializeLibraryFilter().finally(() => performSearch());
 
     // ===== PREVIEW CARD CONTROL =====
     function selectIcon(icon, url) {
@@ -1105,14 +1239,7 @@
       setStatus('Inserting icon...', true);
 
       try {
-        let targetUrl = selectedIcon.resolvedUrl;
-        if (targetUrl.startsWith('http://localhost:3000') && currentBaseUrl !== 'http://localhost:3000') {
-          targetUrl = targetUrl.replace('http://localhost:3000', currentBaseUrl);
-        } else if (targetUrl.startsWith('https://iconsearch.info') && currentBaseUrl !== 'https://iconsearch.info') {
-          targetUrl = targetUrl.replace('https://iconsearch.info', currentBaseUrl);
-        }
-
-        const response = await fetch(targetUrl);
+        const response = await fetch(selectedIcon.resolvedUrl);
         if (!response.ok) throw new Error('Failed to fetch SVG');
 
         const svgText = await response.text();

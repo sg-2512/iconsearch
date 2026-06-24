@@ -1,9 +1,15 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
+import {
+  COMPARISON_COUNT,
+  ICONIFY_COLLECTION_COUNT,
+  NAMED_LIBRARY_COUNT,
+  SEARCHABLE_ICON_COUNT,
+} from '../../data/library-catalog'
 
 export const metadata: Metadata = {
   title: 'About IconSearch — Free SVG Icon Library Comparison Tool (2026)',
-  description: 'IconSearch is the most comprehensive independent resource for comparing and discovering free open source SVG icon libraries for React, Next.js, Vue, and Svelte. 350,000+ icons, 16 libraries, 120 comparisons.',
+  description: `IconSearch indexes ${SEARCHABLE_ICON_COUNT.toLocaleString('en-US')} SVG icons from ${NAMED_LIBRARY_COUNT} named libraries and ${ICONIFY_COLLECTION_COUNT} Iconify collections, with ${COMPARISON_COUNT} library comparisons.`,
 }
 
 export default function AboutPage() {
@@ -44,14 +50,14 @@ export default function AboutPage() {
           </h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '12px' }}>
             {[
-              { value: '350,000+', label: 'Searchable icons' },
-              { value: '16', label: 'Libraries indexed' },
-              { value: '120', label: 'Side-by-side comparisons' },
+              { value: SEARCHABLE_ICON_COUNT.toLocaleString('en-US'), label: 'Searchable icons' },
+              { value: NAMED_LIBRARY_COUNT.toString(), label: 'Named libraries' },
+              { value: ICONIFY_COLLECTION_COUNT.toString(), label: 'Iconify collections' },
+              { value: COMPARISON_COUNT.toString(), label: 'Side-by-side comparisons' },
               { value: '16+', label: 'In-depth blog posts' },
               { value: '10', label: 'Icon category guides' },
               { value: '10', label: 'Use case guides' },
               { value: '6', label: 'Framework guides' },
-              { value: '426,762+', label: 'Total icons tracked' },
             ].map(stat => (
               <div key={stat.label} style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '8px', padding: '16px 20px' }}>
                 <div style={{ fontSize: '24px', fontWeight: 800, color: 'var(--accent)', fontFamily: 'JetBrains Mono, monospace', marginBottom: '4px' }}>
@@ -88,7 +94,7 @@ export default function AboutPage() {
               {
                 title: 'Icon Search Tool',
                 link: '/icon-search',
-                desc: 'Search 350,000+ free SVG icons across all 16 libraries simultaneously. No npm install required.',
+                desc: `Search ${SEARCHABLE_ICON_COUNT.toLocaleString('en-US')} free SVG icons from ${NAMED_LIBRARY_COUNT} named libraries and ${ICONIFY_COLLECTION_COUNT} Iconify collections. No npm install required.`,
               },
               {
                 title: 'SVG Customizer Sandbox',

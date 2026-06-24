@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { icons } from '../../lib/icons'
 import { getComparisonPairs } from '../../lib/icons'
+import { SEARCHABLE_ICON_COUNT } from '../../data/library-catalog'
 
 export const metadata = {
   title: 'Site Directory — IconSearch',
@@ -42,7 +43,7 @@ export default function DirectoryPage() {
           </h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             <Link href="/" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '14px' }}>Homepage</Link>
-            <Link href="/icon-search" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '14px' }}>Search All Icons (350,000+)</Link>
+            <Link href="/icon-search" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '14px' }}>Search All Icons ({SEARCHABLE_ICON_COUNT.toLocaleString('en-US')})</Link>
             <Link href="/free-svg-icons" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '14px' }}>Browse All Libraries</Link>
             <Link href="/compare" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '14px' }}>Compare Libraries</Link>
             <Link href="/best-for-you" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '14px' }}>Interactive Quiz: Best For You</Link>
@@ -107,8 +108,8 @@ export default function DirectoryPage() {
             <Link href="/compare/lucide-icons-vs-heroicons" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '14px' }}>Lucide vs Heroicons</Link>
             <Link href="/compare/lucide-icons-vs-tabler-icons" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '14px' }}>Lucide vs Tabler Icons</Link>
             <Link href="/compare/heroicons-vs-tabler-icons" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '14px' }}>Heroicons vs Tabler</Link>
-            <Link href="/compare/react-icons-vs-lucide-icons" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '14px' }}>React Icons vs Lucide</Link>
-            <Link href="/compare/font-awesome-vs-lucide-icons" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '14px' }}>Font Awesome vs Lucide</Link>
+            <Link href="/compare/lucide-icons-vs-phosphor-icons" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '14px' }}>Lucide vs Phosphor</Link>
+            <Link href="/compare/lucide-icons-vs-radix-icons" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '14px' }}>Lucide vs Radix Icons</Link>
             <Link href="/compare" style={{ color: 'var(--accent)', textDecoration: 'none', fontSize: '13px', fontFamily: 'JetBrains Mono, monospace', marginTop: '8px' }}>View all {pairs.length} comparisons →</Link>
           </div>
         </section>

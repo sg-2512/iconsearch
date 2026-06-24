@@ -2,12 +2,24 @@ import { NextResponse } from 'next/server'
 import { readFileSync, existsSync } from 'fs'
 import { join } from 'path'
 import { gunzipSync } from 'zlib'
+import {
+  ICONIFY_COLLECTION_COUNT,
+  ICONIFY_ICON_COUNT,
+  NAMED_LIBRARY_COUNT,
+  SEARCHABLE_ICON_COUNT,
+} from '../../../data/library-catalog'
 
 let cachedIcons: any[] | null = null
 let cachedPopular: any[] | null = null
 let cachedLegal: any[] | null = null
 let cachedLegalPopular: any[] | null = null
 let cachedLegalSafeCount: number = 0
+
+const API_CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+}
 
 // Library popularity weights used for 'popular' sort order
 const LIBRARY_POPULARITY: Record<string, number> = {
@@ -64,7 +76,7 @@ function isRateLimited(ip: string): boolean {
 export function loadIcons() {
   if (cachedIcons) return cachedIcons
   const start = Date.now()
-  console.log('Loading 350,000+ Icon database into server memory cache...')
+  console.log(`Loading ${SEARCHABLE_ICON_COUNT.toLocaleString('en-US')} icon database into server memory cache...`)
   
   const canonicalPathGz = join(process.cwd(), 'data/canonical-icon-search.json.gz')
   if (existsSync(canonicalPathGz)) {
@@ -196,7 +208,8 @@ export async function GET(request: Request) {
         status: 429,
         headers: {
           'Content-Type': 'application/json',
-          'Retry-After': '60'
+          'Retry-After': '60',
+          ...API_CORS_HEADERS,
         }
       }
     )
@@ -245,6 +258,12 @@ export async function GET(request: Request) {
       page,
       limit,
       totalPages: Math.ceil(total / limit),
+      catalogStats: {
+        totalIcons: SEARCHABLE_ICON_COUNT,
+        namedLibraries: NAMED_LIBRARY_COUNT,
+        iconifyIcons: ICONIFY_ICON_COUNT,
+        iconifyCollections: ICONIFY_COLLECTION_COUNT,
+      },
       facets: {
         libraries: facets?.libraries || [],
         licenses: facets?.licenses || [],
@@ -254,9 +273,7 @@ export async function GET(request: Request) {
       }
     }, {
       headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type',
+        ...API_CORS_HEADERS,
         'X-Response-Time': `${elapsed}ms`
       }
     })
@@ -409,6 +426,12 @@ export async function GET(request: Request) {
     page,
     limit,
     totalPages: Math.ceil(total / limit),
+    catalogStats: {
+      totalIcons: SEARCHABLE_ICON_COUNT,
+      namedLibraries: NAMED_LIBRARY_COUNT,
+      iconifyIcons: ICONIFY_ICON_COUNT,
+      iconifyCollections: ICONIFY_COLLECTION_COUNT,
+    },
     facets: {
       libraries: facets?.libraries || [],
       licenses: facets?.licenses || [],
@@ -418,9 +441,7 @@ export async function GET(request: Request) {
     }
   }, {
     headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
+      ...API_CORS_HEADERS,
       'X-Response-Time': `${elapsed}ms`
     }
   })
@@ -429,11 +450,7 @@ export async function GET(request: Request) {
 export async function OPTIONS() {
   return new NextResponse(null, {
     status: 204,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
-    },
+    headers: API_CORS_HEADERS,
   })
 }
 
