@@ -119,9 +119,12 @@ export async function trackSearch(event: SearchEvent) {
  */
 export async function trackAddToCart(event: AddToCartEvent) {
   fireGtagEvent('add_to_cart', {
-    icon_id: event.iconId,
-    icon_name: event.iconName,
-    library: event.library,
+    items: [{
+      item_id: event.iconId,
+      item_name: event.iconName,
+      item_category: event.library,
+      quantity: 1,
+    }],
   })
 }
 
