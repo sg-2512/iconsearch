@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { generateZipPackage } from '../../lib/exporter'
 import { createClient, isSupabaseConfigured } from '@/lib/supabase'
-import { trackSearch, trackAddToCart, trackExport } from '@/lib/analytics'
+import { trackSearch, trackAddToCart, trackCartImport, trackExport } from '@/lib/analytics'
 import AuthModal from '../components/AuthModal'
 import {
   formatIconifyCollectionName,
@@ -956,6 +956,11 @@ export default function IconSearchClient({ initialData }: { initialData?: ApiRes
                 setCart(cartItems)
                 // Also update the active pack with these loaded items
                 setPacks(prev => prev.map(p => p.id === activeId ? { ...p, items: cartItems } : p))
+                trackCartImport({
+                  source: 'shared_url',
+                  iconCount: cartItems.length,
+                  libraries: [...new Set(cartItems.map(item => item.icon.library))].join(','),
+                })
               }
               setIsLoaded(true)
             })
@@ -1256,6 +1261,13 @@ import { Icon } from '@iconify/vue'
     await navigator.clipboard.writeText(JSON.stringify(payload, null, 2))
     setCopied(true)
     setTimeout(() => setCopied(false), 1800)
+
+    trackExport({
+      format: 'clipboard_json',
+      iconCount: cart.length,
+      libraries: [...new Set(cart.map(item => item.icon.library))].join(','),
+      iconNames: cart.map(item => item.icon.name).join(','),
+    })
   }
 
   function exportCart(format: 'json' | 'react' | 'vue' | 'tailwind' | 'csv') {

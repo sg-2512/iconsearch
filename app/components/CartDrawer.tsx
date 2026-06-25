@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import Link from 'next/link'
 import { generateZipPackage } from '../../lib/exporter'
+import { trackExport } from '../../lib/analytics'
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -228,6 +229,13 @@ export default function CartDrawer() {
         presetColor: exportPresetColor
       }, setExportStatus)
       setIsExportModalOpen(false)
+
+      trackExport({
+        format: 'zip',
+        iconCount: formattedItems.length,
+        libraries: [...new Set(formattedItems.map(item => item.icon.library))].join(','),
+        iconNames: formattedItems.map(item => item.icon.name).join(','),
+      })
     } catch (e) {
       console.error('Failed to generate package', e)
       setExportStatus('Failed to generate package. Try again.')

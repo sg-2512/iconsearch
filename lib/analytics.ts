@@ -39,6 +39,12 @@ export interface AddToCartEvent {
   library: string
 }
 
+export interface CartImportEvent {
+  source: 'shared_url'
+  iconCount: number
+  libraries: string
+}
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -120,14 +126,30 @@ export async function trackAddToCart(event: AddToCartEvent) {
 }
 
 /**
+ * Track a cart restored from an external/shared source.
+ */
+export function trackCartImport(event: CartImportEvent) {
+  const libraries = event.libraries.split(',').filter(Boolean)
+  fireGtagEvent('cart_import', {
+    import_source: event.source,
+    icon_count: event.iconCount,
+    library_count: libraries.length,
+    primary_library: libraries[0] || 'unknown',
+  })
+}
+
+/**
  * Track a ZIP or code-format export.
  */
 export async function trackExport(event: ExportEvent) {
+  const libraries = event.libraries.split(',').filter(Boolean)
+
   // GA4
   fireGtagEvent('icon_export', {
     export_format: event.format,
     icon_count: event.iconCount,
-    libraries: event.libraries,
+    library_count: libraries.length,
+    primary_library: libraries[0] || 'unknown',
   })
 
   // Supabase
