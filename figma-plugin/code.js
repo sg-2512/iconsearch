@@ -51,7 +51,7 @@ async function postAccessState() {
         await figma.clientStorage.deleteAsync(ACCESS_CACHE_KEY);
         access = null;
       }
-    } catch {
+    } catch (_error) {
       // Keep a previously verified session available during a temporary outage.
     }
   } else {
@@ -132,7 +132,7 @@ async function signOut() {
         method: 'POST',
         headers: { authorization: `Bearer ${token}` }
       });
-    } catch {
+    } catch (_error) {
       // Local sign-out still removes the token if the network is unavailable.
     }
   }
