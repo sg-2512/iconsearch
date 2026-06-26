@@ -36,6 +36,7 @@ export default function ConnectClient({ product, code, authError }: ConnectClien
     () => `/connect?product=${encodeURIComponent(product)}&code=${encodeURIComponent(code)}`,
     [code, product]
   )
+  const productLabel = productNames[product] || 'IconSearch app'
 
   useEffect(() => {
     let unsubscribe = () => {}
@@ -86,98 +87,110 @@ export default function ConnectClient({ product, code, authError }: ConnectClien
   }
 
   return (
-    <main style={{ maxWidth: '760px', margin: '0 auto', padding: '64px 32px', minHeight: '70vh' }}>
-      <div style={{
-        border: '1px solid var(--border)',
-        borderRadius: '18px',
-        background: 'var(--bg-card)',
-        padding: 'clamp(24px, 6vw, 48px)',
-        boxShadow: '0 24px 80px rgba(0,0,0,0.2)',
-      }}>
-        <div style={{
-          color: 'var(--accent)',
-          fontFamily: 'JetBrains Mono, monospace',
-          fontSize: '12px',
-          letterSpacing: '0.16em',
-          marginBottom: '14px',
-        }}>
-          {'// SECURE DEVICE CONNECTION'}
-        </div>
-        <h1 style={{ fontSize: 'clamp(30px, 6vw, 48px)', lineHeight: 1.05, margin: '0 0 14px' }}>
-          Connect IconSearch
-        </h1>
+    <main className="connect-page">
+      <div className="connect-bg-grid" aria-hidden="true" />
+      <div className="connect-bg-orb connect-bg-orb-one" aria-hidden="true" />
+      <div className="connect-bg-orb connect-bg-orb-two" aria-hidden="true" />
 
-        {!validRequest ? (
-          <StatusCard tone="error" title="This connection link is invalid">
-            Start sign-in again from the IconSearch extension or plugin. Device links expire after 10 minutes.
-          </StatusCard>
-        ) : approval ? (
-          <StatusCard tone="success" title="Connection approved">
-            {approval.tier === 'founder' && approval.founderNumber
-              ? `You claimed lifetime Founder access #${approval.founderNumber} for the ${productNames[approval.product]}.`
-              : `Your free ${productNames[approval.product]} access is active.`}
-            {' '}You can close this browser tab and return to the app.
-          </StatusCard>
-        ) : (
-          <>
-            <p style={{ color: 'var(--text-muted)', fontSize: '16px', lineHeight: 1.7, marginBottom: '28px' }}>
-              The <strong style={{ color: 'var(--text)' }}>{productNames[product]}</strong> is requesting
-              access to your IconSearch account. Your password never enters the extension or plugin.
-            </p>
+      <Link href="/" className="connect-brand" aria-label="IconSearch home">
+        <span className="connect-brand-mark">IS</span>
+        <span>IconSearch</span>
+      </Link>
 
-            {error && (
-              <StatusCard tone="error" title="Could not connect">
-                {error}
-              </StatusCard>
-            )}
+      <section className="connect-card" aria-labelledby="connect-title">
+        <div className="connect-card-main">
+          <div className="connect-kicker">{'// SECURE DEVICE CONNECTION'}</div>
+          <h1 id="connect-title">Connect IconSearch</h1>
+          <p className="connect-lede">
+            <strong>{productLabel}</strong> is requesting access to your IconSearch account.
+            Sign in on the website, approve once, then return to the app.
+          </p>
 
-            {!isSupabaseConfigured() ? (
-              <StatusCard tone="error" title="Authentication is not configured">
-                Add the Supabase environment variables to the website before testing extension sign-in.
-              </StatusCard>
-            ) : checkingUser ? (
-              <StatusCard tone="neutral" title="Checking your account">
-                One moment while IconSearch verifies your browser session.
-              </StatusCard>
-            ) : user ? (
-              <div>
-                <div style={{
-                  border: '1px solid var(--border)',
-                  borderRadius: '12px',
-                  padding: '16px',
-                  marginBottom: '18px',
-                  color: 'var(--text-muted)',
-                  fontSize: '14px',
-                }}>
-                  Signed in as <strong style={{ color: 'var(--text)' }}>{user.email}</strong>
+          {!validRequest ? (
+            <StatusCard tone="error" title="This connection link is invalid">
+              Start sign-in again from the IconSearch extension or plugin. Device links expire after 10 minutes.
+            </StatusCard>
+          ) : approval ? (
+            <StatusCard tone="success" title="Connection approved">
+              {approval.tier === 'founder' && approval.founderNumber
+                ? `You claimed lifetime Founder access #${approval.founderNumber} for the ${productNames[approval.product]}.`
+                : `Your free ${productNames[approval.product]} access is active.`}
+              {' '}You can close this browser tab and return to the app.
+            </StatusCard>
+          ) : (
+            <>
+              {error && (
+                <StatusCard tone="error" title="Could not connect">
+                  {error}
+                </StatusCard>
+              )}
+
+              {!isSupabaseConfigured() ? (
+                <StatusCard tone="error" title="Authentication is not configured">
+                  Add the Supabase environment variables to the website before testing extension sign-in.
+                </StatusCard>
+              ) : checkingUser ? (
+                <StatusCard tone="neutral" title="Checking your account">
+                  One moment while IconSearch verifies your browser session.
+                </StatusCard>
+              ) : user ? (
+                <div className="connect-action-stack">
+                  <div className="connect-account-box">
+                    <span>Signed in as</span>
+                    <strong>{user.email}</strong>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={approve}
+                    disabled={approving}
+                    className="connect-primary-button"
+                  >
+                    {approving ? 'Approving...' : `Approve ${productLabel}`}
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  onClick={approve}
-                  disabled={approving}
-                  style={primaryButtonStyle}
-                >
-                  {approving ? 'Approving...' : `Approve ${productNames[product]}`}
-                </button>
-              </div>
-            ) : (
-              <div>
-                <button type="button" onClick={() => setShowAuth(true)} style={primaryButtonStyle}>
-                  Sign in or create a free account
-                </button>
-                <p style={{ color: 'var(--text-muted)', fontSize: '13px', lineHeight: 1.6, marginTop: '14px' }}>
-                  The first 500 verified users of each product receive lifetime Founder access.
-                </p>
-              </div>
-            )}
-          </>
-        )}
+              ) : (
+                <div className="connect-action-stack">
+                  <button type="button" onClick={() => setShowAuth(true)} className="connect-primary-button">
+                    Sign in or create a free account
+                  </button>
+                  <p className="connect-founder-note">
+                    The first 500 verified users of each product receive lifetime Founder access.
+                  </p>
+                </div>
+              )}
+            </>
+          )}
 
-        <div style={{ borderTop: '1px solid var(--border)', marginTop: '28px', paddingTop: '20px', color: 'var(--text-muted)', fontSize: '12px', lineHeight: 1.7 }}>
-          Approving shares only your account email, product entitlement, and an opaque revocable session token.
-          {' '}Read the <Link href="/privacy-policy">Privacy Policy</Link> and <Link href="/terms">Terms</Link>.
+          <div className="connect-disclosure">
+            Approving shares only your account email, product entitlement, and an opaque revocable session token.
+            {' '}Read the <Link href="/privacy-policy">Privacy Policy</Link> and <Link href="/terms">Terms</Link>.
+          </div>
         </div>
-      </div>
+
+        <div className="connect-side-panel">
+          <div className="connect-product-pill">
+            <span>{product === 'figma' ? 'Figma' : product === 'vscode' ? 'VS Code' : 'App'}</span>
+            <strong>Free launch</strong>
+          </div>
+          <div className="connect-step-list">
+            <div>
+              <span>1</span>
+              <p>Sign in securely on iconsearch.info.</p>
+            </div>
+            <div>
+              <span>2</span>
+              <p>Approve this short-lived device link.</p>
+            </div>
+            <div>
+              <span>3</span>
+              <p>Return to the app and start searching live icons.</p>
+            </div>
+          </div>
+          <div className="connect-security-note">
+            Your password never enters VS Code or Figma. The app stores only a revocable session token.
+          </div>
+        </div>
+      </section>
 
       <AuthModal
         isOpen={showAuth}
@@ -208,20 +221,9 @@ function StatusCard({
   }[tone]
 
   return (
-    <div style={{ border: `1px solid ${colors.border}`, background: colors.bg, borderRadius: '12px', padding: '18px', marginBottom: '20px' }}>
-      <strong style={{ display: 'block', color: 'var(--text)', marginBottom: '6px' }}>{title}</strong>
-      <span style={{ color: colors.text, lineHeight: 1.6 }}>{children}</span>
+    <div className="connect-status-card" style={{ borderColor: colors.border, background: colors.bg }}>
+      <strong>{title}</strong>
+      <span style={{ color: colors.text }}>{children}</span>
     </div>
   )
-}
-
-const primaryButtonStyle: React.CSSProperties = {
-  width: '100%',
-  border: '1px solid rgba(129,140,248,.65)',
-  borderRadius: '10px',
-  background: 'linear-gradient(135deg, #7c6af7, #4f46e5)',
-  color: '#fff',
-  cursor: 'pointer',
-  fontWeight: 800,
-  padding: '13px 18px',
 }

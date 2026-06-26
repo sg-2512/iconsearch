@@ -80,7 +80,7 @@ async function beginSignIn() {
     const interval = Math.max(2, Number(startPayload.interval) || 3);
     if (!deviceCode || !verificationUrl) throw new Error('The sign-in response was incomplete.');
 
-    figma.openExternal(verificationUrl);
+    post({ type: 'auth-url', url: verificationUrl });
     post({ type: 'auth-pending', message: 'Approve the connection in your browser. This panel will update automatically.' });
     const deadline = Date.now() + expiresIn * 1000;
 

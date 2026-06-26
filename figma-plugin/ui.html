@@ -539,6 +539,27 @@
       opacity: 0.7;
     }
 
+    .auth-open-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      min-height: 32px;
+      margin-top: 8px;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg-secondary);
+      color: var(--text);
+      font-weight: 700;
+      font-size: 11px;
+      text-decoration: none;
+    }
+
+    .auth-open-link:hover {
+      border-color: var(--accent);
+    }
+
     .auth-message {
       min-height: 16px;
       margin-top: 10px;
@@ -596,6 +617,7 @@
       <div class="auth-title">Connect IconSearch</div>
       <p class="auth-copy">Sign in securely in your browser. The first 500 verified Figma users receive lifetime Founder access.</p>
       <button class="auth-button" id="authButton" type="button">Sign in with IconSearch</button>
+      <a class="auth-open-link hidden" id="authOpenLink" href="#" target="_blank" rel="noopener noreferrer">Open approval page</a>
       <div class="auth-message" id="authMessage">Your password never enters this plugin.</div>
     </div>
   </section>
@@ -812,6 +834,7 @@
     const libraryCoverage = document.getElementById('libraryCoverage');
     const authOverlay = document.getElementById('authOverlay');
     const authButton = document.getElementById('authButton');
+    const authOpenLink = document.getElementById('authOpenLink');
     const authMessage = document.getElementById('authMessage');
     const accountLabel = document.getElementById('accountLabel');
     const signOutButton = document.getElementById('signOutButton');
@@ -1280,6 +1303,8 @@
     authButton.addEventListener('click', () => {
       authButton.disabled = true;
       authButton.textContent = 'Opening browser...';
+      authOpenLink.classList.add('hidden');
+      authOpenLink.removeAttribute('href');
       authMessage.textContent = 'Starting secure sign-in...';
       parent.postMessage({ pluginMessage: { type: 'sign-in' } }, '*');
     });
@@ -1297,6 +1322,7 @@
         authOverlay.classList.toggle('hidden', Boolean(message.unlocked));
         authButton.disabled = false;
         authButton.textContent = 'Sign in with IconSearch';
+        authOpenLink.classList.add('hidden');
 
         if (message.unlocked) {
           const plan = access.tier === 'founder' && access.founderNumber
@@ -1309,17 +1335,27 @@
         }
       }
 
+      if (message.type === 'auth-url') {
+        authOverlay.classList.remove('hidden');
+        authOpenLink.href = message.url || '#';
+        authOpenLink.classList.remove('hidden');
+        authMessage.textContent = 'Click "Open approval page", approve in your browser, then return here.';
+      }
+
       if (message.type === 'auth-pending') {
         authOverlay.classList.remove('hidden');
         authButton.disabled = true;
         authButton.textContent = 'Waiting for approval...';
-        authMessage.textContent = message.message || 'Approve the connection in your browser.';
+        authMessage.textContent = authOpenLink.classList.contains('hidden')
+          ? (message.message || 'Approve the connection in your browser.')
+          : 'Waiting for browser approval. Keep this panel open.';
       }
 
       if (message.type === 'auth-error') {
         authOverlay.classList.remove('hidden');
         authButton.disabled = false;
         authButton.textContent = 'Try sign in again';
+        authOpenLink.classList.add('hidden');
         authMessage.textContent = message.message || 'Could not connect your account.';
       }
 
