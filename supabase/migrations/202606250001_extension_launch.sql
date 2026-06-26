@@ -372,6 +372,25 @@ alter table public.usage_daily enable row level security;
 alter table public.waitlist enable row level security;
 alter table public.entitlement_events enable row level security;
 
+grant usage on schema public to anon, authenticated, service_role;
+
+grant select on public.products to anon, authenticated;
+grant select, update on public.profiles to authenticated;
+grant select on public.entitlements to authenticated;
+grant select on public.usage_daily to authenticated;
+grant select on public.waitlist to authenticated;
+grant select on public.entitlement_events to authenticated;
+
+grant all privileges on public.profiles to service_role;
+grant all privileges on public.products to service_role;
+grant all privileges on public.entitlements to service_role;
+grant all privileges on public.device_codes to service_role;
+grant all privileges on public.extension_sessions to service_role;
+grant all privileges on public.usage_daily to service_role;
+grant all privileges on public.waitlist to service_role;
+grant all privileges on public.entitlement_events to service_role;
+grant usage, select on all sequences in schema public to service_role;
+
 drop policy if exists profiles_select_own on public.profiles;
 create policy profiles_select_own
   on public.profiles for select
