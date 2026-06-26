@@ -245,6 +245,7 @@ export default function Sidebar() {
         <div style={{ padding: '16px 20px', borderTop: '1px solid var(--border)', marginTop: 'auto' }}>
           <div style={{ display: 'flex', gap: '16px', justifyContent: 'center' }}>
             {[
+              { label: 'Account', href: '/account' },
               { label: 'About', href: '/about' },
               { label: 'Privacy', href: '/privacy-policy' },
               { label: 'Contact', href: '/contact' },

@@ -4,7 +4,7 @@ Search the live IconSearch catalog from inside VS Code and insert production-rea
 
 ## Features
 
-1. **Free preview unlock:** Sign up or sign in with an email inside the extension. Access is free for now and stored locally in VS Code global state.
+1. **Secure account connection:** Sign in on iconsearch.info through a short-lived browser approval link. VS Code stores only a revocable opaque token in SecretStorage.
 2. **Online-only results:** Every preview and SVG comes from the live IconSearch API or online SVG/CDN sources. No offline icons are bundled.
 3. **Library and style filters:** Filter by popular icon libraries, outline/solid/duotone/two-tone/sharp styles, and legal-safe results.
 4. **Multiple insert formats:** Insert React, raw SVG, Vue, Svelte, or Tailwind mask snippets.
@@ -19,7 +19,7 @@ Open VS Code settings and search for `IconSearch Integration`.
 - `iconSearch.defaultFormat`: Default insert format. Supported values are `ask`, `react`, `svg`, `vue`, `svelte`, and `tailwind`.
 - `iconSearch.tailwindClasses`: Classes appended to generated snippets. Default: `w-5 h-5`.
 
-Search and catalog requests always use the production API at `https://iconsearch.info/api/icon-search`.
+Search and catalog requests use the authenticated production endpoint at `https://iconsearch.info/api/extension/icon-search`.
 
 ## Local Development
 
@@ -29,7 +29,7 @@ npm install
 npm run compile
 ```
 
-Then press `F5` in VS Code and choose **Run Extension**. In the Extension Development Host, open the IconSearch activity bar view, unlock free access with an email, and search for an icon like `home`.
+Then press `F5` in VS Code and choose **Run Extension**. In the Extension Development Host, open the IconSearch activity bar view, connect an IconSearch account in the browser, and search for an icon like `home`.
 
 ## Package Locally
 

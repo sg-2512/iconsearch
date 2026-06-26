@@ -1,15 +1,17 @@
 'use client'
 
 import { useState } from 'react'
+import type { User } from '@supabase/supabase-js'
 import { createClient, isSupabaseConfigured } from '@/lib/supabase'
 
 interface AuthModalProps {
   isOpen: boolean
   onClose: () => void
-  onAuthSuccess: (user: any) => void
+  onAuthSuccess: (user: User) => void
+  redirectTo?: string
 }
 
-export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalProps) {
+export default function AuthModal({ isOpen, onClose, onAuthSuccess, redirectTo }: AuthModalProps) {
   const [isSignUp, setIsSignUp] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -20,6 +22,13 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
   if (!isOpen) return null
 
   const isConfigured = isSupabaseConfigured()
+
+  const getCallbackUrl = () => {
+    const next = redirectTo || `${window.location.pathname}${window.location.search}`
+    const callback = new URL('/auth/callback', window.location.origin)
+    callback.searchParams.set('next', next.startsWith('/') ? next : '/account')
+    return callback.toString()
+  }
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -48,7 +57,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
           email,
           password,
           options: {
-            emailRedirectTo: window.location.origin + '/icon-search',
+            emailRedirectTo: getCallbackUrl(),
           },
         })
 
@@ -75,8 +84,8 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
           onClose()
         }
       }
-    } catch (err: any) {
-      setErrorMsg(err?.message || 'An unexpected error occurred.')
+    } catch (err: unknown) {
+      setErrorMsg(err instanceof Error ? err.message : 'An unexpected error occurred.')
     } finally {
       setLoading(false)
     }
@@ -100,14 +109,14 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
       const { error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
-          redirectTo: window.location.origin + '/icon-search',
+          redirectTo: getCallbackUrl(),
         },
       })
       if (error) {
         setErrorMsg(error.message)
       }
-    } catch (err: any) {
-      setErrorMsg(err?.message || 'An unexpected error occurred during social login.')
+    } catch (err: unknown) {
+      setErrorMsg(err instanceof Error ? err.message : 'An unexpected error occurred during social login.')
     }
   }
 
@@ -152,6 +161,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
         {/* Close Button */}
         <button 
           onClick={onClose}
+          aria-label="Close sign in dialog"
           style={{
             position: 'absolute',
             top: '20px',
@@ -298,7 +308,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
             <input 
               type="password"
               required
-              minLength={6}
+              minLength={8}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"

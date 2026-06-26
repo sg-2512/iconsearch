@@ -9,13 +9,13 @@ export default function PrivacyPolicyPage() {
 
       <section style={{ marginBottom: '48px', paddingBottom: '48px', borderBottom: '1px solid var(--border)' }}>
         <div style={{ fontSize: '12px', color: 'var(--accent)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '2px', marginBottom: '12px' }}>
-          // LEGAL
+          {'// LEGAL'}
         </div>
         <h1 style={{ fontSize: 'clamp(32px, 5vw, 48px)', fontWeight: 800, lineHeight: 1.1, marginBottom: '16px' }}>
           Privacy Policy
         </h1>
         <p style={{ color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace', fontSize: '13px' }}>
-          Last updated: May 27, 2026
+          Last updated: June 25, 2026
         </p>
       </section>
 
@@ -27,7 +27,7 @@ export default function PrivacyPolicyPage() {
           },
           {
             title: '2. Information We Collect',
-            content: 'We collect minimal data necessary to operate and improve the site. This includes: anonymous usage data via Google Analytics (page views, session duration, referral sources, device type, and general geographic region); data processed by Google AdSense for serving contextually relevant advertisements; and any information you voluntarily provide when contacting us by email. We do not collect your name, email address, or any personal information through the site itself — there are no accounts, forms, or sign-ups on IconSearch.'
+            content: 'We collect the minimum information needed to operate IconSearch. This may include your email address and authentication identifiers when you create an account; product entitlements such as free or Founder access; revocable session records used to connect the VS Code extension or Figma plugin; cloud-saved icon packs and presets you choose to sync; anonymous or pseudonymous usage data through Google Analytics; and information you voluntarily provide when contacting us.'
           },
           {
             title: '3. Google Analytics',
@@ -39,11 +39,11 @@ export default function PrivacyPolicyPage() {
           },
           {
             title: '5. Cookies',
-            content: 'Our site uses first-party and third-party cookies. First-party cookies may store your UI preferences (such as dark/light mode) locally in your browser. Third-party cookies are set by Google Analytics and Google AdSense as described above. These cookies do not contain personally identifiable information. You can disable, block, or delete cookies through your browser settings at any time. Note that disabling cookies may affect the functionality of some site features such as theme preferences.'
+            content: 'Our site uses first-party cookies for Supabase authentication sessions and may store UI preferences locally in your browser. Google Analytics and Google AdSense may set third-party cookies as described above. Disabling first-party authentication cookies will prevent account sign-in, cloud sync, and browser approval of extension or plugin connections.'
           },
           {
             title: '6. How We Use Data',
-            content: 'Anonymous usage data from Google Analytics is used solely to understand which pages and features are most useful to developers, to identify technical issues, and to guide future content decisions. We do not sell, rent, or share any data with third parties beyond what is inherently processed by Google Analytics and Google AdSense as described in this policy. We do not use your data for marketing, profiling, or any purpose beyond operating and improving this website.'
+            content: 'We use account and entitlement data to authenticate users, allocate limited Founder access, connect approved devices, synchronize features you request, prevent abuse, provide support, and operate the service. Analytics data helps us understand feature usage and technical issues. We do not sell or rent personal information.'
           },
           {
             title: '7. Third-Party Links',
@@ -51,7 +51,7 @@ export default function PrivacyPolicyPage() {
           },
           {
             title: '8. Data Storage and Security',
-            content: 'IconSearch is a static website with no user accounts, no login system, and no backend database. We do not store any personally identifiable information on our servers. Analytics and advertising data is stored and processed by Google in accordance with Google\'s own privacy policies and security standards. Our website is served over HTTPS to encrypt all data transmitted between your browser and our servers.'
+            content: 'Account, entitlement, device authorization, and optional cloud-sync data is stored with Supabase. Extension session tokens are generated as high-entropy opaque values; the server stores only cryptographic hashes, while VS Code stores the token in SecretStorage and Figma stores it in clientStorage. Device approval links expire after a short period and connected sessions can be revoked. The website and APIs are served over HTTPS. No system can guarantee absolute security, but we use access controls and row-level security to reduce risk.'
           },
           {
             title: '9. California Privacy Rights (CCPA)',
@@ -59,7 +59,7 @@ export default function PrivacyPolicyPage() {
           },
           {
             title: '10. GDPR and EEA Residents',
-            content: 'If you are located in the European Economic Area (EEA), our legal basis for processing anonymous analytics data is our legitimate interest in understanding how the website is used and improving the user experience. You have the right to access, rectify, or erase any personal data we hold about you, the right to data portability, and the right to lodge a complaint with your local supervisory authority. Because we collect no personal data directly, most GDPR rights are automatically satisfied. For any questions, contact iconsearchinfo@gmail.com.'
+            content: 'If you are located in the European Economic Area (EEA), we process account and product-access data to provide the service you request and process limited analytics under our legitimate interest in improving IconSearch. You may request access, correction, deletion, or portability of personal data and may object to or restrict certain processing. You may also lodge a complaint with your local supervisory authority. Contact iconsearchinfo@gmail.com for requests.'
           },
           {
             title: '11. Children\'s Privacy',

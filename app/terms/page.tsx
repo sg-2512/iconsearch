@@ -9,20 +9,20 @@ export default function TermsPage() {
 
       <section style={{ marginBottom: '48px', paddingBottom: '48px', borderBottom: '1px solid var(--border)' }}>
         <div style={{ fontSize: '12px', color: 'var(--accent)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '2px', marginBottom: '12px' }}>
-          // LEGAL
+          {'// LEGAL'}
         </div>
         <h1 style={{ fontSize: 'clamp(32px, 5vw, 48px)', fontWeight: 800, lineHeight: 1.1, marginBottom: '16px' }}>
           Terms and Conditions
         </h1>
         <p style={{ color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace', fontSize: '13px' }}>
-          Last updated: May 27, 2026
+          Last updated: June 25, 2026
         </p>
       </section>
 
       <article style={{ maxWidth: '720px', display: 'flex', flexDirection: 'column', gap: '32px' }}>
 
         <p style={{ color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.8, background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '8px', padding: '20px' }}>
-          Welcome to IconSearch ("we", "our", or "us"). These Terms and Conditions govern your use of the website located at iconsearch.info. By accessing or using this website, you agree to be bound by these Terms in their entirety. If you do not agree with any part of these Terms, please do not use our website.
+          Welcome to IconSearch (&quot;we&quot;, &quot;our&quot;, or &quot;us&quot;). These Terms and Conditions govern your use of the website located at iconsearch.info. By accessing or using this website, you agree to be bound by these Terms in their entirety. If you do not agree with any part of these Terms, please do not use our website.
         </p>
 
         {[
@@ -89,11 +89,19 @@ You can manage your ad personalization preferences through Google's Ad Settings 
 You are solely responsible for any content you submit and must ensure it does not violate any laws, infringe any third-party intellectual property rights, contain harmful, misleading, or defamatory information, or include personal information about third parties without their consent.`,
           },
           {
-            title: '10. Changes to These Terms',
+            title: '10. Accounts, Extensions, and Founder Access',
+            content: `IconSearch may provide accounts that connect the website, VS Code extension, and Figma plugin. You are responsible for maintaining the security of your account and connected devices and for promptly signing out or contacting us if you suspect unauthorized access.
+
+The first 500 verified users of each eligible product may receive lifetime Founder access for that product. Founder eligibility is based on successful account verification and an atomic product claim, not download or installation counts. Founder access is personal, non-transferable, limited to one entitlement per user per product, and may be revoked for fraud, automated claiming, abuse, or material violation of these Terms. "Lifetime" means for as long as IconSearch continues to operate and support the applicable product; it does not guarantee perpetual availability of any specific feature.
+
+Users who join after Founder capacity is reached may receive a free plan with different limits. We may change future free or paid plan features, but we will not convert valid Founder access into a recurring paid subscription.`,
+          },
+          {
+            title: '11. Changes to These Terms',
             content: `We reserve the right to modify, update, or replace these Terms and Conditions at any time at our sole discretion. When we make material changes, we will update the "Last updated" date at the top of this page. Your continued use of IconSearch after any changes to these Terms constitutes your acceptance of the updated Terms. If you do not agree with the revised Terms, you must stop using the website. We encourage you to review these Terms periodically.`,
           },
           {
-            title: '11. Governing Law and Dispute Resolution',
+            title: '12. Governing Law and Dispute Resolution',
             content: `These Terms and Conditions shall be governed by and construed in accordance with the laws of the State of Delaware, United States, without regard to its conflict of law provisions.
 
 Any disputes arising from or relating to these Terms or your use of IconSearch shall first be attempted to be resolved informally by contacting us at iconsearchinfo@gmail.com. If informal resolution is not achieved within 30 days, disputes shall be subject to binding arbitration in accordance with the American Arbitration Association rules, or at our election, to the jurisdiction of the courts of the State of Delaware.
@@ -101,7 +109,7 @@ Any disputes arising from or relating to these Terms or your use of IconSearch s
 If any provision of these Terms is found to be unenforceable or invalid under applicable law, that provision will be limited or eliminated to the minimum extent necessary, and the remaining provisions will continue in full force and effect.`,
           },
           {
-            title: '12. Contact Information',
+            title: '13. Contact Information',
             content: `If you have any questions, concerns, or requests regarding these Terms and Conditions, please contact us:
 
 📧 General: iconsearchinfo@gmail.com

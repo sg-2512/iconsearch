@@ -140,15 +140,23 @@ Open [http://localhost:3000](http://localhost:3000).
 Create `.env.local` in the project root (never commit this file — it is gitignored).
 
 ```env
-# Supabase (required for auth + cloud sync; optional for local-only browsing)
+# Supabase public browser configuration
 NEXT_PUBLIC_SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_REPLACE_ME
+
+# Server-only extension authentication configuration
+SUPABASE_SECRET_KEY=sb_secret_REPLACE_ME
+DEVICE_TOKEN_PEPPER=replace-with-at-least-32-random-characters
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ```
 
 | Variable | Required | Notes |
 |----------|----------|-------|
 | `NEXT_PUBLIC_SUPABASE_URL` | For auth | Project URL from Supabase → Settings → API |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | For auth | **anon public** key only — never use `service_role` in the frontend |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | For auth | Public `sb_publishable_...` key. Legacy `NEXT_PUBLIC_SUPABASE_ANON_KEY` is temporarily supported |
+| `SUPABASE_SECRET_KEY` | Extension auth | Server-only `sb_secret_...` key. Never expose it in website client, VS Code, or Figma code |
+| `DEVICE_TOKEN_PEPPER` | Extension auth | Random server-only value of at least 32 characters used to hash device and app tokens |
+| `NEXT_PUBLIC_SITE_URL` | Extension auth | `http://localhost:3000` locally and `https://iconsearch.info` in production |
 
 Without valid Supabase keys, the app runs in **local-only mode**: search, cart, and export still work via `localStorage`, but sign-in and cloud sync are disabled.
 
@@ -159,11 +167,16 @@ Without valid Supabase keys, the app runs in **local-only mode**: search, cart, 
 ### 1. Create a Supabase project
 
 1. [supabase.com](https://supabase.com) → New project (e.g. `icon-hub`)
-2. Copy **Project URL** and **anon public key** into `.env.local` and Vercel env vars
+2. Copy the **Project URL**, **publishable key**, and server-only **secret key** into `.env.local` and the matching Vercel environment variables
 
 ### 2. Run database schema
 
-In Supabase → **SQL Editor**, run:
+First run `supabase/migrations/202606250001_extension_launch.sql` in
+Supabase SQL Editor. It creates product counters, atomic first-500 Founder
+claims, short-lived device codes, hashed extension sessions, usage tables,
+audit events, and row-level-security policies.
+
+The cloud workspace tables are shown below:
 
 ```sql
 -- Profiles (user plan — reserved for future freemium)
@@ -237,7 +250,7 @@ Supabase → **Authentication → URL Configuration**
 | Setting | Value |
 |---------|--------|
 | Site URL | `https://iconsearch.info` |
-| Redirect URLs | `http://localhost:3000/icon-search`, `https://iconsearch.info/icon-search`, `https://www.iconsearch.info/icon-search` |
+| Redirect URLs | `http://localhost:3000/auth/callback`, `https://iconsearch.info/auth/callback`, `https://www.iconsearch.info/auth/callback` |
 
 ### 4. OAuth (optional)
 
@@ -250,6 +263,9 @@ Enable **GitHub** and/or **Google** under **Authentication → Providers**. Use 
 | `packs` | Named workspace carts and their icon items (JSON) |
 | `presets` | Saved size / stroke / color presets |
 | `profiles` | User plan (`free` / `pro`) — schema exists; billing not wired yet |
+| `products` / `entitlements` | VS Code and Figma free or Founder access |
+| `device_codes` | Ten-minute browser approval handshakes |
+| `extension_sessions` | Revocable 90-day app sessions stored only as hashes |
 
 ---
 
@@ -400,7 +416,10 @@ This project is connected to Vercel and deploys from the `main` branch (or your 
 
 1. **Environment variables** in Vercel → Settings → Environment Variables:
    - `NEXT_PUBLIC_SUPABASE_URL`
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+   - `SUPABASE_SECRET_KEY`
+   - `DEVICE_TOKEN_PEPPER`
+   - `NEXT_PUBLIC_SITE_URL`
 2. **Redeploy** after changing env vars
 3. **Domain:** `iconsearch.info` (Settings → Domains)
 4. **Supabase redirect URLs** include production domain (see [Supabase setup](#supabase-setup-auth--cloud-sync))
@@ -445,7 +464,7 @@ Vercel runs this automatically. The icon gzip file is included in the deployment
 
 - **No automated tests** — manual QA only
 - **No CI/CD workflows** in `.github/`
-- **Supabase schema not versioned** in repo (SQL documented here only)
+- Supabase migrations are versioned in `supabase/migrations/`
 - **Freemium / Stripe not implemented** — all export formats available to everyone
 - **Rate limiting is in-memory** — not shared across Vercel serverless instances
 - **Full icon index loaded into RAM** on cold start (~tens of MB decompressed)
@@ -457,13 +476,13 @@ Vercel runs this automatically. The icon gzip file is included in the deployment
 ## Roadmap
 
 - [ ] Stripe billing + enforced free/pro limits
-- [ ] Supabase migrations in repo (`supabase/migrations/`)
-- [ ] `.env.example` committed for onboarding
+- [x] Supabase migrations in repo (`supabase/migrations/`)
+- [x] `.env.example` committed for onboarding
 - [ ] Wire `merge-and-canonicalize.js` into `package.json` as `build:icons:full`
 - [ ] GitHub Actions for weekly icon DB refresh
 - [ ] Favicon asset (`favicon.svg` referenced in JSON-LD but missing from repo)
 - [ ] Distributed rate limiting (Vercel KV / Upstash)
-- [ ] Figma / VS Code plugins (paid tier vision)
+- [ ] Publish the authenticated Figma and VS Code marketplace builds
 
 ---
 

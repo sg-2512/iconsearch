@@ -475,6 +475,89 @@
       display: none !important;
     }
 
+    .auth-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background: color-mix(in srgb, var(--bg) 94%, transparent);
+      backdrop-filter: blur(10px);
+    }
+
+    .auth-card {
+      width: 100%;
+      max-width: 300px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 22px;
+      background: var(--bg);
+      box-shadow: 0 18px 60px rgba(0, 0, 0, 0.18);
+      text-align: center;
+    }
+
+    .auth-logo {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 14px;
+      border-radius: 12px;
+      color: white;
+      background: linear-gradient(135deg, #818cf8, #4f46e5);
+      font-weight: 800;
+    }
+
+    .auth-title {
+      margin-bottom: 8px;
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .auth-copy {
+      color: var(--text-secondary);
+      font-size: 11px;
+      line-height: 1.6;
+    }
+
+    .auth-button {
+      width: 100%;
+      height: 34px;
+      margin-top: 16px;
+      border: 0;
+      border-radius: 8px;
+      color: white;
+      background: #4f46e5;
+      cursor: pointer;
+      font: inherit;
+      font-weight: 700;
+    }
+
+    .auth-button:disabled {
+      cursor: wait;
+      opacity: 0.7;
+    }
+
+    .auth-message {
+      min-height: 16px;
+      margin-top: 10px;
+      color: var(--text-secondary);
+      font-size: 10px;
+      line-height: 1.5;
+    }
+
+    .account-box {
+      margin-top: 16px;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg-secondary);
+      text-align: left;
+      font-size: 10.5px;
+      line-height: 1.6;
+    }
+
     /* ===== STATUS BAR ===== */
     .status-bar {
       padding: 4px 12px;
@@ -506,6 +589,16 @@
   </style>
 </head>
 <body>
+
+  <section class="auth-overlay" id="authOverlay">
+    <div class="auth-card">
+      <div class="auth-logo">IS</div>
+      <div class="auth-title">Connect IconSearch</div>
+      <p class="auth-copy">Sign in securely in your browser. The first 500 verified Figma users receive lifetime Founder access.</p>
+      <button class="auth-button" id="authButton" type="button">Sign in with IconSearch</button>
+      <div class="auth-message" id="authMessage">Your password never enters this plugin.</div>
+    </div>
+  </section>
 
   <!-- Sidebar -->
   <aside class="sidebar">
@@ -580,6 +673,10 @@
             • Filter by library and style<br>
             • Bookmark favorite icons
           </div>
+          <div class="account-box">
+            <strong id="accountLabel">Connected account</strong><br>
+            <button class="btn btn-save" id="signOutButton" type="button" style="width:100%; margin-top:8px;">Sign out</button>
+          </div>
         </div>
       </section>
     </div>
@@ -610,11 +707,26 @@
 
   <script>
     // ===== CONFIGURATION =====
-    const API_URL = 'https://iconsearch.info/api/icon-search';
+    const pendingApiRequests = new Map();
+    let apiRequestCounter = 0;
 
-    async function apiFetch(queryParams) {
-      return fetch(`${API_URL}${queryParams}`, {
-        headers: { accept: 'application/json' }
+    function apiFetch(queryParams) {
+      const requestId = `api-${Date.now()}-${++apiRequestCounter}`;
+
+      return new Promise((resolve, reject) => {
+        const timeout = setTimeout(() => {
+          pendingApiRequests.delete(requestId);
+          reject(new Error('IconSearch API request timed out.'));
+        }, 30000);
+
+        pendingApiRequests.set(requestId, { resolve, reject, timeout });
+        parent.postMessage({
+          pluginMessage: {
+            type: 'api-request',
+            requestId,
+            queryParams
+          }
+        }, '*');
       });
     }
 
@@ -698,6 +810,11 @@
     const statusText = document.getElementById('statusText');
     const catalogSummary = document.getElementById('catalogSummary');
     const libraryCoverage = document.getElementById('libraryCoverage');
+    const authOverlay = document.getElementById('authOverlay');
+    const authButton = document.getElementById('authButton');
+    const authMessage = document.getElementById('authMessage');
+    const accountLabel = document.getElementById('accountLabel');
+    const signOutButton = document.getElementById('signOutButton');
 
     // ===== STATE =====
     let debounceTimer;
@@ -706,6 +823,7 @@
     let isLoading = false;
     let libraryCounts = {};
     let viewportFillScheduled = false;
+    let appStarted = false;
 
     // Progressive rendering state
     let allGroupedData = {};
@@ -1153,8 +1271,73 @@
       });
     }
 
-    // Initial load
-    initializeLibraryFilter().finally(() => performSearch());
+    function startApp() {
+      if (appStarted) return;
+      appStarted = true;
+      initializeLibraryFilter().finally(() => performSearch());
+    }
+
+    authButton.addEventListener('click', () => {
+      authButton.disabled = true;
+      authButton.textContent = 'Opening browser...';
+      authMessage.textContent = 'Starting secure sign-in...';
+      parent.postMessage({ pluginMessage: { type: 'sign-in' } }, '*');
+    });
+
+    signOutButton.addEventListener('click', () => {
+      parent.postMessage({ pluginMessage: { type: 'sign-out' } }, '*');
+    });
+
+    window.addEventListener('message', event => {
+      const message = event.data.pluginMessage;
+      if (!message) return;
+
+      if (message.type === 'access-state') {
+        const access = message.access || {};
+        authOverlay.classList.toggle('hidden', Boolean(message.unlocked));
+        authButton.disabled = false;
+        authButton.textContent = 'Sign in with IconSearch';
+
+        if (message.unlocked) {
+          const plan = access.tier === 'founder' && access.founderNumber
+            ? `Founder #${access.founderNumber}`
+            : 'Free';
+          accountLabel.textContent = `${access.email || 'Connected'} - ${plan}`;
+          startApp();
+        } else {
+          authMessage.textContent = 'Your password never enters this plugin.';
+        }
+      }
+
+      if (message.type === 'auth-pending') {
+        authOverlay.classList.remove('hidden');
+        authButton.disabled = true;
+        authButton.textContent = 'Waiting for approval...';
+        authMessage.textContent = message.message || 'Approve the connection in your browser.';
+      }
+
+      if (message.type === 'auth-error') {
+        authOverlay.classList.remove('hidden');
+        authButton.disabled = false;
+        authButton.textContent = 'Try sign in again';
+        authMessage.textContent = message.message || 'Could not connect your account.';
+      }
+
+      if (message.type === 'api-response') {
+        const pending = pendingApiRequests.get(message.requestId);
+        if (!pending) return;
+        clearTimeout(pending.timeout);
+        pendingApiRequests.delete(message.requestId);
+
+        pending.resolve({
+          ok: Boolean(message.ok),
+          status: Number(message.status) || 0,
+          json: async () => message.payload
+        });
+      }
+    });
+
+    parent.postMessage({ pluginMessage: { type: 'auth-ready' } }, '*');
 
     // ===== PREVIEW CARD CONTROL =====
     function selectIcon(icon, url) {

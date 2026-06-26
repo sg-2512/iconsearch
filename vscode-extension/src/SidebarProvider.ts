@@ -50,13 +50,18 @@ type SearchRequest = {
   legalOnly: boolean;
 };
 
-type FreeAccess = {
+type ExtensionAccess = {
   email: string;
-  unlockedAt: string;
+  product: 'vscode';
+  tier: 'free' | 'founder';
+  founderNumber: number | null;
+  expiresAt: string;
 };
 
-const DEFAULT_API_URL = 'https://iconsearch.info/api/icon-search';
-const ACCESS_KEY = 'iconsearch.freeAccess';
+const EXTENSION_API_URL = 'https://iconsearch.info/api/extension/icon-search';
+const AUTH_API_URL = 'https://iconsearch.info/api';
+const SESSION_TOKEN_KEY = 'iconsearch.sessionToken';
+const ACCESS_CACHE_KEY = 'iconsearch.accessCache';
 const RECENT_KEY = 'iconsearch.recentIcons';
 const MAX_RECENT_ICONS = 12;
 const SEARCHABLE_ICON_COUNT = 351_639;
@@ -81,6 +86,7 @@ const NAMED_LIBRARIES = [
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
   private _view?: vscode.WebviewView;
+  private authAttempt = 0;
 
   constructor(private readonly context: vscode.ExtensionContext) {}
 
@@ -99,11 +105,11 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
       switch (data.type) {
         case 'ready':
-          this.postAccessState();
+          await this.postAccessState();
           void this.loadCatalog();
           break;
-        case 'unlockAccess':
-          await this.unlockAccess(data.value);
+        case 'signIn':
+          void this.beginSignIn();
           break;
         case 'signOut':
           await this.signOut();
@@ -134,48 +140,152 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     this._view = panel;
   }
 
-  private postAccessState() {
-    const access = this.context.globalState.get<FreeAccess>(ACCESS_KEY);
+  private async postAccessState() {
+    const token = await this.context.secrets.get(SESSION_TOKEN_KEY);
+    let access = this.context.globalState.get<ExtensionAccess>(ACCESS_CACHE_KEY);
+
+    if (token) {
+      try {
+        const response = await fetch(`${AUTH_API_URL}/entitlements/me`, {
+          headers: {
+            accept: 'application/json',
+            authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.ok) {
+          const payload = await response.json() as { access?: unknown };
+          access = normalizeExtensionAccess(payload.access);
+          if (access) await this.context.globalState.update(ACCESS_CACHE_KEY, access);
+        } else if (response.status === 401) {
+          await this.context.secrets.delete(SESSION_TOKEN_KEY);
+          await this.context.globalState.update(ACCESS_CACHE_KEY, undefined);
+          access = undefined;
+        }
+      } catch {
+        // A previously verified token remains usable during a temporary outage.
+      }
+    } else {
+      access = undefined;
+    }
+
     const config = vscode.workspace.getConfiguration('iconSearch');
     const defaultFormat = config.get<string>('defaultFormat') || 'react';
     this.post({
       type: 'accessState',
-      unlocked: Boolean(access),
+      unlocked: Boolean(token && access),
       email: access?.email || '',
+      tier: access?.tier || '',
+      founderNumber: access?.founderNumber ?? null,
       recentIcons: this.getRecentIcons(),
       defaultFormat,
     });
   }
 
-  private async unlockAccess(value: unknown) {
-    const email = isRecord(value) ? stringFrom(value.email).trim().toLowerCase() : '';
-    if (!isValidEmail(email)) {
-      this.post({ type: 'unlockError', value: 'Enter a valid email to unlock free access.' });
-      return;
+  private async beginSignIn() {
+    const attempt = ++this.authAttempt;
+    this.post({ type: 'authPending', value: 'Opening secure sign-in in your browser...' });
+
+    try {
+      const startResponse = await fetch(`${AUTH_API_URL}/device/start`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', accept: 'application/json' },
+        body: JSON.stringify({
+          product: 'vscode',
+          clientName: `VS Code ${vscode.version}`,
+        }),
+      });
+      const startPayload = await startResponse.json() as Record<string, unknown>;
+      if (!startResponse.ok) {
+        throw new Error(stringFrom(startPayload.error) || 'Could not start sign-in.');
+      }
+
+      const deviceCode = stringFrom(startPayload.deviceCode);
+      const verificationUrl = stringFrom(startPayload.verificationUriComplete);
+      const expiresIn = numberFrom(startPayload.expiresIn, 600);
+      const interval = Math.max(2, numberFrom(startPayload.interval, 3));
+      if (!deviceCode || !verificationUrl) throw new Error('The sign-in response was incomplete.');
+
+      const opened = await vscode.env.openExternal(vscode.Uri.parse(verificationUrl));
+      if (!opened) throw new Error('Could not open the browser sign-in page.');
+
+      this.post({ type: 'authPending', value: 'Approve the connection in your browser. This window will update automatically.' });
+      const deadline = Date.now() + expiresIn * 1000;
+
+      while (attempt === this.authAttempt && Date.now() < deadline) {
+        await delay(interval * 1000);
+        if (attempt !== this.authAttempt) return;
+
+        const statusResponse = await fetch(`${AUTH_API_URL}/device/status`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', accept: 'application/json' },
+          body: JSON.stringify({ deviceCode }),
+        });
+        const statusPayload = await statusResponse.json() as Record<string, unknown>;
+        const status = stringFrom(statusPayload.status);
+
+        if (status === 'pending') continue;
+        if (status === 'authorized') {
+          const token = stringFrom(statusPayload.token);
+          const access = normalizeExtensionAccess(statusPayload.access);
+          if (!token || !access) throw new Error('The approved session was incomplete.');
+
+          await this.context.secrets.store(SESSION_TOKEN_KEY, token);
+          await this.context.globalState.update(ACCESS_CACHE_KEY, access);
+          await this.postAccessState();
+          void this.loadCatalog();
+
+          const label = access.tier === 'founder' && access.founderNumber
+            ? `Founder #${access.founderNumber}`
+            : 'Free';
+          vscode.window.showInformationMessage(`IconSearch connected. ${label} access is active.`);
+          return;
+        }
+
+        throw new Error(stringFrom(statusPayload.error) || 'The sign-in link expired. Please try again.');
+      }
+
+      throw new Error('The sign-in link expired. Please try again.');
+    } catch (error) {
+      if (attempt !== this.authAttempt) return;
+      const message = error instanceof Error ? error.message : 'Could not connect your IconSearch account.';
+      this.post({ type: 'authError', value: message });
     }
-
-    await this.context.globalState.update(ACCESS_KEY, {
-      email,
-      unlockedAt: new Date().toISOString(),
-    } satisfies FreeAccess);
-
-    this.postAccessState();
-    vscode.window.showInformationMessage('IconSearch extension unlocked for free.');
   }
 
   private async signOut() {
-    await this.context.globalState.update(ACCESS_KEY, undefined);
-    this.postAccessState();
+    this.authAttempt += 1;
+    const token = await this.context.secrets.get(SESSION_TOKEN_KEY);
+    if (token) {
+      try {
+        await fetch(`${AUTH_API_URL}/device/revoke`, {
+          method: 'POST',
+          headers: { authorization: `Bearer ${token}` },
+        });
+      } catch {
+        // Local sign-out still removes the token if the network is unavailable.
+      }
+    }
+    await this.context.secrets.delete(SESSION_TOKEN_KEY);
+    await this.context.globalState.update(ACCESS_CACHE_KEY, undefined);
+    await this.postAccessState();
   }
 
   private async loadCatalog() {
     try {
-      const url = new URL(DEFAULT_API_URL);
+      const token = await this.context.secrets.get(SESSION_TOKEN_KEY);
+      if (!token) return;
+
+      const url = new URL(EXTENSION_API_URL);
       url.searchParams.set('limit', '1');
       url.searchParams.set('legalOnly', '0');
 
       const response = await fetch(url.toString(), {
-        headers: { accept: 'application/json' },
+        headers: {
+          accept: 'application/json',
+          authorization: `Bearer ${token}`,
+          'x-iconsearch-product': 'vscode',
+        },
       });
       if (!response.ok) throw new Error(`IconSearch catalog returned ${response.status}`);
 
@@ -198,8 +308,8 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
   }
 
   private async handleSearch(request: SearchRequest) {
-    const access = this.context.globalState.get<FreeAccess>(ACCESS_KEY);
-    if (!access) {
+    const token = await this.context.secrets.get(SESSION_TOKEN_KEY);
+    if (!token) {
       this.post({ type: 'accessRequired' });
       return;
     }
@@ -212,7 +322,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     }
 
     try {
-      const url = new URL(DEFAULT_API_URL);
+      const url = new URL(EXTENSION_API_URL);
       if (query) url.searchParams.set('q', query);
       url.searchParams.set('limit', '60');
       url.searchParams.set('sort', 'relevance');
@@ -227,7 +337,11 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
       if (request.style !== 'all') url.searchParams.set('style', request.style);
 
       const response = await fetch(url.toString(), {
-        headers: { accept: 'application/json' },
+        headers: {
+          accept: 'application/json',
+          authorization: `Bearer ${token}`,
+          'x-iconsearch-product': 'vscode',
+        },
       });
 
       if (!response.ok) {
@@ -463,14 +577,13 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
           </header>
 
           <section id="unlockPanel" class="unlock-card hidden">
-            <div class="unlock-title">Unlock IconSearch for free</div>
-            <div class="unlock-copy">Sign up or sign in with your email. Access is free while the extension is in preview.</div>
+            <div class="unlock-title">Connect your IconSearch account</div>
+            <div class="unlock-copy">Sign in securely in your browser. The first 500 verified VS Code users receive lifetime Founder access.</div>
             <div class="unlock-row">
-              <input id="emailInput" class="input" type="email" placeholder="you@example.com" autocomplete="email" />
-              <button id="unlockBtn" class="primary-btn" type="button">Unlock free access</button>
+              <button id="signInBtn" class="primary-btn" type="button">Sign in with IconSearch</button>
               <div id="unlockError" class="unlock-error"></div>
             </div>
-            <div class="small-copy">By continuing, you can use live online icon search, insert, copy, and preview features.</div>
+            <div class="small-copy">Your password stays in the browser. VS Code stores only a revocable app token in SecretStorage.</div>
           </section>
 
           <section id="appPanel" class="hidden">
@@ -539,8 +652,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
           const vscode = acquireVsCodeApi();
           const unlockPanel = document.getElementById('unlockPanel');
           const appPanel = document.getElementById('appPanel');
-          const emailInput = document.getElementById('emailInput');
-          const unlockBtn = document.getElementById('unlockBtn');
+          const signInBtn = document.getElementById('signInBtn');
           const unlockError = document.getElementById('unlockError');
           const signOutBtn = document.getElementById('signOutBtn');
           const accountLabel = document.getElementById('accountLabel');
@@ -662,10 +774,15 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
             debounceTimer = setTimeout(searchNow, 250);
           }
 
-          function setAccess(unlocked, email) {
+          function setAccess(unlocked, email, tier, founderNumber) {
             unlockPanel.classList.toggle('hidden', unlocked);
             appPanel.classList.toggle('hidden', !unlocked);
-            accountLabel.textContent = email ? 'Signed in: ' + email : 'Unlocked free access';
+            const plan = tier === 'founder' && founderNumber
+              ? 'Founder #' + founderNumber
+              : (tier ? tier.charAt(0).toUpperCase() + tier.slice(1) : '');
+            accountLabel.textContent = email
+              ? 'Signed in: ' + email + (plan ? ' - ' + plan : '')
+              : 'Connected';
             if (unlocked) renderRecentOrEmpty();
           }
 
@@ -792,12 +909,11 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
             });
           }
 
-          unlockBtn.addEventListener('click', () => {
+          signInBtn.addEventListener('click', () => {
             unlockError.textContent = '';
-            vscode.postMessage({ type: 'unlockAccess', value: { email: emailInput.value } });
-          });
-          emailInput.addEventListener('keydown', (event) => {
-            if (event.key === 'Enter') unlockBtn.click();
+            signInBtn.disabled = true;
+            signInBtn.textContent = 'Opening browser...';
+            vscode.postMessage({ type: 'signIn' });
           });
           signOutBtn.addEventListener('click', () => vscode.postMessage({ type: 'signOut' }));
           document.querySelectorAll('[data-format]').forEach((button) => button.addEventListener('click', () => setFormat(button.dataset.format)));
@@ -824,16 +940,30 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
             const message = event.data;
             if (message.type === 'accessState') {
               recentIcons = Array.isArray(message.recentIcons) ? message.recentIcons : [];
-              setAccess(Boolean(message.unlocked), message.email || '');
+              setAccess(
+                Boolean(message.unlocked),
+                message.email || '',
+                message.tier || '',
+                message.founderNumber || null
+              );
+              signInBtn.disabled = false;
+              signInBtn.textContent = 'Sign in with IconSearch';
               if (message.defaultFormat && message.defaultFormat !== 'ask') {
                 setFormat(message.defaultFormat);
               }
             }
-            if (message.type === 'unlockError') {
-              unlockError.textContent = message.value || 'Could not unlock access.';
+            if (message.type === 'authPending') {
+              unlockError.textContent = message.value || 'Waiting for browser approval...';
+              signInBtn.disabled = true;
+              signInBtn.textContent = 'Waiting for approval...';
+            }
+            if (message.type === 'authError') {
+              unlockError.textContent = message.value || 'Could not connect your account.';
+              signInBtn.disabled = false;
+              signInBtn.textContent = 'Try sign in again';
             }
             if (message.type === 'accessRequired') {
-              setAccess(false, '');
+              setAccess(false, '', '', null);
             }
             if (message.type === 'recentIcons') {
               recentIcons = Array.isArray(message.value) ? message.value : [];
@@ -1202,16 +1332,37 @@ function stringFrom(value: unknown): string {
   return typeof value === 'string' ? value : '';
 }
 
+function numberFrom(value: unknown, fallback: number): number {
+  return typeof value === 'number' && Number.isFinite(value) ? value : fallback;
+}
+
 function stringArrayFrom(value: unknown): string[] {
   return Array.isArray(value) ? value.filter((item): item is string => typeof item === 'string') : [];
 }
 
-function isHttpUrl(value: string): boolean {
-  return value.startsWith('https://') || value.startsWith('http://');
+function normalizeExtensionAccess(value: unknown): ExtensionAccess | undefined {
+  if (!isRecord(value)) return undefined;
+
+  const product = stringFrom(value.product);
+  const tier = stringFrom(value.tier);
+  const expiresAt = stringFrom(value.expiresAt);
+  if (product !== 'vscode' || (tier !== 'free' && tier !== 'founder') || !expiresAt) return undefined;
+
+  return {
+    email: stringFrom(value.email),
+    product,
+    tier,
+    founderNumber: typeof value.founderNumber === 'number' ? value.founderNumber : null,
+    expiresAt,
+  };
 }
 
-function isValidEmail(value: string): boolean {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+function delay(milliseconds: number) {
+  return new Promise<void>((resolve) => setTimeout(resolve, milliseconds));
+}
+
+function isHttpUrl(value: string): boolean {
+  return value.startsWith('https://') || value.startsWith('http://');
 }
 
 function toPascalCase(value: string): string {

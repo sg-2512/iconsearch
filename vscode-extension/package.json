@@ -1,7 +1,7 @@
 {
   "name": "iconsearch-integration",
   "displayName": "IconSearch Integration",
-  "description": "Search and insert 351,639 free online icons from 16 named libraries and 224 Iconify collections directly inside VS Code.",
+  "description": "Search and insert 351,639 free online icons from 16 named libraries and 224 Iconify collections. Secure IconSearch account connection included.",
   "version": "1.0.0",
   "publisher": "iconsearch",
   "engines": {
@@ -13,7 +13,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/SanchitGupta/icon-hub.git"
+    "url": "https://github.com/sg-2512/iconsearch.git"
+  },
+  "homepage": "https://iconsearch.info/vscode-extension",
+  "bugs": {
+    "url": "https://github.com/sg-2512/iconsearch/issues"
   },
   "activationEvents": [],
   "main": "./out/extension.js",

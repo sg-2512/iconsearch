@@ -1,11 +1,16 @@
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+const supabasePublishableKey =
+  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
 // Helper to check if Supabase is properly configured with real credentials
 export const isSupabaseConfigured = (): boolean => {
-  if (!supabaseUrl || !supabaseAnonKey) return false
+  if (!supabaseUrl || !supabasePublishableKey) return false
   if (supabaseUrl.includes('your-supabase-project-id')) return false
-  if (supabaseAnonKey.includes('your-anon-key')) return false
+  if (
+    supabasePublishableKey.includes('your-publishable-key') ||
+    supabasePublishableKey.includes('your-anon-key')
+  ) return false
   return true
 }
 
@@ -23,7 +28,7 @@ export const createClient = async () => {
 
   try {
     const { createBrowserClient } = await import('@supabase/ssr')
-    return createBrowserClient(supabaseUrl!, supabaseAnonKey!)
+    return createBrowserClient(supabaseUrl!, supabasePublishableKey!)
   } catch (err) {
     console.warn('Failed to initialise Supabase client – falling back to local-only mode.', err)
     return null

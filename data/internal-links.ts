@@ -58,6 +58,7 @@ export const internalLinkGroups: InternalLinkGroup[] = [
 ]
 
 export const footerLegalLinks: InternalLink[] = [
+  { label: 'Account', href: '/account' },
   { label: 'About', href: '/about' },
   { label: 'Best For You', href: '/best-for-you' },
   { label: 'Privacy Policy', href: '/privacy-policy' },
