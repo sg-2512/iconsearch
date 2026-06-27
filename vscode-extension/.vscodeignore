@@ -5,3 +5,7 @@ node_modules/**
 tsconfig.json
 package-lock.json
 *.vsix
+.gitignore
+out/**/*.map
+out/supabase.js
+out/supabase.js.map
