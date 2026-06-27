@@ -35,7 +35,7 @@ Then press `F5` in VS Code and choose **Run Extension**. In the Extension Develo
 
 ```bash
 cd vscode-extension
-npx @vscode/vsce package --out iconsearch-integration-1.0.0.vsix
+npx @vscode/vsce package --out iconsearch-integration-1.0.1.vsix
 ```
 
 Install the generated `.vsix` from VS Code:
@@ -43,7 +43,7 @@ Install the generated `.vsix` from VS Code:
 1. Open the Extensions panel.
 2. Click `...`.
 3. Choose **Install from VSIX...**.
-4. Pick `vscode-extension/iconsearch-integration-1.0.0.vsix`.
+4. Pick `vscode-extension/iconsearch-integration-1.0.1.vsix`.
 
 ## Publish Later
 
