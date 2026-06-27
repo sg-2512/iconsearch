@@ -53,6 +53,7 @@ type SearchRequest = {
   legalOnly: boolean;
   page: number;
   append: boolean;
+  prefetch: boolean;
   requestKey: string;
 };
 
@@ -334,6 +335,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         limit,
         totalPages: 0,
         append: false,
+        prefetch: false,
         requestKey: request.requestKey,
       });
       return;
@@ -388,11 +390,19 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         limit: typeof payload.limit === 'number' ? payload.limit : limit,
         totalPages,
         append: request.append,
+        prefetch: request.prefetch,
         requestKey: request.requestKey,
       });
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unknown API error';
-      this.post({ type: 'searchError', value: message, query, append: request.append, requestKey: request.requestKey });
+      this.post({
+        type: 'searchError',
+        value: message,
+        query,
+        append: request.append,
+        prefetch: request.prefetch,
+        requestKey: request.requestKey,
+      });
     }
   }
 
@@ -706,6 +716,9 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
           let totalResults = 0;
           let totalPages = 0;
           let loadingMore = false;
+          let prefetching = false;
+          let prefetchedPage = null;
+          let pendingPrefetchPromotion = false;
           let activeRequestKey = '';
 
           function escapeHtml(value) {
@@ -795,7 +808,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
             });
           }
 
-          function currentSearchRequest(page, append) {
+          function currentSearchRequest(page, append, prefetch) {
             const request = {
               query: searchInput.value.trim(),
               library: libraryFilter.value,
@@ -803,6 +816,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
               legalOnly: legalOnly.checked,
               page: page || 1,
               append: Boolean(append),
+              prefetch: Boolean(prefetch),
             };
             request.requestKey = requestKey(request);
             return request;
@@ -814,12 +828,18 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
             if (request.query.length === 1 || (!request.query && !hasActiveFilter)) {
               activeRequestKey = '';
               loadingMore = false;
+              prefetching = false;
+              prefetchedPage = null;
+              pendingPrefetchPromotion = false;
               renderRecentOrEmpty();
               return;
             }
 
             activeRequestKey = request.requestKey;
             loadingMore = true;
+            prefetching = false;
+            prefetchedPage = null;
+            pendingPrefetchPromotion = false;
             currentPage = 0;
             totalResults = 0;
             totalPages = 0;
@@ -871,6 +891,16 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
             img.dataset.index = String(index);
           }
 
+          function warmPreviewImages(icons) {
+            icons.forEach((icon) => {
+              const urls = Array.isArray(icon.previewUrls) ? icon.previewUrls : [icon.svgUrl].filter(Boolean);
+              if (!urls[0]) return;
+              const img = new Image();
+              img.decoding = 'async';
+              img.src = urls[0];
+            });
+          }
+
           function setSelectedIndex(index) {
             const cards = Array.from(document.querySelectorAll('.icon-card'));
             if (!cards.length) {
@@ -899,33 +929,76 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
             totalResults = 0;
             totalPages = 0;
             loadingMore = false;
+            prefetching = false;
+            prefetchedPage = null;
+            pendingPrefetchPromotion = false;
             emptyState.style.display = 'block';
             emptyState.textContent = 'Search the live API or pick from recent icons after your first insert.';
             statusEl.textContent = 'Type 2+ characters to search the live API.';
           }
 
-          function loadNextPage() {
-            if (loadingMore || !currentIcons.length || !totalResults) return;
-            const request = currentSearchRequest(currentPage + 1, true);
-            const hasActiveFilter = request.library !== 'all' || request.style !== 'all';
-            const hasMore = totalPages ? currentPage < totalPages : currentIcons.length < totalResults;
-            if (request.query.length === 1 || (!request.query && !hasActiveFilter) || !hasMore) return;
+          function hasMoreResults() {
+            return Boolean(totalResults && currentIcons.length < totalResults && (!totalPages || currentPage < totalPages));
+          }
 
-            if (request.requestKey !== activeRequestKey) {
-              searchNow();
+          function isNearBottom(distance) {
+            const scrollTop = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0;
+            const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 0;
+            const fullHeight = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
+            return scrollTop + viewportHeight >= fullHeight - distance;
+          }
+
+          function canRequestMore() {
+            if (!currentIcons.length || !totalResults || !hasMoreResults()) return false;
+            const request = currentSearchRequest(currentPage + 1, true, false);
+            const hasActiveFilter = request.library !== 'all' || request.style !== 'all';
+            return !(request.query.length === 1 || (!request.query && !hasActiveFilter) || request.requestKey !== activeRequestKey);
+          }
+
+          function prefetchNextPage() {
+            if (loadingMore || prefetching || prefetchedPage || !canRequestMore()) return;
+            const request = currentSearchRequest(currentPage + 1, true, true);
+            prefetching = true;
+            vscode.postMessage({ type: 'search', value: request });
+          }
+
+          function appendPrefetchedPage() {
+            if (!prefetchedPage || prefetchedPage.requestKey !== activeRequestKey || prefetchedPage.page !== currentPage + 1) {
+              prefetchedPage = null;
+              return false;
+            }
+
+            const page = prefetchedPage;
+            prefetchedPage = null;
+            pendingPrefetchPromotion = false;
+            renderIcons(page.icons, page.total, page.query, '', {
+              append: true,
+              page: page.page,
+              totalPages: page.totalPages,
+            });
+            window.setTimeout(prefetchNextPage, 80);
+            return true;
+          }
+
+          function loadNextPage() {
+            if (loadingMore || !canRequestMore()) return;
+            if (appendPrefetchedPage()) return;
+
+            if (prefetching) {
+              pendingPrefetchPromotion = true;
+              statusEl.textContent = currentIcons.length + ' shown from ' + totalResults.toLocaleString('en-US') + ' online results - preparing more...';
               return;
             }
 
+            const request = currentSearchRequest(currentPage + 1, true, false);
             loadingMore = true;
             statusEl.textContent = currentIcons.length + ' shown from ' + totalResults.toLocaleString('en-US') + ' online results - loading more...';
             vscode.postMessage({ type: 'search', value: request });
           }
 
           function maybeLoadMore() {
-            const scrollTop = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0;
-            const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 0;
-            const fullHeight = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
-            if (scrollTop + viewportHeight >= fullHeight - 320) loadNextPage();
+            prefetchNextPage();
+            if (isNearBottom(900)) loadNextPage();
           }
 
           function renderIcons(icons, total, query, label, options) {
@@ -940,6 +1013,9 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
               iconsGrid.innerHTML = '';
               currentIcons = [];
               selectedIndex = -1;
+              prefetchedPage = null;
+              prefetching = false;
+              pendingPrefetchPromotion = false;
             }
 
             if (!icons.length && !append) {
@@ -1019,6 +1095,10 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
               card.appendChild(main);
               iconsGrid.appendChild(card);
             });
+
+            if (!label && hasMore) {
+              window.setTimeout(prefetchNextPage, append ? 80 : 140);
+            }
           }
 
           signInBtn.addEventListener('click', () => {
@@ -1037,7 +1117,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
           if ('IntersectionObserver' in window && loadMoreSentinel) {
             const loadObserver = new IntersectionObserver((entries) => {
               if (entries.some((entry) => entry.isIntersecting)) loadNextPage();
-            }, { rootMargin: '280px 0px' });
+            }, { rootMargin: '900px 0px' });
             loadObserver.observe(loadMoreSentinel);
           }
           searchInput.addEventListener('keydown', (event) => {
@@ -1083,6 +1163,9 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
             }
             if (message.type === 'accessRequired') {
               loadingMore = false;
+              prefetching = false;
+              prefetchedPage = null;
+              pendingPrefetchPromotion = false;
               setAccess(false, '', '', null);
             }
             if (message.type === 'recentIcons') {
@@ -1091,6 +1174,23 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
             }
             if (message.type === 'searchResults') {
               if (message.requestKey && activeRequestKey && message.requestKey !== activeRequestKey) return;
+              if (message.prefetch) {
+                prefetching = false;
+                const page = Number(message.page) || 0;
+                if (page === currentPage + 1) {
+                  prefetchedPage = {
+                    icons: Array.isArray(message.value) ? message.value : [],
+                    total: Number(message.total) || totalResults,
+                    query: message.query || '',
+                    page,
+                    totalPages: Number(message.totalPages) || totalPages,
+                    requestKey: message.requestKey || activeRequestKey,
+                  };
+                  warmPreviewImages(prefetchedPage.icons);
+                  if (pendingPrefetchPromotion || isNearBottom(900)) appendPrefetchedPage();
+                }
+                return;
+              }
               renderIcons(message.value || [], message.total || 0, message.query || '', '', {
                 append: Boolean(message.append),
                 page: message.page || 1,
@@ -1099,6 +1199,15 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
             }
             if (message.type === 'searchError') {
               if (message.requestKey && activeRequestKey && message.requestKey !== activeRequestKey) return;
+              if (message.prefetch) {
+                prefetching = false;
+                prefetchedPage = null;
+                if (pendingPrefetchPromotion) {
+                  pendingPrefetchPromotion = false;
+                  loadNextPage();
+                }
+                return;
+              }
               loadingMore = false;
               if (message.append) {
                 statusEl.textContent = 'Could not load more icons. Scroll again to retry.';
@@ -1138,6 +1247,7 @@ function parseSearchRequest(value: unknown): SearchRequest {
       legalOnly: true,
       page: 1,
       append: false,
+      prefetch: false,
       requestKey: '',
     };
   }
@@ -1149,6 +1259,7 @@ function parseSearchRequest(value: unknown): SearchRequest {
     legalOnly: value.legalOnly !== false,
     page: Math.max(1, Math.floor(numberFrom(value.page, 1))),
     append: value.append === true,
+    prefetch: value.prefetch === true,
     requestKey: stringFrom(value.requestKey),
   };
 }
