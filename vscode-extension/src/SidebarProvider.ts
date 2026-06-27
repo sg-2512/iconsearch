@@ -25,6 +25,9 @@ type WebviewIcon = ApiIcon & {
 type ApiResponse = {
   icons?: unknown;
   total?: unknown;
+  page?: unknown;
+  limit?: unknown;
+  totalPages?: unknown;
   facets?: unknown;
 };
 
@@ -48,6 +51,9 @@ type SearchRequest = {
   library: string;
   style: string;
   legalOnly: boolean;
+  page: number;
+  append: boolean;
+  requestKey: string;
 };
 
 type ExtensionAccess = {
@@ -315,16 +321,29 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     }
 
     const query = request.query.trim();
+    const limit = 60;
+    const page = Math.max(1, Math.floor(request.page));
     const hasActiveFilter = request.library !== 'all' || request.style !== 'all';
     if (query.length === 1 || (!query && !hasActiveFilter)) {
-      this.post({ type: 'searchResults', value: [], total: 0, query });
+      this.post({
+        type: 'searchResults',
+        value: [],
+        total: 0,
+        query,
+        page: 1,
+        limit,
+        totalPages: 0,
+        append: false,
+        requestKey: request.requestKey,
+      });
       return;
     }
 
     try {
       const url = new URL(EXTENSION_API_URL);
       if (query) url.searchParams.set('q', query);
-      url.searchParams.set('limit', '60');
+      url.searchParams.set('limit', String(limit));
+      url.searchParams.set('page', String(page));
       url.searchParams.set('sort', 'relevance');
       url.searchParams.set('legalOnly', request.legalOnly ? '1' : '0');
 
@@ -353,16 +372,27 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
       const onlineIcons = icons
         .map((icon) => normalizeIcon(icon))
         .filter((icon): icon is WebviewIcon => Boolean(icon));
+      const total = typeof payload.total === 'number' ? payload.total : onlineIcons.length;
+      const totalPages = typeof payload.totalPages === 'number'
+        ? payload.totalPages
+        : total > 0
+          ? Math.ceil(total / limit)
+          : 0;
 
       this.post({
         type: 'searchResults',
         value: onlineIcons,
-        total: typeof payload.total === 'number' ? payload.total : onlineIcons.length,
+        total,
         query,
+        page: typeof payload.page === 'number' ? payload.page : page,
+        limit: typeof payload.limit === 'number' ? payload.limit : limit,
+        totalPages,
+        append: request.append,
+        requestKey: request.requestKey,
       });
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unknown API error';
-      this.post({ type: 'searchError', value: message, query });
+      this.post({ type: 'searchError', value: message, query, append: request.append, requestKey: request.requestKey });
     }
   }
 
@@ -564,6 +594,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
           .action-btn { padding: 5px 6px; color: var(--vscode-button-secondaryForeground); background: var(--vscode-button-secondaryBackground); font-size: 11px; }
           .action-btn.primary { color: var(--vscode-button-foreground); background: var(--vscode-button-background); }
           .empty { color: var(--vscode-descriptionForeground); text-align: center; font-size: 12px; line-height: 1.5; }
+          .load-more-sentinel { height: 1px; }
         </style>
       </head>
       <body>
@@ -644,6 +675,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
             </section>
 
             <div class="results" id="iconsGrid"></div>
+            <div id="loadMoreSentinel" class="load-more-sentinel" aria-hidden="true"></div>
             <div class="empty" id="emptyState">No offline icons are bundled. Results appear only from the live IconSearch API.</div>
           </section>
         </main>
@@ -661,6 +693,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
           const styleFilter = document.getElementById('styleFilter');
           const legalOnly = document.getElementById('legalOnly');
           const iconsGrid = document.getElementById('iconsGrid');
+          const loadMoreSentinel = document.getElementById('loadMoreSentinel');
           const statusEl = document.getElementById('status');
           const emptyState = document.getElementById('emptyState');
 
@@ -669,6 +702,11 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
           let currentIcons = [];
           let recentIcons = [];
           let selectedIndex = -1;
+          let currentPage = 0;
+          let totalResults = 0;
+          let totalPages = 0;
+          let loadingMore = false;
+          let activeRequestKey = '';
 
           function escapeHtml(value) {
             return String(value ?? '')
@@ -748,23 +786,43 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
             }
           }
 
-          function currentSearchRequest() {
-            return {
+          function requestKey(request) {
+            return JSON.stringify({
+              query: request.query,
+              library: request.library,
+              style: request.style,
+              legalOnly: request.legalOnly,
+            });
+          }
+
+          function currentSearchRequest(page, append) {
+            const request = {
               query: searchInput.value.trim(),
               library: libraryFilter.value,
               style: styleFilter.value,
               legalOnly: legalOnly.checked,
+              page: page || 1,
+              append: Boolean(append),
             };
+            request.requestKey = requestKey(request);
+            return request;
           }
 
           function searchNow() {
-            const request = currentSearchRequest();
+            const request = currentSearchRequest(1, false);
             const hasActiveFilter = request.library !== 'all' || request.style !== 'all';
             if (request.query.length === 1 || (!request.query && !hasActiveFilter)) {
+              activeRequestKey = '';
+              loadingMore = false;
               renderRecentOrEmpty();
               return;
             }
 
+            activeRequestKey = request.requestKey;
+            loadingMore = true;
+            currentPage = 0;
+            totalResults = 0;
+            totalPages = 0;
             statusEl.textContent = 'Searching live IconSearch API...';
             vscode.postMessage({ type: 'search', value: request });
           }
@@ -837,27 +895,81 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
             iconsGrid.innerHTML = '';
             currentIcons = [];
             selectedIndex = -1;
+            currentPage = 0;
+            totalResults = 0;
+            totalPages = 0;
+            loadingMore = false;
             emptyState.style.display = 'block';
             emptyState.textContent = 'Search the live API or pick from recent icons after your first insert.';
             statusEl.textContent = 'Type 2+ characters to search the live API.';
           }
 
-          function renderIcons(icons, total, query, label) {
-            iconsGrid.innerHTML = '';
-            currentIcons = icons;
-            selectedIndex = -1;
+          function loadNextPage() {
+            if (loadingMore || !currentIcons.length || !totalResults) return;
+            const request = currentSearchRequest(currentPage + 1, true);
+            const hasActiveFilter = request.library !== 'all' || request.style !== 'all';
+            const hasMore = totalPages ? currentPage < totalPages : currentIcons.length < totalResults;
+            if (request.query.length === 1 || (!request.query && !hasActiveFilter) || !hasMore) return;
 
-            if (!icons.length) {
+            if (request.requestKey !== activeRequestKey) {
+              searchNow();
+              return;
+            }
+
+            loadingMore = true;
+            statusEl.textContent = currentIcons.length + ' shown from ' + totalResults.toLocaleString('en-US') + ' online results - loading more...';
+            vscode.postMessage({ type: 'search', value: request });
+          }
+
+          function maybeLoadMore() {
+            const scrollTop = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0;
+            const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 0;
+            const fullHeight = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
+            if (scrollTop + viewportHeight >= fullHeight - 320) loadNextPage();
+          }
+
+          function renderIcons(icons, total, query, label, options) {
+            const append = Boolean(options && options.append);
+            const page = Number(options && options.page) || 1;
+            const reportedTotalPages = Number(options && options.totalPages) || 0;
+            totalResults = Number(total) || 0;
+            totalPages = reportedTotalPages || (totalResults > 0 ? Math.ceil(totalResults / 60) : 0);
+            currentPage = page;
+
+            if (!append) {
+              iconsGrid.innerHTML = '';
+              currentIcons = [];
+              selectedIndex = -1;
+            }
+
+            if (!icons.length && !append) {
+              loadingMore = false;
               emptyState.style.display = 'block';
               emptyState.textContent = query ? 'No live online results for "' + query + '".' : 'No recent icons yet.';
               statusEl.textContent = query ? 'No results from live API.' : 'Type 2+ characters to search the live API.';
               return;
             }
 
-            emptyState.style.display = 'none';
-            statusEl.textContent = label || (icons.length + ' shown' + (total ? ' from ' + total.toLocaleString('en-US') + ' online results' : ''));
+            if (!icons.length && append) {
+              loadingMore = false;
+              statusEl.textContent = currentIcons.length + ' shown from ' + totalResults.toLocaleString('en-US') + ' online results';
+              return;
+            }
 
-            icons.forEach((icon, index) => {
+            emptyState.style.display = 'none';
+            const startIndex = append ? currentIcons.length : 0;
+            currentIcons = append ? currentIcons.concat(icons) : icons;
+            loadingMore = false;
+
+            const hasMore = totalResults && currentIcons.length < totalResults && (!totalPages || currentPage < totalPages);
+            statusEl.textContent = label || (
+              currentIcons.length + ' shown' +
+              (totalResults ? ' from ' + totalResults.toLocaleString('en-US') + ' online results' : '') +
+              (hasMore ? ' - scroll for more' : '')
+            );
+
+            icons.forEach((icon, offset) => {
+              const index = startIndex + offset;
               const card = document.createElement('article');
               card.className = 'icon-card';
               card.draggable = true;
@@ -921,6 +1033,13 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
           libraryFilter.addEventListener('change', searchNow);
           styleFilter.addEventListener('change', searchNow);
           legalOnly.addEventListener('change', searchNow);
+          window.addEventListener('scroll', maybeLoadMore, { passive: true });
+          if ('IntersectionObserver' in window && loadMoreSentinel) {
+            const loadObserver = new IntersectionObserver((entries) => {
+              if (entries.some((entry) => entry.isIntersecting)) loadNextPage();
+            }, { rootMargin: '280px 0px' });
+            loadObserver.observe(loadMoreSentinel);
+          }
           searchInput.addEventListener('keydown', (event) => {
             if (event.key === 'ArrowDown') {
               event.preventDefault();
@@ -963,6 +1082,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
               signInBtn.textContent = 'Try sign in again';
             }
             if (message.type === 'accessRequired') {
+              loadingMore = false;
               setAccess(false, '', '', null);
             }
             if (message.type === 'recentIcons') {
@@ -970,13 +1090,24 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
               if (!searchInput.value.trim()) renderRecentOrEmpty();
             }
             if (message.type === 'searchResults') {
-              renderIcons(message.value || [], message.total || 0, message.query || '');
+              if (message.requestKey && activeRequestKey && message.requestKey !== activeRequestKey) return;
+              renderIcons(message.value || [], message.total || 0, message.query || '', '', {
+                append: Boolean(message.append),
+                page: message.page || 1,
+                totalPages: message.totalPages || 0,
+              });
             }
             if (message.type === 'searchError') {
-              iconsGrid.innerHTML = '';
-              emptyState.style.display = 'block';
-              emptyState.textContent = 'Live API error: ' + message.value;
-              statusEl.textContent = 'Online search failed.';
+              if (message.requestKey && activeRequestKey && message.requestKey !== activeRequestKey) return;
+              loadingMore = false;
+              if (message.append) {
+                statusEl.textContent = 'Could not load more icons. Scroll again to retry.';
+              } else {
+                iconsGrid.innerHTML = '';
+                emptyState.style.display = 'block';
+                emptyState.textContent = 'Live API error: ' + message.value;
+                statusEl.textContent = 'Online search failed.';
+              }
             }
             if (message.type === 'catalog') {
               renderCatalog(
@@ -1000,7 +1131,15 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
 function parseSearchRequest(value: unknown): SearchRequest {
   if (!isRecord(value)) {
-    return { query: stringFrom(value), library: 'all', style: 'all', legalOnly: true };
+    return {
+      query: stringFrom(value),
+      library: 'all',
+      style: 'all',
+      legalOnly: true,
+      page: 1,
+      append: false,
+      requestKey: '',
+    };
   }
 
   return {
@@ -1008,6 +1147,9 @@ function parseSearchRequest(value: unknown): SearchRequest {
     library: stringFrom(value.library) || 'all',
     style: stringFrom(value.style) || 'all',
     legalOnly: value.legalOnly !== false,
+    page: Math.max(1, Math.floor(numberFrom(value.page, 1))),
+    append: value.append === true,
+    requestKey: stringFrom(value.requestKey),
   };
 }
 
