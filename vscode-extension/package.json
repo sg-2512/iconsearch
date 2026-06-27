@@ -3,7 +3,7 @@
   "displayName": "IconSearch Integration",
   "description": "Search and insert 351,639 free online icons from 16 named libraries and 224 Iconify collections. Secure IconSearch account connection included.",
   "version": "1.0.0",
-  "publisher": "iconsearch",
+  "publisher": "IconSearch",
   "engines": {
     "vscode": "^1.85.0"
   },
