@@ -14,7 +14,7 @@ alter table public.profiles
   add column if not exists updated_at timestamptz not null default now();
 
 create table if not exists public.products (
-  id text primary key check (id in ('vscode', 'figma')),
+  id text primary key check (id in ('vscode', 'figma', 'chrome', 'framer')),
   name text not null,
   founder_limit integer not null default 500 check (founder_limit >= 0),
   founder_claimed integer not null default 0 check (founder_claimed >= 0),
@@ -26,7 +26,9 @@ create table if not exists public.products (
 insert into public.products (id, name, founder_limit)
 values
   ('vscode', 'IconSearch for VS Code', 500),
-  ('figma', 'IconSearch for Figma', 500)
+  ('figma', 'IconSearch for Figma', 500),
+  ('chrome', 'IconSearch for Chrome', 500),
+  ('framer', 'IconSearch for Framer', 500)
 on conflict (id) do update
 set name = excluded.name,
     founder_limit = excluded.founder_limit,

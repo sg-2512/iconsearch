@@ -1,0 +1,90 @@
+<svg width="1440" height="960" viewBox="0 0 1440 960" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1440" height="960" fill="#070A13"/>
+  <rect width="1440" height="960" fill="url(#grid)" opacity="0.5"/>
+  <circle cx="1180" cy="120" r="360" fill="#5668FF" opacity="0.22"/>
+  <circle cx="140" cy="900" r="300" fill="#22D3EE" opacity="0.16"/>
+
+  <rect x="72" y="72" width="1296" height="816" rx="44" fill="#101626" stroke="#263148" stroke-width="2"/>
+
+  <rect x="112" y="112" width="96" height="96" rx="26" fill="url(#logoGradient)"/>
+  <text x="160" y="175" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="44" font-weight="800" fill="white">IS</text>
+
+  <text x="236" y="145" font-family="Inter, Arial, sans-serif" font-size="44" font-weight="800" fill="white">IconSearch Playground</text>
+  <text x="238" y="190" font-family="Inter, Arial, sans-serif" font-size="22" fill="#A8B6D1">Try the plugin: search, preview, and insert open source SVG icons into this file.</text>
+
+  <rect x="112" y="250" width="548" height="560" rx="30" fill="#141B2E" stroke="#2A3650" stroke-width="2"/>
+  <text x="152" y="305" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="800" fill="#FFFFFF">How to test</text>
+
+  <g font-family="Inter, Arial, sans-serif">
+    <circle cx="166" cy="356" r="18" fill="#38BDF8"/>
+    <text x="166" y="364" text-anchor="middle" font-size="18" font-weight="800" fill="#07111F">1</text>
+    <text x="202" y="364" font-size="22" fill="#E5EDF9">Open Plugins → IconSearch</text>
+
+    <circle cx="166" cy="426" r="18" fill="#818CF8"/>
+    <text x="166" y="434" text-anchor="middle" font-size="18" font-weight="800" fill="#07111F">2</text>
+    <text x="202" y="434" font-size="22" fill="#E5EDF9">Sign in for free access</text>
+
+    <circle cx="166" cy="496" r="18" fill="#A855F7"/>
+    <text x="166" y="504" text-anchor="middle" font-size="18" font-weight="800" fill="#07111F">3</text>
+    <text x="202" y="504" font-size="22" fill="#E5EDF9">Search: home, arrow, chart, settings</text>
+
+    <circle cx="166" cy="566" r="18" fill="#22D3EE"/>
+    <text x="166" y="574" text-anchor="middle" font-size="18" font-weight="800" fill="#07111F">4</text>
+    <text x="202" y="574" font-size="22" fill="#E5EDF9">Insert icons into the canvas</text>
+  </g>
+
+  <rect x="152" y="650" width="408" height="92" rx="20" fill="#0E7490" fill-opacity="0.18" stroke="#22D3EE" stroke-opacity="0.45"/>
+  <text x="182" y="686" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="800" fill="#BAE6FD">Suggested searches</text>
+  <text x="182" y="720" font-family="Inter, Arial, sans-serif" font-size="18" fill="#D7E7FF">home • arrow • dashboard • calendar • user</text>
+
+  <rect x="720" y="250" width="608" height="560" rx="30" fill="#141B2E" stroke="#2A3650" stroke-width="2"/>
+  <text x="760" y="305" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="800" fill="#FFFFFF">Drop inserted icons here</text>
+  <text x="760" y="338" font-family="Inter, Arial, sans-serif" font-size="18" fill="#A8B6D1">Use this area to compare styles, sizes, and icon libraries.</text>
+
+  <g transform="translate(760 390)">
+    <rect width="120" height="120" rx="26" fill="#1C2538" stroke="#34425F"/>
+    <path d="M34 65L60 40L86 65V92H68V74H52V92H34V65Z" stroke="#7DD3FC" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="60" y="158" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="16" fill="#9FB0C8">home</text>
+  </g>
+  <g transform="translate(930 390)">
+    <rect width="120" height="120" rx="26" fill="#1C2538" stroke="#34425F"/>
+    <path d="M32 60H88M64 36L88 60L64 84" stroke="#A78BFA" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="60" y="158" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="16" fill="#9FB0C8">arrow</text>
+  </g>
+  <g transform="translate(1100 390)">
+    <rect width="120" height="120" rx="26" fill="#1C2538" stroke="#34425F"/>
+    <path d="M36 84V52M60 84V36M84 84V62" stroke="#38BDF8" stroke-width="5" stroke-linecap="round"/>
+    <path d="M30 88H92" stroke="#38BDF8" stroke-width="5" stroke-linecap="round"/>
+    <text x="60" y="158" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="16" fill="#9FB0C8">chart</text>
+  </g>
+
+  <g transform="translate(760 610)">
+    <rect width="120" height="120" rx="26" fill="#1C2538" stroke="#34425F"/>
+    <circle cx="60" cy="60" r="24" stroke="#22D3EE" stroke-width="5"/>
+    <path d="M60 28V40M60 80V92M28 60H40M80 60H92M38 38L47 47M73 73L82 82M82 38L73 47M47 73L38 82" stroke="#22D3EE" stroke-width="4" stroke-linecap="round"/>
+    <text x="60" y="158" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="16" fill="#9FB0C8">settings</text>
+  </g>
+  <g transform="translate(930 610)">
+    <rect width="120" height="120" rx="26" fill="#1C2538" stroke="#34425F"/>
+    <circle cx="60" cy="48" r="18" stroke="#818CF8" stroke-width="5"/>
+    <path d="M30 92C36 72 84 72 90 92" stroke="#818CF8" stroke-width="5" stroke-linecap="round"/>
+    <text x="60" y="158" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="16" fill="#9FB0C8">user</text>
+  </g>
+  <g transform="translate(1100 610)">
+    <rect width="120" height="120" rx="26" fill="#1C2538" stroke="#34425F"/>
+    <rect x="35" y="40" width="50" height="44" rx="8" stroke="#60A5FA" stroke-width="5"/>
+    <path d="M45 30V48M75 30V48M35 58H85" stroke="#60A5FA" stroke-width="5" stroke-linecap="round"/>
+    <text x="60" y="158" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="16" fill="#9FB0C8">calendar</text>
+  </g>
+
+  <defs>
+    <linearGradient id="logoGradient" x1="112" y1="112" x2="208" y2="208" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#38BDF8"/>
+      <stop offset="0.55" stop-color="#6366F1"/>
+      <stop offset="1" stop-color="#A855F7"/>
+    </linearGradient>
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M48 0H0V48" stroke="white" stroke-opacity="0.06"/>
+    </pattern>
+  </defs>
+</svg>

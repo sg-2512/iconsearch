@@ -6,6 +6,21 @@ export type RecentItem = {
 
 export const staticPages: RecentItem[] = [
   {
+    label: "IconSearch Framer Plugin",
+    href: "/framer-plugin",
+    date: "2026-06-28"
+  },
+  {
+    label: "IconSearch Chrome Extension",
+    href: "/chrome-extension",
+    date: "2026-06-28"
+  },
+  {
+    label: "IconSearch VS Code Extension",
+    href: "/vscode-extension",
+    date: "2026-06-28"
+  },
+  {
     label: "Icon Library License Guide — MIT, Apache, ISC Explained",
     href: "/licenses",
     date: "2026-05-20"

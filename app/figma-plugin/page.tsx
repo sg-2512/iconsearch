@@ -9,13 +9,13 @@ export default function FigmaPluginPage() {
 
       <section style={{ marginBottom: '48px', paddingBottom: '48px', borderBottom: '1px solid var(--border)' }}>
         <div style={{ fontSize: '12px', color: 'var(--accent)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '2px', marginBottom: '12px' }}>
-          // FIGMA INTEGRATION
+          {'// FIGMA PLUGIN - LAUNCHING SOON'}
         </div>
         <h1 style={{ fontSize: 'clamp(32px, 5vw, 48px)', fontWeight: 800, lineHeight: 1.1, marginBottom: '16px', letterSpacing: '-0.02em' }}>
           IconSearch <span style={{ color: 'var(--accent)' }}>Figma Plugin</span>
         </h1>
         <p style={{ color: 'var(--text-muted)', fontSize: '18px', lineHeight: 1.7, maxWidth: '600px', marginBottom: '24px' }}>
-          Bring the entire IconSearch database into your design canvas. Search, filter, and insert {SEARCHABLE_ICON_COUNT.toLocaleString('en-US')} free SVG icons from {NAMED_LIBRARY_COUNT} named libraries and {ICONIFY_COLLECTION_COUNT} Iconify collections.
+          The IconSearch Figma plugin is preparing for public launch. It brings the live IconSearch database into your design canvas so you can search, filter, and insert {SEARCHABLE_ICON_COUNT.toLocaleString('en-US')} free SVG icons from {NAMED_LIBRARY_COUNT} named libraries and {ICONIFY_COLLECTION_COUNT} Iconify collections.
         </p>
 
         {/* Launching Soon Badge */}
@@ -107,7 +107,9 @@ export default function FigmaPluginPage() {
             Perfect Designer-Developer Handoff
           </h2>
           <p style={{ color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.8 }}>
-            Our Figma plugin will use the exact same icons and library IDs as our website search engine and our upcoming VS Code extension. Your developers will be able to find and import the exact matching components — no more searching for custom icon packages or mismatching SVG paths during frontend implementation.
+            Our Figma plugin will use the exact same icons and library IDs as our website search engine and the live{' '}
+            <Link href="/vscode-extension" style={{ color: 'var(--accent)', textDecoration: 'underline' }}>VS Code extension</Link>.
+            {' '}Your developers will be able to find and import the exact matching components — no more searching for custom icon packages or mismatching SVG paths during frontend implementation.
           </p>
         </div>
 
@@ -122,7 +124,7 @@ export default function FigmaPluginPage() {
             Stay in the Loop
           </h2>
           <p style={{ color: 'var(--text-muted)', fontSize: '14px', lineHeight: 1.7 }}>
-            We&apos;re actively building the Figma plugin. In the meantime, you can use the full-featured{' '}
+            We&apos;re preparing the Figma plugin for public launch. In the meantime, you can use the full-featured{' '}
             <Link href="/icon-search" style={{ color: 'var(--accent)', textDecoration: 'underline' }}>web search</Link>{' '}
             to find, customize, and export icons for your design projects.
           </p>

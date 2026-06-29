@@ -21,6 +21,8 @@ type Approval = {
 const productNames: Record<string, string> = {
   vscode: 'VS Code extension',
   figma: 'Figma plugin',
+  chrome: 'Chrome extension',
+  framer: 'Framer plugin',
 }
 
 export default function ConnectClient({ product, code, authError }: ConnectClientProps) {
@@ -169,7 +171,7 @@ export default function ConnectClient({ product, code, authError }: ConnectClien
 
         <div className="connect-side-panel">
           <div className="connect-product-pill">
-            <span>{product === 'figma' ? 'Figma' : product === 'vscode' ? 'VS Code' : 'App'}</span>
+            <span>{product === 'figma' ? 'Figma' : product === 'vscode' ? 'VS Code' : product === 'chrome' ? 'Chrome' : product === 'framer' ? 'Framer' : 'App'}</span>
             <strong>Free launch</strong>
           </div>
           <div className="connect-step-list">
@@ -187,7 +189,7 @@ export default function ConnectClient({ product, code, authError }: ConnectClien
             </div>
           </div>
           <div className="connect-security-note">
-            Your password never enters VS Code or Figma. The app stores only a revocable session token.
+            Your password never enters the extension or plugin. The app stores only a revocable session token.
           </div>
         </div>
       </section>

@@ -51,6 +51,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/directory`,        lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
     { url: `${base}/figma-plugin`,     lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
     { url: `${base}/vscode-extension`, lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${base}/chrome-extension`, lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${base}/framer-plugin`,    lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
     { url: `${base}/about`,            lastModified: now, changeFrequency: 'monthly', priority: 0.5 },
     { url: `${base}/contact`,          lastModified: now, changeFrequency: 'monthly', priority: 0.5 },
     { url: `${base}/privacy-policy`,   lastModified: now, changeFrequency: 'monthly', priority: 0.3 },

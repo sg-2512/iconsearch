@@ -156,6 +156,54 @@ export default function Sidebar() {
             </svg>
             VS Code extension
           </Link>
+          <Link
+            href="/chrome-extension"
+            style={{
+              padding: '8px 12px',
+              borderRadius: '8px',
+              color: pathname === '/chrome-extension' ? 'var(--text)' : 'var(--text-muted)',
+              background: pathname === '/chrome-extension' ? 'var(--accent-dim)' : 'transparent',
+              textDecoration: 'none',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              fontWeight: pathname === '/chrome-extension' ? 500 : 400,
+              fontSize: '14px',
+              transition: 'all 0.15s ease',
+            }}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+              <circle cx="12" cy="12" r="10" />
+              <circle cx="12" cy="12" r="4" />
+              <line x1="21.17" y1="8" x2="12" y2="8" />
+              <line x1="3.95" y1="6.06" x2="8.54" y2="14" />
+              <line x1="10.88" y1="21.94" x2="15.46" y2="14" />
+            </svg>
+            Chrome extension
+          </Link>
+          <Link
+            href="/framer-plugin"
+            style={{
+              padding: '8px 12px',
+              borderRadius: '8px',
+              color: pathname === '/framer-plugin' ? 'var(--text)' : 'var(--text-muted)',
+              background: pathname === '/framer-plugin' ? 'var(--accent-dim)' : 'transparent',
+              textDecoration: 'none',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              fontWeight: pathname === '/framer-plugin' ? 500 : 400,
+              fontSize: '14px',
+              transition: 'all 0.15s ease',
+            }}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+              <path d="M4 4h16v6H4z" />
+              <path d="M4 10h10v5H4z" />
+              <path d="M4 15h7v5H4z" />
+            </svg>
+            Framer plugin
+          </Link>
         </nav>
 
         {/* Divider */}

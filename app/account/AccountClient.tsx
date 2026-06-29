@@ -7,11 +7,18 @@ import { createClient } from '@/lib/supabase'
 
 type Entitlement = {
   id: string
-  product: 'vscode' | 'figma'
+  product: 'vscode' | 'figma' | 'chrome' | 'framer'
   tier: 'free' | 'founder'
   status: 'active' | 'revoked'
   founder_number: number | null
 }
+
+const products = [
+  { id: 'vscode', label: 'VS Code extension' },
+  { id: 'figma', label: 'Figma plugin' },
+  { id: 'chrome', label: 'Chrome extension' },
+  { id: 'framer', label: 'Framer plugin' },
+] as const
 
 export default function AccountClient() {
   const [user, setUser] = useState<User | null>(null)
@@ -66,7 +73,7 @@ export default function AccountClient() {
         <div style={cardStyle}>
           <h2 style={{ marginTop: 0 }}>Sign in to view your products</h2>
           <p style={{ color: 'var(--text-muted)', lineHeight: 1.7 }}>
-            One account connects the website, VS Code extension, and Figma plugin.
+            One account connects the website, VS Code extension, Figma plugin, Chrome extension, and Framer plugin.
           </p>
           <button type="button" onClick={() => setShowAuth(true)} style={buttonStyle}>
             Sign in or sign up
@@ -83,15 +90,15 @@ export default function AccountClient() {
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px', marginTop: '18px' }}>
-            {(['vscode', 'figma'] as const).map((product) => {
-              const entitlement = entitlements.find((item) => item.product === product)
+            {products.map((product) => {
+              const entitlement = entitlements.find((item) => item.product === product.id)
               return (
-                <div key={product} style={cardStyle}>
+                <div key={product.id} style={cardStyle}>
                   <div style={{ color: 'var(--accent)', fontFamily: 'JetBrains Mono, monospace', fontSize: '11px', textTransform: 'uppercase' }}>
-                    {product}
+                    {product.id}
                   </div>
                   <h2 style={{ margin: '8px 0 10px' }}>
-                    {product === 'vscode' ? 'VS Code extension' : 'Figma plugin'}
+                    {product.label}
                   </h2>
                   {entitlement ? (
                     <p style={{ color: 'var(--text-muted)', lineHeight: 1.7 }}>

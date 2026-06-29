@@ -1,0 +1,27 @@
+{
+  "name": "iconsearch-framer-plugin",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "pack": "framer-plugin-tools pack"
+  },
+  "dependencies": {
+    "@framer/plugin": "^4.0.1",
+    "@vitejs/plugin-react": "^6.0.0",
+    "framer-plugin-tools": "^1.2.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "vite": "^8.0.0",
+    "vite-plugin-framer": "^1.1.1",
+    "vite-plugin-mkcert": "^1.17.8"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "typescript": "^5.9.0"
+  }
+}

@@ -47,3 +47,9 @@ next-env.d.ts
 # large files
 /data/iconify-icon-search.json
 /data/iconify-icon-search.json.gz
+
+# packaged plugin/extension outputs
+/framer-plugin/node_modules
+/framer-plugin/dist
+/framer-plugin/plugin.zip
+/public/downloads/iconsearch-chrome-extension.zip
