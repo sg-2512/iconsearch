@@ -10,6 +10,9 @@ framer.showUI({
 const API_BASE = 'https://iconsearch.info'
 const SEARCH_API_URL = `${API_BASE}/api/extension/icon-search`
 const AUTH_API_URL = `${API_BASE}/api`
+const ICONSEARCH_ORIGIN = new URL(API_BASE).origin
+const ICONIFY_ORIGIN = 'https://api.iconify.design'
+const TRUSTED_SVG_ORIGINS = new Set([ICONSEARCH_ORIGIN, ICONIFY_ORIGIN])
 const PRODUCT = 'framer'
 const SESSION_KEY = 'iconsearchFramerSession'
 const RECENT_KEY = 'iconsearchFramerRecent'
@@ -144,7 +147,7 @@ function trimMap<K, V>(map: Map<K, V>, limit: number) {
 }
 
 export function App() {
-  const [session, setSession] = useState<Session | null>(() => readJson<Session | null>(SESSION_KEY, null))
+  const [session, setSession] = useState<Session | null>(() => readSession())
   const [recent, setRecent] = useState<IconResult[]>(() => readJson<IconResult[]>(RECENT_KEY, []))
   const [pinned, setPinned] = useState<IconResult[]>(() => readJson<IconResult[]>(PINNED_KEY, []))
   const [icons, setIcons] = useState<IconResult[]>([])
@@ -225,8 +228,10 @@ export function App() {
   const persistSession = useCallback((nextSession: Session | null) => {
     setSession(nextSession)
     if (nextSession) {
-      window.localStorage.setItem(SESSION_KEY, JSON.stringify(nextSession))
+      window.sessionStorage.setItem(SESSION_KEY, JSON.stringify(nextSession))
+      window.localStorage.removeItem(SESSION_KEY)
     } else {
+      window.sessionStorage.removeItem(SESSION_KEY)
       window.localStorage.removeItem(SESSION_KEY)
     }
   }, [])
@@ -958,8 +963,9 @@ function normalizeIcon(value: ApiIcon): IconResult | null {
 }
 
 function normalizeSvgUrl(url: string, library: string, name: string) {
-  if (url.startsWith('//')) return `https:${url}`
-  if (/^https?:\/\//.test(url)) return url
+  const trustedUrl = normalizeTrustedSvgUrl(url)
+  if (trustedUrl) return trustedUrl
+  if (url.startsWith('//') || /^https?:\/\//i.test(url)) return ''
 
   const dashedName = name.replace(/_/g, '-')
   const prefixes: Record<string, string> = {
@@ -982,11 +988,32 @@ function normalizeSvgUrl(url: string, library: string, name: string) {
   }
 
   if (library.startsWith('iconify-')) {
-    return `https://api.iconify.design/${library.replace(/^iconify-/, '')}/${dashedName}.svg`
+    return normalizeTrustedSvgUrl(`${ICONIFY_ORIGIN}/${library.replace(/^iconify-/, '')}/${dashedName}.svg`)
   }
 
   const prefix = prefixes[library]
-  return prefix ? `https://api.iconify.design/${prefix}/${dashedName}.svg` : ''
+  return prefix ? normalizeTrustedSvgUrl(`${ICONIFY_ORIGIN}/${prefix}/${dashedName}.svg`) : ''
+}
+
+function normalizeTrustedSvgUrl(value: string) {
+  const trimmed = value.trim()
+  if (!trimmed) return ''
+
+  const normalized = trimmed.startsWith('//') ? `https:${trimmed}` : trimmed
+  if (!/^https?:\/\//i.test(normalized)) return ''
+
+  try {
+    const parsed = new URL(normalized)
+    if (parsed.protocol !== 'https:') return ''
+    if (!TRUSTED_SVG_ORIGINS.has(parsed.origin)) return ''
+    return parsed.toString()
+  } catch {
+    return ''
+  }
+}
+
+function isTrustedSvgUrl(value: string) {
+  return Boolean(normalizeTrustedSvgUrl(value))
 }
 
 function toIconifyName(library: string, name: string) {
@@ -1028,6 +1055,10 @@ function formatIconifySet(value: string) {
 }
 
 async function fetchSvg(icon: IconResult) {
+  if (!isTrustedSvgUrl(icon.svgUrl)) {
+    throw new Error('SVG source is not on the trusted IconSearch allowlist.')
+  }
+
   const response = await fetch(icon.svgUrl, { headers: { accept: 'image/svg+xml,text/plain,*/*' } })
   if (!response.ok) throw new Error(`SVG source returned ${response.status}`)
   const text = await response.text()
@@ -1229,6 +1260,16 @@ function readJson<T>(key: string, fallback: T): T {
     return value ? JSON.parse(value) as T : fallback
   } catch {
     return fallback
+  }
+}
+
+function readSession() {
+  try {
+    window.localStorage.removeItem(SESSION_KEY)
+    const value = window.sessionStorage.getItem(SESSION_KEY)
+    return value ? JSON.parse(value) as Session : null
+  } catch {
+    return null
   }
 }
 
