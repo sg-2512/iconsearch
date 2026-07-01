@@ -38,7 +38,10 @@
               <small id="accessLabel">Connected</small>
             </div>
           </div>
-          <button id="signOutBtn" class="ghost-btn" type="button">Sign out</button>
+          <div class="topbar-actions">
+            <button id="aboutBtn" class="icon-btn" type="button" title="About IconSearch" aria-label="About IconSearch">?</button>
+            <button id="signOutBtn" class="ghost-btn" type="button">Sign out</button>
+          </div>
         </header>
 
         <div class="search-card">
@@ -68,28 +71,69 @@
           </div>
 
           <div class="mode-row" role="group" aria-label="Copy format">
-            <button class="mode-btn active" type="button" data-format="react">React</button>
+            <button class="mode-btn active" type="button" data-format="graphic">Graphic</button>
             <button class="mode-btn" type="button" data-format="svg">SVG</button>
             <button class="mode-btn" type="button" data-format="url">URL</button>
           </div>
 
-          <label class="legal-toggle">
-            <input id="legalOnly" type="checkbox" checked>
-            <span>Legal-safe only</span>
-          </label>
+          <div class="output-grid">
+            <label>
+              <span>Size</span>
+              <select id="sizeSelect">
+                <option value="24">24 px</option>
+                <option value="32">32 px</option>
+                <option value="48">48 px</option>
+                <option value="64">64 px</option>
+                <option value="128">128 px</option>
+                <option value="256" selected>256 px</option>
+                <option value="512">512 px</option>
+                <option value="768">768 px</option>
+              </select>
+            </label>
+            <label>
+              <span>Color</span>
+              <div class="color-row">
+                <input id="colorInput" type="color" value="#000000" aria-label="Output color">
+                <label class="mini-toggle">
+                  <input id="originalColor" type="checkbox" checked>
+                  <span>Original</span>
+                </label>
+              </div>
+            </label>
+          </div>
+
+          <div class="utility-row">
+            <label class="legal-toggle">
+              <input id="legalOnly" type="checkbox" checked>
+              <span>Legal-safe only</span>
+            </label>
+            <button id="pinnedBtn" class="pill-btn" type="button">
+              Pinned <span id="favoriteCount">0</span>
+            </button>
+          </div>
         </div>
 
-        <div class="status-row">
-          <span id="resultStatus">Search the live API to begin.</span>
-          <span id="onlineBadge">Online</span>
-        </div>
+        <section class="results-panel" aria-label="Icon search results">
+          <div class="status-row">
+            <span id="resultStatus">Search the live API to begin.</span>
+            <span id="onlineBadge">Online</span>
+          </div>
 
-        <section id="emptyState" class="empty-state">
-          Search the live IconSearch API, or pick from recent icons after your first copy.
+          <section id="emptyState" class="empty-state">
+            Search the live IconSearch API, or pick from recent icons after your first copy.
+          </section>
+
+          <section id="resultsGrid" class="results-grid" aria-label="Icon results"></section>
+          <section id="loadingShelf" class="loading-shelf hidden" aria-label="Loading icons">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+          </section>
+          <div id="loadSentinel" class="load-sentinel"></div>
         </section>
-
-        <section id="resultsGrid" class="results-grid" aria-label="Icon results"></section>
-        <div id="loadSentinel" class="load-sentinel"></div>
       </section>
     </main>
 
@@ -105,10 +149,31 @@
         </div>
         <div class="sheet-grid">
           <button type="button" data-sheet-action="copy">Copy selected format</button>
+          <button id="sheetPinBtn" type="button" data-sheet-action="pin">Pin icon</button>
           <button type="button" data-sheet-action="svg">Copy SVG markup</button>
           <button type="button" data-sheet-action="url">Copy SVG URL</button>
+          <button type="button" data-sheet-action="license">Open license/source</button>
           <button type="button" data-sheet-action="download">Download SVG</button>
           <button type="button" data-sheet-action="open">Open source</button>
+        </div>
+      </section>
+    </div>
+
+    <div id="aboutSheet" class="action-sheet hidden" aria-hidden="true">
+      <button class="sheet-backdrop" type="button" data-about-close aria-label="Close about"></button>
+      <section class="sheet-panel" role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
+        <div class="sheet-head">
+          <div>
+            <strong id="aboutTitle">IconSearch</strong>
+            <small id="versionLabel">Chrome extension</small>
+          </div>
+          <button class="sheet-close" type="button" data-about-close aria-label="Close">x</button>
+        </div>
+        <div class="about-grid">
+          <button type="button" data-open-url="https://iconsearch.info/privacy-policy">Privacy policy</button>
+          <button type="button" data-open-url="https://iconsearch.info/licenses">Licenses</button>
+          <button type="button" data-open-url="https://iconsearch.info/contact">Support</button>
+          <button type="button" data-open-url="https://iconsearch.info/chrome-extension">Extension page</button>
         </div>
       </section>
     </div>

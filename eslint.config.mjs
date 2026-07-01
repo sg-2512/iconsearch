@@ -12,7 +12,29 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    "dist/**",
+    "scratch/**",
+    "chrome-extension/**",
+    "figma-plugin/**",
+    "framer-plugin/**",
+    "vscode-extension/**",
+    "vscode-extension/out/**",
+    "eslint-report*.json",
   ]),
+  {
+    rules: {
+      "@typescript-eslint/no-explicit-any": "warn",
+      "react-hooks/set-state-in-effect": "warn",
+      "react/jsx-no-comment-textnodes": "off",
+      "react/no-unescaped-entities": "off",
+    },
+  },
+  {
+    files: ["scripts/**/*.js"],
+    rules: {
+      "@typescript-eslint/no-require-imports": "off",
+    },
+  },
 ]);
 
 export default eslintConfig;

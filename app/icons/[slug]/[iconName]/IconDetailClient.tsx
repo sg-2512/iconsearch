@@ -164,7 +164,7 @@ export default function IconDetailClient({ icon, initialSvg, relatedIcons, libra
       .join('')
       .replace(/[^a-zA-Z0-9]/g, '')
 
-    let jsx = modifiedSvg
+    const jsx = modifiedSvg
       .replace(/class=/g, 'className=')
       .replace(/stroke-width=/g, 'strokeWidth=')
       .replace(/stroke-linecap=/g, 'strokeLinecap=')

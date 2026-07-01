@@ -14,7 +14,7 @@ export function activate(context: vscode.ExtensionContext) {
     )
   );
 
-  let disposable = vscode.commands.registerCommand('iconsearch-integration.search', async () => {
+  const disposable = vscode.commands.registerCommand('iconsearch-integration.search', async () => {
     vscode.commands.executeCommand('iconsearch.sidebar.focus');
   });
 

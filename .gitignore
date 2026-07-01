@@ -52,4 +52,5 @@ next-env.d.ts
 /framer-plugin/node_modules
 /framer-plugin/dist
 /framer-plugin/plugin.zip
+/dist/
 /public/downloads/iconsearch-chrome-extension.zip
