@@ -11,6 +11,10 @@ function toTags(name) {
   return name.toLowerCase().replace(/[-_]/g, ' ').split(' ').filter(Boolean)
 }
 
+function iconifySvgUrl(prefix, name) {
+  return `https://api.iconify.design/${prefix}/${name.replace(/_/g, '-')}.svg`
+}
+
 function findDir(candidates) {
   for (const c of candidates) {
     const p = join(root, c)
@@ -488,7 +492,7 @@ try {
         tags: toTags(name),
         reactImport: `import { ${componentName} } from 'teenyicons'`,
         reactUsage: `<${componentName} className="w-4 h-4" />`,
-        svgUrl: `https://raw.githubusercontent.com/teenyicons/teenyicons/master/outline/${name}.svg`,
+        svgUrl: iconifySvgUrl('teenyicons', name),
       })
     }
     console.log(`✓ Teenyicons: ${files.length} icons`)
@@ -513,7 +517,7 @@ try {
               tags: toTags(name),
               reactImport: `import { ${componentName} } from 'teenyicons'`,
               reactUsage: `<${componentName} className="w-4 h-4" />`,
-              svgUrl: `https://raw.githubusercontent.com/teenyicons/teenyicons/master/outline/${name}.svg`,
+              svgUrl: iconifySvgUrl('teenyicons', name),
             })
             tCount++
           }
@@ -554,7 +558,7 @@ try {
         tags: toTags(name),
         reactImport: `import { ${componentName} } from 'circum-icons'`,
         reactUsage: `<${componentName} size={24} />`,
-        svgUrl: `https://raw.githubusercontent.com/klaufel/circum-icons/main/svg/${name}.svg`,
+        svgUrl: iconifySvgUrl('circum', name),
       })
     }
     console.log(`✓ Circum Icons: ${files.length} icons`)
@@ -579,7 +583,7 @@ try {
               tags: toTags(name),
               reactImport: `import { ${componentName} } from 'circum-icons'`,
               reactUsage: `<${componentName} size={24} />`,
-              svgUrl: `https://raw.githubusercontent.com/klaufel/circum-icons/main/svg/${name}.svg`,
+              svgUrl: iconifySvgUrl('circum', name),
             })
             cCount++
           }
@@ -621,7 +625,7 @@ try {
         tags: toTags(name),
         reactImport: `// Use via SVG or Iconify component`,
         reactUsage: `<iconify-icon icon="el:${name}"></iconify-icon>`,
-        svgUrl: `https://raw.githubusercontent.com/dovy/elusive-icons/master/dev/svg/${name}.svg`,
+        svgUrl: iconifySvgUrl('el', name),
       })
     }
     console.log(`✓ Elusive Icons: ${files.length} icons`)
@@ -646,7 +650,7 @@ try {
               tags: toTags(name),
               reactImport: `// Use via SVG or Iconify component`,
               reactUsage: `<iconify-icon icon="el:${name}"></iconify-icon>`,
-              svgUrl: `https://raw.githubusercontent.com/dovy/elusive-icons/master/dev/svg/${name}.svg`,
+              svgUrl: iconifySvgUrl('el', name),
             })
             eCount++
           }

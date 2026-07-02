@@ -39,10 +39,25 @@ const LIBRARY_POPULARITY: Record<string, number> = {
   'elusive-icons': 1,
 }
 
+const ICONIFY_PREVIEW_PREFIXES: Record<string, string> = {
+  teenyicons: 'teenyicons',
+  'circum-icons': 'circum',
+  'elusive-icons': 'el',
+}
+
+const ICONIFY_PREVIEW_PRIMARY_LIBRARIES = new Set(Object.keys(ICONIFY_PREVIEW_PREFIXES))
+
 type Facets = {
   libraries: string[]
   licenses: string[]
   iconifySets: string[]
+}
+
+type NormalizableIcon = {
+  library?: unknown
+  name?: unknown
+  previewUrls?: unknown
+  svgUrl?: unknown
 }
 
 let cachedFacets: {
@@ -70,6 +85,50 @@ function isRateLimited(ip: string): boolean {
   
   record.count++
   return record.count > MAX_REQUESTS
+}
+
+function toHttpUrl(url: unknown): string {
+  const value = typeof url === 'string' ? url.trim() : ''
+  if (!value) return ''
+  if (value.startsWith('//')) return `https:${value}`
+  return /^https?:\/\//i.test(value) ? value : ''
+}
+
+function addUniqueUrl(urls: string[], seen: Set<string>, url: unknown) {
+  const value = toHttpUrl(url)
+  if (!value || seen.has(value)) return
+  seen.add(value)
+  urls.push(value)
+}
+
+function addIconifyPreviewUrls(urls: string[], seen: Set<string>, library: string, name: string) {
+  const prefix = ICONIFY_PREVIEW_PREFIXES[library]
+  if (!prefix || !name) return
+
+  const dashedName = name.replace(/_/g, '-')
+  const underscoredName = name.replace(/-/g, '_')
+  for (const iconName of [name, dashedName, underscoredName]) {
+    addUniqueUrl(urls, seen, `https://api.iconify.design/${prefix}/${iconName}.svg`)
+  }
+}
+
+function normalizePreviewUrls(icon: NormalizableIcon) {
+  const library = typeof icon.library === 'string' ? icon.library : ''
+  const name = typeof icon.name === 'string' ? icon.name : ''
+  if (!ICONIFY_PREVIEW_PRIMARY_LIBRARIES.has(library) || !name) return
+
+  const urls: string[] = []
+  const seen = new Set<string>()
+  addIconifyPreviewUrls(urls, seen, library, name)
+
+  if (Array.isArray(icon.previewUrls)) {
+    icon.previewUrls.forEach((url: unknown) => addUniqueUrl(urls, seen, url))
+  }
+  addUniqueUrl(urls, seen, icon.svgUrl)
+
+  if (urls.length === 0) return
+  icon.svgUrl = urls[0]
+  icon.previewUrls = urls
 }
 
 
@@ -129,6 +188,8 @@ export function loadIcons() {
           icon.reactImport = `import { ${compName} } from '@ant-design/icons'`
           icon.reactUsage = `<${compName} style={{ fontSize: '24px' }} />`
         }
+
+        normalizePreviewUrls(icon)
       })
 
       // Pre-sort alphabetically once on startup to optimize future default/alphabetical requests
