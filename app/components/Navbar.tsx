@@ -40,9 +40,7 @@ export default function Navbar() {
         textDecoration: 'none',
         flexShrink: 0,
       }}>
-        <span style={{ color: 'var(--accent)' }}>&lt;</span>
         IconSearch
-        <span style={{ color: 'var(--accent)' }}>/&gt;</span>
       </Link>
 
       {/* Desktop Links */}

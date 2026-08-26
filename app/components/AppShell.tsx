@@ -27,7 +27,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(140px, 100%), 1fr))', gap: '40px', marginBottom: '48px' }}>
               <div>
                 <div style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 700, fontSize: '16px', color: 'var(--text)', marginBottom: '12px' }}>
-                  <span style={{ color: 'var(--accent)' }}>&lt;</span>IconSearch<span style={{ color: 'var(--accent)' }}>/&gt;</span>
+                  IconSearch
                 </div>
                 <p style={{ color: 'var(--text-muted)', fontSize: '13px', lineHeight: 1.7 }}>
                   Independent resource for comparing open source icon libraries.
