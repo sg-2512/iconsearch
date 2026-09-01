@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import dynamic from 'next/dynamic'
@@ -11,6 +12,17 @@ const CartDrawer = dynamic(() => import('./CartDrawer'), { ssr: false })
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const standalone = pathname === '/connect' || pathname === '/framer-template' || pathname === '/logo-maker'
+  const [shouldLoadCart, setShouldLoadCart] = useState(false)
+
+  useEffect(() => {
+    const triggerCart = () => setShouldLoadCart(true)
+    window.addEventListener('cart-toggle', triggerCart, { once: true })
+    window.addEventListener('cart-updated', triggerCart, { once: true })
+    return () => {
+      window.removeEventListener('cart-toggle', triggerCart)
+      window.removeEventListener('cart-updated', triggerCart)
+    }
+  }, [])
 
   if (standalone) {
     return <div className="standalone-main">{children}</div>
@@ -63,7 +75,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           </div>
         </footer>
       </div>
-      <CartDrawer />
+      {shouldLoadCart && <CartDrawer />}
     </>
   )
 }

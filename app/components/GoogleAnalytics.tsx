@@ -11,7 +11,7 @@ declare global {
 
 export default function GoogleAnalytics({ gaId }: { gaId: string }) {
   useEffect(() => {
-    // 1. Initialize dataLayer & gtag immediately to capture any early events without error
+    // 1. Initialize dataLayer & gtag immediately to capture any early events in memory without error
     window.dataLayer = window.dataLayer || []
     if (!window.gtag) {
       window.gtag = function gtag() {
@@ -34,36 +34,21 @@ export default function GoogleAnalytics({ gaId }: { gaId: string }) {
       document.head.appendChild(script)
     }
 
-    const events = ['scroll', 'touchstart', 'pointerdown', 'mousemove', 'keydown']
+    const events = ['scroll', 'touchstart', 'pointerdown', 'mousemove', 'keydown', 'click']
     const options: AddEventListenerOptions = { passive: true, once: true }
 
     events.forEach((event) => window.addEventListener(event, loadGtag, options))
 
-    let idleId: number | undefined
-    let timerId: NodeJS.Timeout | undefined
-
-    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
-      idleId = (
-        window as Window & {
-          requestIdleCallback: (cb: () => void, opts?: { timeout: number }) => number
-        }
-      ).requestIdleCallback(loadGtag, { timeout: 3500 })
-    } else {
-      timerId = setTimeout(loadGtag, 3500)
+    const handleVisibility = () => {
+      if (document.visibilityState === 'hidden') {
+        loadGtag()
+      }
     }
+    document.addEventListener('visibilitychange', handleVisibility, { once: true })
 
     function cleanup() {
       events.forEach((event) => window.removeEventListener(event, loadGtag))
-      if (timerId) clearTimeout(timerId)
-      if (
-        idleId !== undefined &&
-        typeof window !== 'undefined' &&
-        'cancelIdleCallback' in window
-      ) {
-        ;(
-          window as Window & { cancelIdleCallback: (id: number) => void }
-        ).cancelIdleCallback(idleId)
-      }
+      document.removeEventListener('visibilitychange', handleVisibility)
     }
 
     return cleanup

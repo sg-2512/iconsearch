@@ -19,36 +19,13 @@ export default function GoogleAdSense({ client }: { client: string }) {
       document.head.appendChild(script)
     }
 
-    const events = ['scroll', 'touchstart', 'pointerdown', 'mousemove', 'keydown']
+    const events = ['scroll', 'touchstart', 'pointerdown', 'mousemove', 'keydown', 'click']
     const options: AddEventListenerOptions = { passive: true, once: true }
 
     events.forEach((event) => window.addEventListener(event, loadAdSense, options))
 
-    let idleId: number | undefined
-    let timerId: NodeJS.Timeout | undefined
-
-    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
-      idleId = (
-        window as Window & {
-          requestIdleCallback: (cb: () => void, opts?: { timeout: number }) => number
-        }
-      ).requestIdleCallback(loadAdSense, { timeout: 3500 })
-    } else {
-      timerId = setTimeout(loadAdSense, 3500)
-    }
-
     function cleanup() {
       events.forEach((event) => window.removeEventListener(event, loadAdSense))
-      if (timerId) clearTimeout(timerId)
-      if (
-        idleId !== undefined &&
-        typeof window !== 'undefined' &&
-        'cancelIdleCallback' in window
-      ) {
-        ;(
-          window as Window & { cancelIdleCallback: (id: number) => void }
-        ).cancelIdleCallback(idleId)
-      }
     }
 
     return cleanup

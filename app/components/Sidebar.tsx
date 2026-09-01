@@ -7,8 +7,14 @@ import { usePathname, useRouter } from 'next/navigation'
 import type { User } from '@supabase/supabase-js'
 import { Bookmark, Bot, Home, List, LogIn, Search, Sparkles, UserCheck } from 'lucide-react'
 import dynamic from 'next/dynamic'
-import { createClient } from '@/lib/supabase'
-import { allLibraries, namedLibraries } from '../../data/library-catalog'
+import { namedLibraries } from '../../data/library-catalog'
+
+type CollectionOption = {
+  id: string
+  name: string
+  slug: string
+  iconCount?: number
+}
 
 const AuthModal = dynamic(() => import('./AuthModal'), { ssr: false })
 
@@ -49,19 +55,39 @@ export default function Sidebar() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [user, setUser] = useState<User | null>(null)
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
+  const [collectionOptions, setCollectionOptions] = useState<CollectionOption[]>(namedLibraries)
+
+  const loadFullCollection = async () => {
+    if (collectionOptions.length > namedLibraries.length) return
+    const { allLibraries } = await import('../../data/library-catalog')
+    setCollectionOptions(allLibraries)
+  }
 
   useEffect(() => {
-    void (async () => {
-      const supabase = await createClient()
-      if (!supabase) return
-      const { data } = await supabase.auth.getUser()
-      setUser(data.user)
+    let unsubscribe: (() => void) | undefined
 
-      const { data: subscription } = supabase.auth.onAuthStateChange((_event, session) => {
-        setUser(session?.user || null)
-      })
-      return () => subscription.subscription.unsubscribe()
-    })()
+    const initAuth = async () => {
+      try {
+        const { createClient } = await import('@/lib/supabase')
+        const supabase = await createClient()
+        if (!supabase) return
+        const { data } = await supabase.auth.getUser()
+        setUser(data.user)
+
+        const { data: subscription } = supabase.auth.onAuthStateChange((_event, session) => {
+          setUser(session?.user || null)
+        })
+        unsubscribe = () => subscription.subscription.unsubscribe()
+      } catch {}
+    }
+
+    if (typeof window !== 'undefined') {
+      const timer = setTimeout(() => void initAuth(), 2500)
+      return () => {
+        clearTimeout(timer)
+        if (unsubscribe) unsubscribe()
+      }
+    }
   }, [])
 
   useEffect(() => {
@@ -334,6 +360,9 @@ export default function Sidebar() {
               suppressHydrationWarning
               aria-label="Browse all library collections"
               defaultValue=""
+              onFocus={loadFullCollection}
+              onMouseEnter={loadFullCollection}
+              onTouchStart={loadFullCollection}
               onChange={(event) => {
                 const slug = event.target.value
                 if (!slug) return
@@ -354,11 +383,11 @@ export default function Sidebar() {
               }}
             >
               <option value="">
-                Select collection (242)
+                Select collection ({collectionOptions.length >= 242 ? '242' : '242'})
               </option>
-              {allLibraries.map((lib) => (
+              {collectionOptions.map((lib) => (
                 <option key={lib.id} value={lib.slug}>
-                  {lib.name} ({lib.iconCount.toLocaleString('en-US')})
+                  {lib.name} {lib.iconCount !== undefined ? `(${lib.iconCount.toLocaleString('en-US')})` : ''}
                 </option>
               ))}
             </select>
