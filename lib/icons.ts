@@ -220,16 +220,6 @@ export const icons: IconLibrary[] = [
     installCommand: "npm install @radix-ui/react-icons",
     usageExample: "import { HomeIcon } from '@radix-ui/react-icons'\n\nexport default function App() {\n  return <HomeIcon />\n}"
   },
-
-
-
-
-  // ── Iconify ───────────────────────────────────────────────────────────────────
-
-
-// ── Simple Icons ──────────────────────────────────────────────────────────────
-  
-  // ── Iconoir ──────────────────────────────────────────────────────────────────
   {
     name: 'Iconoir',
     slug: 'iconoir',

@@ -239,3 +239,102 @@ export function generateFAQSchema(faqs: { q: string; a: string }[]) {
     })),
   }
 }
+
+export function generateCategoryPageSchema({
+  name,
+  description,
+  path,
+  count,
+  icons,
+}: {
+  name: string
+  description: string
+  path: string
+  count?: number
+  icons?: { name: string; url: string }[]
+}) {
+  const url = `${SITE_URL}${path}`
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name,
+    description,
+    url,
+    ...(count !== undefined ? { numberOfItems: count } : {}),
+    ...(icons && icons.length > 0
+      ? {
+          mainEntity: {
+            '@type': 'ItemList',
+            numberOfItems: icons.length,
+            itemListElement: icons.map((icon, idx) => ({
+              '@type': 'ListItem',
+              position: idx + 1,
+              name: icon.name,
+              url: icon.url.startsWith('http') ? icon.url : `${SITE_URL}${icon.url}`,
+            })),
+          },
+        }
+      : {}),
+    publisher: {
+      '@id': `${SITE_URL}/#organization`,
+    },
+  }
+}
+
+export function generateFrameworkHubSchema({
+  name,
+  description,
+  path,
+}: {
+  name: string
+  description: string
+  path: string
+}) {
+  const url = `${SITE_URL}${path}`
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'TechArticle',
+    headline: name,
+    description,
+    url,
+    mainEntityOfPage: url,
+    author: {
+      '@id': `${SITE_URL}/#organization`,
+    },
+    publisher: {
+      '@id': `${SITE_URL}/#organization`,
+    },
+  }
+}
+
+export function generateComparisonSchema({
+  libA,
+  libB,
+  path,
+  description,
+}: {
+  libA: string
+  libB: string
+  path: string
+  description?: string
+}) {
+  const url = `${SITE_URL}${path}`
+  const headline = `${libA} vs ${libB}: In-Depth Vector Icon Library Comparison (2026)`
+  const desc =
+    description ||
+    `Compare ${libA} and ${libB} on icon count, framework support, bundle weight, licenses, and visual styles.`
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'TechArticle',
+    headline,
+    description: desc,
+    url,
+    mainEntityOfPage: url,
+    author: {
+      '@id': `${SITE_URL}/#organization`,
+    },
+    publisher: {
+      '@id': `${SITE_URL}/#organization`,
+    },
+  }
+}

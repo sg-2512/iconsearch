@@ -33,7 +33,7 @@ import {
   Zap,
   type LucideIcon,
 } from 'lucide-react'
-import { ICONIFY_COLLECTION_COUNT, NAMED_LIBRARY_COUNT, SEARCHABLE_ICON_COUNT } from '../../../data/library-catalog'
+import { ICON_COLLECTION_COUNT, NAMED_LIBRARY_COUNT, SEARCHABLE_ICON_COUNT } from '../../../data/library-catalog'
 import { generateBreadcrumbSchema, generateSoftwareAppSchema } from '../../../lib/seo'
 import type { IntegrationConfig, IntegrationIcon, IntegrationSlug } from './integration-catalog'
 import styles from './integration-page.module.css'
@@ -504,7 +504,7 @@ export default function IntegrationPage({ config }: { config: IntegrationConfig 
       <section className={styles.stats} aria-label={`${config.name} overview`}>
         <div><strong>{iconCount}</strong><span>searchable icons</span></div>
         <div><strong>{NAMED_LIBRARY_COUNT}</strong><span>named libraries</span></div>
-        <div><strong>{ICONIFY_COLLECTION_COUNT}</strong><span>icon collections</span></div>
+        <div><strong>{ICON_COLLECTION_COUNT}</strong><span>icon collections</span></div>
         <div><strong>{config.account}</strong><span>access model</span></div>
       </section>
 

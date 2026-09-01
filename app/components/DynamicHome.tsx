@@ -4,7 +4,7 @@ import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { IconLibrary } from '../../lib/icons'
-import { ICONIFY_COLLECTION_COUNT, NAMED_LIBRARY_COUNT, SEARCHABLE_ICON_COUNT } from '../../data/library-catalog'
+import { ICON_COLLECTION_COUNT, NAMED_LIBRARY_COUNT, SEARCHABLE_ICON_COUNT } from '../../data/library-catalog'
 
 // Hardcoded sample SVGs for the Customizer Sandbox (Lucide/Heroicons standard outlines)
 const sandboxIcons = [
@@ -311,7 +311,6 @@ const BUNDLE_SIZES: Record<string, number> = {
   'radix-icons': 28,
   'font-awesome': 580,
   'react-icons': 1850,
-  'iconify': 15,
   'simple-icons': 320,
   'iconoir': 148,
 }
@@ -398,7 +397,7 @@ export default function DynamicHome({ initialLibraries, recentItems }: DynamicHo
       if (fw === 'react' && lib.frameworks.includes('react')) score += 15
       if (fw === 'vue' && lib.frameworks.includes('vue')) score += 15
       if (fw === 'svelte' && lib.frameworks.includes('svelte')) score += 15
-      if (fw === 'vanilla' && (lib.slug === 'iconify' || lib.license.includes('MIT'))) score += 10
+      if (fw === 'vanilla' && lib.license.includes('MIT')) score += 10
 
       // Style matching
       const preferredStyle = quizAnswers.style.toLowerCase() // outline, solid, multiweight, brands

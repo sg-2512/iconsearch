@@ -118,7 +118,7 @@ export default function VSCodeExtensionPage() {
                 <div className="mock-icon-card" key={icon}>
                   <span aria-hidden="true">{icon.slice(0, 2)}</span>
                   <strong>{icon}</strong>
-                  <small>@iconify/react</small>
+                  <small>react-icons</small>
                 </div>
               ))}
             </div>

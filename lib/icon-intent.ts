@@ -14,6 +14,7 @@ export type IconSearchIntent = {
   normalizedQuery: string
   groups: IconIntentGroup[]
   matchPattern: RegExp | null
+  terms: string[]
 }
 
 export type IconIntentEvaluation = {
@@ -79,7 +80,7 @@ const PHRASE_CONCEPTS = Object.keys(INTENT_CONCEPTS)
 
 export function buildIconSearchIntent(query: string): IconSearchIntent {
   const normalizedQuery = normalizeText(query)
-  if (!normalizedQuery) return { normalizedQuery: '', groups: [], matchPattern: null }
+  if (!normalizedQuery) return { normalizedQuery: '', groups: [], matchPattern: null, terms: [] }
 
   const consumedTokens = new Set<string>()
   const groups: IconIntentGroup[] = []
@@ -99,10 +100,12 @@ export function buildIconSearchIntent(query: string): IconSearchIntent {
   for (const group of groups) uniqueGroups.set(group.concept, group)
 
   const intentGroups = Array.from(uniqueGroups.values())
+  const terms = Array.from(new Set(intentGroups.flatMap((group) => group.terms)))
   return {
     normalizedQuery,
     groups: intentGroups,
     matchPattern: createIntentPattern(intentGroups, normalizedQuery),
+    terms,
   }
 }
 

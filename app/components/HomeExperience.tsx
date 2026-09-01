@@ -18,7 +18,7 @@ import {
 import type { LucideIcon } from 'lucide-react'
 import type { IconLibrary } from '../../lib/icons'
 import {
-  ICONIFY_COLLECTION_COUNT,
+  ICON_COLLECTION_COUNT,
   NAMED_LIBRARY_COUNT,
   SEARCHABLE_ICON_COUNT,
 } from '../../data/library-catalog'
@@ -215,7 +215,7 @@ export default function HomeExperience({ initialLibraries, recentItems }: HomeEx
           </div>
 
           <div className={styles.directoryFooter}>
-            <span>{NAMED_LIBRARY_COUNT} libraries · {ICONIFY_COLLECTION_COUNT} collections</span>
+            <span>{NAMED_LIBRARY_COUNT} libraries · {ICON_COLLECTION_COUNT} collections</span>
             <Link href="/free-svg-icons">View directory <ArrowRight size={14} aria-hidden="true" /></Link>
           </div>
         </aside>
@@ -231,7 +231,7 @@ export default function HomeExperience({ initialLibraries, recentItems }: HomeEx
           <span>named libraries reviewed</span>
         </div>
         <div>
-          <strong>{ICONIFY_COLLECTION_COUNT}</strong>
+          <strong>{ICON_COLLECTION_COUNT}</strong>
           <span>Open-source collections indexed</span>
         </div>
         <div>

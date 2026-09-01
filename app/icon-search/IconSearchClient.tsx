@@ -3,12 +3,14 @@
 import { useEffect, useMemo, useRef, useState, useCallback, memo } from 'react'
 import { useSearchParams } from 'next/navigation'
 import type { Subscription, User } from '@supabase/supabase-js'
-import { generateZipPackage } from '../../lib/exporter'
+import { generateZipPackage, customizeSvg, type FrameShape, type ExportOptions } from '../../lib/exporter'
 import { ICON_PREVIEW_CACHE_VERSION, getBestIconPreviewUrl, getCleanSvgUrl, getIconPreviewCandidates } from '../../lib/icon-preview'
 import { createClient, isSupabaseConfigured } from '@/lib/supabase'
 import { trackSearch, trackAddToCart, trackCartImport, trackExport } from '@/lib/analytics'
 import AuthModal from '../components/AuthModal'
+import UniversalExporterModal from '../components/UniversalExporterModal'
 import LibraryFilter from '../components/LibraryFilter'
+import MultiFacetFilterBar from '../components/MultiFacetFilterBar'
 import { namedLibraries } from '../../data/library-catalog'
 
 type Icon = {
@@ -79,6 +81,26 @@ const LIBRARY_COLORS: Record<string, string> = {
   'ant-design-icons': '#1890ff',
 }
 
+const TAILWIND_PALETTES = [
+  { name: 'Current', color: 'currentColor' },
+  { name: 'Slate', color: '#64748b' },
+  { name: 'Red', color: '#ef4444' },
+  { name: 'Emerald', color: '#10b981' },
+  { name: 'Blue', color: '#3b82f6' },
+  { name: 'Violet', color: '#8b5cf6' },
+  { name: 'Amber', color: '#f59e0b' },
+  { name: 'Rose', color: '#f43f5e' },
+  { name: 'Neutral', color: '#737373' },
+]
+
+const BRAND_PALETTES = [
+  { name: 'Discord', color: '#5865f2' },
+  { name: 'Twitter/X', color: '#1da1f2' },
+  { name: 'GitHub', color: '#f0f6fc' },
+  { name: 'React', color: '#61dafb' },
+  { name: 'Figma', color: '#f24e1e' },
+]
+
 const CATEGORIES = [
   { id: 'all', name: 'All Icons', icon: '✨' },
   { id: 'ai', name: 'AI & Intelligence', icon: '🤖' },
@@ -109,6 +131,10 @@ type ApiResponse = {
     iconifySets?: string[]
     legalSafeCount: number
     legalOnlyApplied: boolean
+    styles?: Record<string, number>
+    colorModels?: Record<string, number>
+    licenseCounts?: Record<string, number>
+    sourceTypes?: Record<string, number>
   }
 }
 
@@ -151,6 +177,9 @@ function readSearchState(params: SearchParamReader | null) {
   const rawIconifySet = params?.get('iconifySet') || 'all'
   const rawCategory = params?.get('category') || 'all'
   const rawStyle = params?.get('style') || 'all'
+  const rawColorModel = params?.get('colorModel') || 'all'
+  const rawLicense = params?.get('license') || 'all'
+  const rawSourceType = (params?.get('sourceType') || 'all') as 'all' | 'curated' | 'iconify'
   const rawSort = params?.get('sort') as SortOption | null
   const page = Math.max(1, Number(params?.get('page') || '1') || 1)
 
@@ -172,6 +201,8 @@ function readSearchState(params: SearchParamReader | null) {
 
   const validCategory = CATEGORIES.some((cat) => cat.id === rawCategory) ? rawCategory : 'all'
   const validStyle = ['all', 'stroke', 'solid', 'duotone', 'twotone', 'sharp'].includes(rawStyle) ? rawStyle : 'all'
+  const validColorModel = ['all', 'mono', 'multicolor'].includes(rawColorModel) ? rawColorModel : 'all'
+  const validSourceType = ['all', 'curated', 'iconify'].includes(rawSourceType) ? rawSourceType : 'all'
   const sortBy: SortOption = ['relevance', 'popular', 'alphabetical'].includes(rawSort || '')
     ? rawSort!
     : query
@@ -184,6 +215,9 @@ function readSearchState(params: SearchParamReader | null) {
     selectedIconifySet,
     selectedCategory: validCategory,
     selectedStyle: validStyle,
+    selectedColorModel: validColorModel,
+    selectedLicense: rawLicense,
+    selectedSourceType: validSourceType,
     sortBy,
     legalOnly: params?.get('legalOnly') !== '0',
     currentPage: page,
@@ -197,10 +231,12 @@ const IconCard = memo(({
   icon,
   color,
   onSelect,
+  onExport,
 }: {
   icon: Icon
   color: string
   onSelect: (icon: Icon) => void
+  onExport?: (icon: Icon) => void
 }) => {
   const [fallbackIndex, setFallbackIndex] = useState(0)
   const [failed, setFailed] = useState(false)
@@ -245,10 +281,17 @@ const IconCard = memo(({
   }, [previewCacheKey, src, failed])
 
   return (
-    <button
-      type="button"
+    <div
+      role="button"
+      tabIndex={0}
       aria-label={`Customize ${icon.displayName || icon.name}`}
       onClick={() => onSelect(icon)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onSelect(icon)
+        }
+      }}
       style={{
         background: 'rgba(24,24,27,0.8)',
         border: '1px solid var(--border)',
@@ -262,6 +305,7 @@ const IconCard = memo(({
         color: 'inherit',
         font: 'inherit',
         transition: 'all 0.16s ease',
+        position: 'relative',
       }}
       onMouseEnter={(e) => {
         e.currentTarget.style.borderColor = color
@@ -294,26 +338,57 @@ const IconCard = memo(({
           />
         )}
       </div>
+
+      {/* Top right quick open button (+) */}
+      <button
+        type="button"
+        aria-label={`Open and customize ${icon.name}`}
+        title="Open and customize icon"
+        onClick={(e) => {
+          e.stopPropagation()
+          onSelect(icon)
+        }}
+        style={{
+          position: 'absolute',
+          top: '8px',
+          right: '8px',
+          width: '22px',
+          height: '22px',
+          borderRadius: '6px',
+          background: 'rgba(255, 255, 255, 0.06)',
+          border: '1px solid var(--border)',
+          color: 'var(--text-muted)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: '14px',
+          lineHeight: 1,
+          cursor: 'pointer',
+          transition: 'all 0.15s ease',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.background = 'var(--accent)'
+          e.currentTarget.style.borderColor = 'var(--accent)'
+          e.currentTarget.style.color = '#ffffff'
+          e.currentTarget.style.transform = 'scale(1.1)'
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.background = 'rgba(255, 255, 255, 0.06)'
+          e.currentTarget.style.borderColor = 'var(--border)'
+          e.currentTarget.style.color = 'var(--text-muted)'
+          e.currentTarget.style.transform = 'none'
+        }}
+      >
+        +
+      </button>
+
       <div style={{ textAlign: 'center', width: '100%' }}>
         <div style={{ color: 'var(--text)', fontSize: '11px', fontFamily: 'JetBrains Mono, monospace', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{icon.name}</div>
         <div style={{ color, fontSize: '9px', textTransform: 'uppercase', letterSpacing: '0.4px', marginTop: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
           {icon.libraryName}
         </div>
-        <div style={{
-          marginTop: '6px',
-          fontSize: '8px',
-          fontFamily: 'JetBrains Mono, monospace',
-          borderRadius: '999px',
-          padding: '2px 6px',
-          display: 'inline-block',
-          background: icon.legalSafe ? 'rgba(52,211,153,0.15)' : 'rgba(248,113,113,0.15)',
-          border: `1px solid ${icon.legalSafe ? 'rgba(52,211,153,0.55)' : 'rgba(248,113,113,0.55)'}`,
-          color: icon.legalSafe ? '#34d399' : '#f87171',
-        }}>
-          {icon.legalSafe ? 'legal-safe' : 'restricted'}
-        </div>
       </div>
-    </button>
+    </div>
   )
 })
 IconCard.displayName = 'IconCard'
@@ -326,6 +401,9 @@ export default function IconSearchClient({ initialData }: { initialData?: ApiRes
   const [selectedIconifySet, setSelectedIconifySet] = useState(initialSearchState.selectedIconifySet)
   const [selectedCategory, setSelectedCategory] = useState(initialSearchState.selectedCategory)
   const [selectedStyle, setSelectedStyle] = useState(initialSearchState.selectedStyle)
+  const [selectedColorModel, setSelectedColorModel] = useState(initialSearchState.selectedColorModel)
+  const [selectedLicense, setSelectedLicense] = useState(initialSearchState.selectedLicense)
+  const [selectedSourceType, setSelectedSourceType] = useState<'all' | 'curated' | 'iconify'>(initialSearchState.selectedSourceType)
   const [sortBy, setSortBy] = useState<SortOption>(initialSearchState.sortBy)
   const [sortTouched, setSortTouched] = useState(initialSearchState.hasExplicitSort)
   const [legalOnly, setLegalOnly] = useState(initialSearchState.legalOnly)
@@ -341,6 +419,13 @@ export default function IconSearchClient({ initialData }: { initialData?: ApiRes
   const [customSize, setCustomSize] = useState(32)
   const [customStroke, setCustomStroke] = useState(1.5)
   const [customColor, setCustomColor] = useState('#818cf8')
+  const [customPadding, setCustomPadding] = useState(0)
+  const [customFrameShape, setCustomFrameShape] = useState<FrameShape>('none')
+  const [customFrameColor, setCustomFrameColor] = useState('rgba(129, 140, 248, 0.15)')
+  const [customFrameStroke, setCustomFrameStroke] = useState('rgba(129, 140, 248, 0.3)')
+  const [customSecondaryOpacity, setCustomSecondaryOpacity] = useState(0.3)
+  const [isUniversalModalOpen, setIsUniversalModalOpen] = useState(false)
+  const [universalModalIcon, setUniversalModalIcon] = useState<Icon | null>(null)
   const [cart, setCart] = useState<CartItem[]>([])
   const [isLoaded, setIsLoaded] = useState(false)
   const searchRef = useRef<HTMLInputElement>(null)
@@ -708,12 +793,41 @@ export default function IconSearchClient({ initialData }: { initialData?: ApiRes
     setCurrentPage(1)
   }
 
+  function handleColorModelChange(value: string) {
+    setSelectedColorModel(value)
+    setCurrentPage(1)
+  }
+
+  function handleLicenseChange(value: string) {
+    setSelectedLicense(value)
+    setCurrentPage(1)
+  }
+
+  function handleSourceTypeChange(value: 'all' | 'curated' | 'iconify') {
+    setSelectedSourceType(value)
+    if (value === 'curated' && selectedLib.startsWith('iconify-')) {
+      setSelectedLib('all')
+      setSelectedIconifySet('all')
+    }
+    setCurrentPage(1)
+  }
+
   function handleLegalOnlyChange(value: boolean) {
     setLegalOnly(value)
     setCurrentPage(1)
   }
 
-
+  function handleResetFilters() {
+    setSelectedSourceType('all')
+    setSelectedLib('all')
+    setSelectedIconifySet('all')
+    setSelectedCategory('all')
+    setSelectedStyle('all')
+    setSelectedColorModel('all')
+    setSelectedLicense('all')
+    setLegalOnly(true)
+    setCurrentPage(1)
+  }
 
   useEffect(() => {
     function handleKey(e: KeyboardEvent) {
@@ -762,6 +876,9 @@ export default function IconSearchClient({ initialData }: { initialData?: ApiRes
           iconifySet: selectedIconifySet,
           category: selectedCategory,
           style: selectedStyle,
+          colorModel: selectedColorModel,
+          license: selectedLicense,
+          sourceType: selectedSourceType,
           legalOnly: legalOnly ? '1' : '0',
           page: String(currentPage),
           limit: '80',
@@ -805,7 +922,7 @@ export default function IconSearchClient({ initialData }: { initialData?: ApiRes
       controller.abort()
       if (timer) clearTimeout(timer)
     }
-  }, [query, selectedLib, selectedIconifySet, selectedCategory, selectedStyle, currentPage, sortBy, legalOnly])
+  }, [query, selectedLib, selectedIconifySet, selectedCategory, selectedStyle, selectedColorModel, selectedLicense, selectedSourceType, currentPage, sortBy, legalOnly])
 
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -826,11 +943,20 @@ export default function IconSearchClient({ initialData }: { initialData?: ApiRes
       url.searchParams.delete('iconifySet')
     }
 
+    if (selectedSourceType !== 'all') url.searchParams.set('sourceType', selectedSourceType)
+    else url.searchParams.delete('sourceType')
+
     if (selectedCategory !== 'all') url.searchParams.set('category', selectedCategory)
     else url.searchParams.delete('category')
 
     if (selectedStyle !== 'all') url.searchParams.set('style', selectedStyle)
     else url.searchParams.delete('style')
+
+    if (selectedColorModel !== 'all') url.searchParams.set('colorModel', selectedColorModel)
+    else url.searchParams.delete('colorModel')
+
+    if (selectedLicense !== 'all') url.searchParams.set('license', selectedLicense)
+    else url.searchParams.delete('license')
 
     if (!legalOnly) url.searchParams.set('legalOnly', '0')
     else url.searchParams.delete('legalOnly')
@@ -845,7 +971,7 @@ export default function IconSearchClient({ initialData }: { initialData?: ApiRes
     const nextSearch = url.searchParams.toString()
     lastSearchParamStringRef.current = nextSearch
     window.history.replaceState({}, '', url.toString())
-  }, [query, selectedLib, selectedIconifySet, selectedCategory, selectedStyle, sortBy, legalOnly, currentPage])
+  }, [query, selectedLib, selectedIconifySet, selectedCategory, selectedStyle, selectedColorModel, selectedLicense, selectedSourceType, sortBy, legalOnly, currentPage])
 
   // Load packs, presets, and check URL params on startup (Phase 3)
   useEffect(() => {
@@ -1060,6 +1186,9 @@ export default function IconSearchClient({ initialData }: { initialData?: ApiRes
     setCustomSize(32)
     setCustomStroke(1.5)
     setCustomColor('#818cf8')
+    setCustomPadding(0)
+    setCustomFrameShape('none')
+    setCustomSecondaryOpacity(0.3)
     const controller = new AbortController()
     fetch(getBestIconPreviewUrl(selectedIcon), { signal: controller.signal })
       .then((res) => res.text())
@@ -1083,17 +1212,17 @@ export default function IconSearchClient({ initialData }: { initialData?: ApiRes
 
   const customizedSvg = useMemo(() => {
     if (!svgContent) return ''
-    let parsed = svgContent
-    parsed = parsed.replace(/width="[^"]*"/g, `width="${customSize}"`)
-    parsed = parsed.replace(/height="[^"]*"/g, `height="${customSize}"`)
-    parsed = parsed.replace(/stroke-width="[^"]*"/g, `stroke-width="${customStroke}"`)
-    parsed = parsed.replace(/stroke="currentColor"/g, `stroke="${customColor}"`)
-    parsed = parsed.replace(/fill="currentColor"/g, `fill="${customColor}"`)
-    if (!parsed.includes('width=')) parsed = parsed.replace('<svg', `<svg width="${customSize}"`)
-    if (!parsed.includes('height=')) parsed = parsed.replace('<svg', `<svg height="${customSize}"`)
-    if (!parsed.includes('stroke-width=')) parsed = parsed.replace('<svg', `<svg stroke-width="${customStroke}"`)
-    return parsed
-  }, [svgContent, customSize, customStroke, customColor])
+    return customizeSvg(svgContent, {
+      size: customSize,
+      strokeWidth: customStroke,
+      color: customColor,
+      padding: customPadding,
+      frameShape: customFrameShape,
+      frameColor: customFrameColor,
+      frameStroke: customFrameStroke,
+      secondaryOpacity: customSecondaryOpacity,
+    })
+  }, [svgContent, customSize, customStroke, customColor, customPadding, customFrameShape, customFrameColor, customFrameStroke, customSecondaryOpacity])
 
   function addToCart() {
     if (!selectedIcon) return
@@ -1240,32 +1369,27 @@ export default function IconSearchClient({ initialData }: { initialData?: ApiRes
         </div>
       </section>
 
-      <section className="icon-search-filter-bar" style={{ position: 'relative', zIndex: 50, marginBottom: '20px', background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: '12px', padding: '12px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '10px' }}>
-        <LibraryFilter value={selectedLib} onChange={(newLib) => handleLibraryChange(newLib)} />
-        <select suppressHydrationWarning aria-label="Filter by category" title="Filter by category" value={selectedCategory} onChange={(e) => handleCategoryChange(e.target.value)} className="icon-search-select">
-          {CATEGORIES.map((cat) => <option key={cat.id} value={cat.id}>{cat.icon} {cat.name}</option>)}
-        </select>
-        <select suppressHydrationWarning aria-label="Filter by icon style" title="Filter by icon style" value={selectedStyle} onChange={(e) => handleStyleChange(e.target.value)} className="icon-search-select">
-          <option value="all">All styles</option>
-          <option value="stroke">Outline/Stroke</option>
-          <option value="solid">Solid/Filled</option>
-          <option value="duotone">Duotone</option>
-          <option value="twotone">Two-Tone</option>
-          <option value="sharp">Sharp</option>
-        </select>
-        <select suppressHydrationWarning aria-label="Sort search results" title="Sort search results" value={sortBy} onChange={(e) => handleSortChange(e.target.value as SortOption)} className="icon-search-select">
-          <option value="alphabetical">Sort: A → Z</option>
-          <option value="relevance">Sort: Relevance</option>
-          <option value="popular">Sort: Popular</option>
-        </select>
-        <label className="icon-search-legal-toggle" title="Show only legally safer icon licenses">
-          <input suppressHydrationWarning type="checkbox" checked={legalOnly} onChange={(e) => handleLegalOnlyChange(e.target.checked)} />
-          Legal-safe only
-        </label>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', fontSize: '13px', border: '1px solid var(--border)', borderRadius: '8px', background: 'var(--bg-card)' }}>
-          {loading ? 'loading...' : `${formatNumber(results.total)} results`}
-        </div>
-      </section>
+      <MultiFacetFilterBar
+        selectedLib={selectedLib}
+        onLibraryChange={handleLibraryChange}
+        selectedCategory={selectedCategory}
+        onCategoryChange={handleCategoryChange}
+        categories={CATEGORIES}
+        selectedStyle={selectedStyle}
+        onStyleChange={handleStyleChange}
+        selectedColorModel={selectedColorModel}
+        onColorModelChange={handleColorModelChange}
+        selectedLicense={selectedLicense}
+        onLicenseChange={handleLicenseChange}
+        legalOnly={legalOnly}
+        onLegalOnlyChange={handleLegalOnlyChange}
+        sortBy={sortBy}
+        onSortChange={handleSortChange}
+        totalResults={results.total}
+        loading={loading}
+        facetCounts={results.facets}
+        onResetFilters={handleResetFilters}
+      />
 
       <section style={{ position: 'relative', zIndex: 1 }}>
         <div className="icon-search-results-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(132px, 1fr))', gap: '12px' }}>
@@ -1277,6 +1401,10 @@ export default function IconSearchClient({ initialData }: { initialData?: ApiRes
                 icon={icon}
                 color={color}
                 onSelect={setSelectedIcon}
+                onExport={(ic) => {
+                  setUniversalModalIcon(ic)
+                  setIsUniversalModalOpen(true)
+                }}
               />
             )
           })}
@@ -1347,8 +1475,57 @@ export default function IconSearchClient({ initialData }: { initialData?: ApiRes
                 100% pre-vetted for production deployment, business sites, SaaS web apps, and premium exports under {selectedIcon.license}.
               </div>
             )}
+            {/* Quick 1-Click Code & PNG Exporter Trigger */}
+            <button
+              suppressHydrationWarning
+              type="button"
+              onClick={() => {
+                setUniversalModalIcon(selectedIcon)
+                setIsUniversalModalOpen(true)
+              }}
+              style={{
+                width: '100%',
+                background: 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%)',
+                border: 'none',
+                borderRadius: '10px',
+                padding: '11px 16px',
+                color: '#fff',
+                fontSize: '13px',
+                fontWeight: 700,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                marginBottom: '14px',
+                boxShadow: '0 4px 16px rgba(139, 92, 246, 0.35)',
+                transition: 'all 0.15s ease',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-1px)'
+                e.currentTarget.style.boxShadow = '0 6px 20px rgba(139, 92, 246, 0.5)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'none'
+                e.currentTarget.style.boxShadow = '0 4px 16px rgba(139, 92, 246, 0.35)'
+              }}
+            >
+              <span>⚡</span>
+              <span>Universal Code Exporter (SVG, React, Vue, Svelte, Tailwind, PNG)</span>
+            </button>
+
+            {/* Live Interactive Preview Box */}
+            <div style={{ marginBottom: '14px', border: '1px solid var(--border)', borderRadius: '12px', padding: '16px', minHeight: '110px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'radial-gradient(circle at center, rgba(30,30,36,0.8) 0%, rgba(18,18,21,0.95) 100%)' }}>
+              {customizedSvg ? (
+                <div dangerouslySetInnerHTML={{ __html: customizedSvg }} />
+              ) : (
+                <img src={getBestIconPreviewUrl(selectedIcon)} alt={selectedIcon.name} width={customSize} height={customSize} style={{ filter: `drop-shadow(0 0 8px ${customColor === 'currentColor' ? '#818cf8' : customColor}33) invert(1)` }} />
+              )}
+            </div>
+
+            {/* Dimension & Stroke Sliders */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '12px' }}>
-              <div style={{ border: '1px solid var(--border)', borderRadius: '8px', padding: '10px' }}>
+              <div style={{ border: '1px solid var(--border)', borderRadius: '8px', padding: '10px', background: 'var(--bg)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
                   <label style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Size</label>
                   <span style={{ fontSize: '11px', color: 'var(--accent)', fontFamily: 'JetBrains Mono, monospace' }}>{customSize}px</span>
@@ -1364,7 +1541,7 @@ export default function IconSearchClient({ initialData }: { initialData?: ApiRes
                   onChange={(e) => setCustomSize(Number(e.target.value))}
                 />
               </div>
-              <div style={{ border: '1px solid var(--border)', borderRadius: '8px', padding: '10px' }}>
+              <div style={{ border: '1px solid var(--border)', borderRadius: '8px', padding: '10px', background: 'var(--bg)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
                   <label style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Stroke</label>
                   <span style={{ fontSize: '11px', color: 'var(--accent)', fontFamily: 'JetBrains Mono, monospace' }}>{customStroke.toFixed(1)}px</span>
@@ -1382,16 +1559,142 @@ export default function IconSearchClient({ initialData }: { initialData?: ApiRes
                 />
               </div>
             </div>
-            <div style={{ marginBottom: '12px', border: '1px solid var(--border)', borderRadius: '8px', padding: '10px' }}>
-              <label style={{ fontSize: '11px', color: 'var(--text-muted)', marginRight: '8px' }}>Color</label>
+
+            {/* Canvas Padding Slider */}
+            <div style={{ marginBottom: '12px', border: '1px solid var(--border)', borderRadius: '8px', padding: '10px', background: 'var(--bg)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                <label style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Canvas Padding</label>
+                <span style={{ fontSize: '11px', color: 'var(--accent)', fontFamily: 'JetBrains Mono, monospace' }}>{customPadding}px</span>
+              </div>
               <input suppressHydrationWarning
-                type="color"
-                aria-label="Customizer color picker"
-                title="Customizer color picker"
-                value={customColor}
-                onChange={(e) => setCustomColor(e.target.value)}
+                className="icon-search-slider"
+                type="range"
+                aria-label="Customizer canvas padding"
+                title="Customizer canvas padding"
+                min={0}
+                max={24}
+                step={1}
+                value={customPadding}
+                onChange={(e) => setCustomPadding(Number(e.target.value))}
               />
-              <span style={{ marginLeft: '8px', fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace' }}>{customColor}</span>
+            </div>
+
+            {/* Container Frame Shape Selector */}
+            <div style={{ marginBottom: '12px', border: '1px solid var(--border)', borderRadius: '8px', padding: '10px', background: 'var(--bg)' }}>
+              <label style={{ fontSize: '11px', color: 'var(--text-muted)', display: 'block', marginBottom: '8px' }}>
+                Container Frame Shape
+              </label>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
+                {[
+                  { id: 'none', label: 'None' },
+                  { id: 'circle', label: 'Circle' },
+                  { id: 'rounded', label: 'Rounded' },
+                  { id: 'squircle', label: 'Squircle' },
+                ].map((s) => {
+                  const isSelected = customFrameShape === s.id
+                  return (
+                    <button
+                      key={s.id}
+                      type="button"
+                      onClick={() => setCustomFrameShape(s.id as FrameShape)}
+                      style={{
+                        padding: '6px 4px',
+                        borderRadius: '6px',
+                        border: isSelected ? '1px solid var(--accent)' : '1px solid var(--border)',
+                        background: isSelected ? 'rgba(129, 140, 248, 0.15)' : 'transparent',
+                        color: isSelected ? 'var(--accent)' : 'var(--text-muted)',
+                        fontSize: '11px',
+                        cursor: 'pointer',
+                        textAlign: 'center',
+                        fontWeight: isSelected ? 700 : 500,
+                      }}
+                    >
+                      {s.label}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+
+            {/* Curated Color Palettes */}
+            <div style={{ marginBottom: '12px', border: '1px solid var(--border)', borderRadius: '8px', padding: '10px', background: 'var(--bg)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                <label style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Color Palette</label>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <input suppressHydrationWarning
+                    type="color"
+                    aria-label="Customizer color picker"
+                    title="Customizer color picker"
+                    value={customColor === 'currentColor' ? '#818cf8' : customColor}
+                    onChange={(e) => setCustomColor(e.target.value)}
+                    style={{ width: '20px', height: '20px', borderRadius: '4px', border: 'none', cursor: 'pointer', background: 'transparent' }}
+                  />
+                  <span style={{ fontSize: '10px', color: 'var(--text-dim)', fontFamily: 'JetBrains Mono, monospace' }}>{customColor}</span>
+                </div>
+              </div>
+
+              {/* Tailwind Swatches */}
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
+                {TAILWIND_PALETTES.map((p) => (
+                  <button
+                    key={p.name}
+                    type="button"
+                    title={p.name}
+                    onClick={() => setCustomColor(p.color)}
+                    style={{
+                      width: '20px',
+                      height: '20px',
+                      borderRadius: '50%',
+                      background: p.color === 'currentColor' ? 'linear-gradient(135deg, #fff 50%, #475569 50%)' : p.color,
+                      border: customColor === p.color ? '2px solid #fff' : '1px solid rgba(255,255,255,0.15)',
+                      cursor: 'pointer',
+                      transform: customColor === p.color ? 'scale(1.15)' : 'none',
+                      transition: 'all 0.12s ease',
+                    }}
+                  />
+                ))}
+              </div>
+
+              {/* Brand Swatches */}
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px', marginTop: '8px' }}>
+                {BRAND_PALETTES.map((b) => (
+                  <button
+                    key={b.name}
+                    type="button"
+                    title={b.name}
+                    onClick={() => setCustomColor(b.color)}
+                    style={{
+                      width: '20px',
+                      height: '20px',
+                      borderRadius: '50%',
+                      background: b.color,
+                      border: customColor === b.color ? '2px solid #fff' : '1px solid rgba(255,255,255,0.15)',
+                      cursor: 'pointer',
+                      transform: customColor === b.color ? 'scale(1.15)' : 'none',
+                      transition: 'all 0.12s ease',
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Duotone Secondary Opacity Slider */}
+            <div style={{ marginBottom: '12px', border: '1px solid var(--border)', borderRadius: '8px', padding: '10px', background: 'var(--bg)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                <label style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Duotone Opacity</label>
+                <span style={{ fontSize: '11px', color: 'var(--accent)', fontFamily: 'JetBrains Mono, monospace' }}>{customSecondaryOpacity.toFixed(2)}</span>
+              </div>
+              <input suppressHydrationWarning
+                className="icon-search-slider"
+                type="range"
+                aria-label="Duotone secondary opacity"
+                title="Duotone secondary opacity"
+                min={0.1}
+                max={0.9}
+                step={0.05}
+                value={customSecondaryOpacity}
+                onChange={(e) => setCustomSecondaryOpacity(Number(e.target.value))}
+              />
             </div>
 
             {/* Visual Style Presets Panel (Phase 3 Upgrade) */}
@@ -1435,21 +1738,38 @@ export default function IconSearchClient({ initialData }: { initialData?: ApiRes
               </div>
             </div>
 
-            <div style={{ marginBottom: '12px', border: '1px solid var(--border)', borderRadius: '10px', padding: '12px', minHeight: '90px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)' }}>
-              {customizedSvg ? (
-                <div dangerouslySetInnerHTML={{ __html: customizedSvg }} />
-              ) : (
-                <img src={getBestIconPreviewUrl(selectedIcon)} alt={selectedIcon.name} width={customSize} height={customSize} style={{ filter: `drop-shadow(0 0 8px ${customColor}33) invert(1)` }} />
-              )}
-            </div>
-            <pre style={{ background: 'var(--code-bg)', border: '1px solid var(--border)', borderRadius: '10px', padding: '14px', color: 'var(--green)', fontSize: '11px', overflowX: 'auto' }}>
+            <pre style={{ background: 'var(--code-bg)', border: '1px solid var(--border)', borderRadius: '10px', padding: '14px', color: 'var(--green)', fontSize: '11px', overflowX: 'auto', marginBottom: '12px' }}>
 {selectedIcon.reactImport}
 
 {selectedIcon.reactUsage}
             </pre>
-            <button suppressHydrationWarning onClick={addToCart} className="icon-search-btn" style={{ marginTop: '12px', width: '100%', background: 'var(--accent)', color: '#fff', borderColor: 'var(--accent)' }}>
-              Add to Bundle
-            </button>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <button suppressHydrationWarning onClick={addToCart} className="icon-search-btn" style={{ width: '100%', background: 'var(--accent)', color: '#fff', borderColor: 'var(--accent)' }}>
+                Add to Bundle
+              </button>
+              {cart.length > 0 && (
+                <button
+                  suppressHydrationWarning
+                  onClick={() => setIsExportModalOpen(true)}
+                  className="icon-search-btn"
+                  style={{
+                    width: '100%',
+                    background: 'rgba(52, 211, 153, 0.12)',
+                    borderColor: 'rgba(52, 211, 153, 0.4)',
+                    color: '#34d399',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '6px',
+                    fontWeight: 600,
+                  }}
+                >
+                  <span>📦</span>
+                  <span>Export Bundle ZIP ({cart.length})</span>
+                </button>
+              )}
+            </div>
           </aside>
         </>
       )}
@@ -1803,6 +2123,24 @@ export default function IconSearchClient({ initialData }: { initialData?: ApiRes
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
         onAuthSuccess={handleAuthSuccess}
+      />
+
+      {/* Universal Code & PNG Exporter Modal (Milestone M3) */}
+      <UniversalExporterModal
+        isOpen={isUniversalModalOpen}
+        onClose={() => setIsUniversalModalOpen(false)}
+        icon={universalModalIcon || selectedIcon}
+        initialSvgContent={universalModalIcon?.id === selectedIcon?.id ? svgContent : ''}
+        initialOptions={{
+          size: customSize,
+          strokeWidth: customStroke,
+          color: customColor,
+          padding: customPadding,
+          frameShape: customFrameShape,
+          frameColor: customFrameColor,
+          frameStroke: customFrameStroke,
+          secondaryOpacity: customSecondaryOpacity,
+        }}
       />
 
     </main>

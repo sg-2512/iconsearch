@@ -4,6 +4,7 @@ import { join } from 'path'
 import { gunzipSync } from 'zlib'
 import {
   allLibraries,
+  namedLibraries,
   ICONIFY_COLLECTION_COUNT,
   ICONIFY_ICON_COUNT,
   NAMED_LIBRARY_COUNT,
@@ -20,6 +21,7 @@ import {
   iconMatchesIntent,
   scoreIconIntent,
 } from '../../../lib/icon-intent'
+import { CATEGORY_KEYWORDS_MAP } from '../../../lib/categories'
 
 const LIBRARY_OPTIONS = allLibraries
   .map(({ id, name }) => ({ id, name }))
@@ -29,6 +31,145 @@ const LIBRARY_FILTER_ALIASES: Record<string, string> = {
   'iconify-ant-design': 'ant-design-icons',
   'iconify-ion': 'ionicons',
   'iconify-octicon': 'octicons',
+}
+
+const NAMED_LIBRARY_ID_SET = new Set([
+  ...namedLibraries.map((l) => l.id.toLowerCase()),
+  'lucide-icons',
+  'heroicons',
+  'tabler-icons',
+  'patternfly-icons',
+  'untitled-ui-icons',
+  'phosphor-icons',
+  'remix-icon',
+  'feather-icons',
+  'bootstrap-icons',
+  'radix-icons',
+  'iconoir',
+  'ionicons',
+  'octicons',
+  'ant-design-icons',
+  'devicons',
+  'teenyicons',
+  'circum-icons',
+  'elusive-icons',
+])
+
+const MULTICOLOR_LIBRARIES = new Set([
+  'flat-color-icons',
+  'devicons',
+  'devicon',
+  'skill-icons',
+  'vscode-icons',
+  'logos',
+  'circle-flags',
+  'flag',
+  'flagpack',
+  'cif',
+  'country-flag',
+  'twemoji',
+  'noto',
+  'noto-v1',
+  'emojione',
+  'emojione-v1',
+  'emojione-monotone',
+  'openmoji',
+  'fxemoji',
+  'fluent-emoji',
+  'fluent-emoji-flat',
+  'fluent-emoji-high-contrast',
+  'catppuccin',
+  'cryptocurrency-color',
+  'cryptocurrency',
+  'token-branded',
+  'simple-icons-color',
+  'streamline-color',
+  'streamline-plump-color',
+  'streamline-freehand-color',
+  'streamline-flex-color',
+  'streamline-sharp-color',
+  'streamline-ultimate-color',
+  'streamline-cyber-color',
+  'streamline-kameleon-color',
+  'streamline-stickies-color',
+  'fluent-color',
+])
+
+export function detectIconStyle(icon: { name: string; library: string }): 'stroke' | 'solid' | 'duotone' | 'twotone' | 'sharp' | undefined {
+  const nameLower = icon.name.toLowerCase()
+  const libLower = icon.library.toLowerCase()
+
+  if (nameLower.includes('duotone')) return 'duotone'
+  if (nameLower.includes('twotone') || nameLower.includes('two-tone')) return 'twotone'
+  if (nameLower.includes('sharp')) return 'sharp'
+  if (
+    nameLower.includes('solid') ||
+    nameLower.includes('fill') ||
+    nameLower.includes('bold') ||
+    (libLower.includes('bootstrap') && nameLower.includes('fill')) ||
+    (libLower.includes('remix') && nameLower.includes('fill'))
+  ) {
+    return 'solid'
+  }
+  if (
+    nameLower.includes('outline') ||
+    nameLower.includes('regular') ||
+    nameLower.includes('light') ||
+    nameLower.includes('thin') ||
+    nameLower.includes('line') ||
+    libLower.includes('lucide') ||
+    libLower.includes('feather') ||
+    libLower.includes('iconoir')
+  ) {
+    return 'stroke'
+  }
+  return undefined
+}
+
+export function detectIconColorModel(icon: { name: string; library: string; tags?: string[] }): 'mono' | 'multicolor' {
+  const libLower = icon.library.toLowerCase()
+  const cleanLib = libLower.replace(/^iconify-/, '')
+
+  if (MULTICOLOR_LIBRARIES.has(libLower) || MULTICOLOR_LIBRARIES.has(cleanLib)) {
+    return 'multicolor'
+  }
+
+  if (
+    libLower.includes('color') ||
+    libLower.includes('emoji') ||
+    libLower.includes('flag') ||
+    cleanLib.includes('color') ||
+    cleanLib.includes('emoji') ||
+    cleanLib.includes('flag')
+  ) {
+    return 'multicolor'
+  }
+
+  const tags = icon.tags || []
+  if (
+    tags.some((t) => {
+      const tl = t.toLowerCase()
+      return tl === 'multicolor' || tl === 'colored' || tl === 'multi-color' || tl === 'emoji' || tl === 'flags'
+    })
+  ) {
+    return 'multicolor'
+  }
+
+  return 'mono'
+}
+
+export function normalizeLicenseGroup(lic?: string): string {
+  if (!lic) return 'Other'
+  const l = lic.trim().toUpperCase()
+  if (l.includes('MIT')) return 'MIT'
+  if (l.includes('APACHE')) return 'Apache-2.0'
+  if (l.includes('CC0') || l.includes('PUBLIC DOMAIN') || l.includes('UNLICENSE') || l.includes('WTFPL')) return 'CC0'
+  if (l.includes('OFL') || l.includes('SIL')) return 'OFL'
+  if (l.includes('ISC')) return 'ISC'
+  if (l.includes('CC-BY') || l.includes('CREATIVE COMMONS')) return 'CC-BY'
+  if (l.includes('BSD')) return 'BSD'
+  if (l.includes('GPL')) return 'GPL'
+  return lic
 }
 
 let cachedIcons: SearchIcon[] | null = null
@@ -67,6 +208,10 @@ type Facets = {
   libraries: string[]
   licenses: string[]
   iconifySets: string[]
+  styles: Record<string, number>
+  colorModels: Record<string, number>
+  licenseCounts: Record<string, number>
+  sourceTypes: Record<string, number>
 }
 
 type NormalizableIcon = {
@@ -90,6 +235,9 @@ type SearchIcon = NormalizableIcon & {
   svgUrl: string
   legalSafe?: boolean
   licenseUrl?: string
+  style?: 'stroke' | 'solid' | 'duotone' | 'twotone' | 'sharp'
+  colorModel?: 'mono' | 'multicolor'
+  isCurated?: boolean
 }
 
 let cachedFacets: {
@@ -129,7 +277,52 @@ function normalizePreviewUrls(icon: NormalizableIcon) {
   icon.previewUrls = [internalPath]
 }
 
+function computeFacetsForList(icons: SearchIcon[]): Facets {
+  const allLibs = Array.from(new Set(icons.map((icon) => icon.library))).sort()
+  const allLics = Array.from(
+    new Set(icons.map((icon) => icon.license).filter((license): license is string => typeof license === 'string'))
+  ).sort()
+  const allSets = allLibs
+    .filter((name) => name.startsWith('iconify-'))
+    .map((name) => name.replace(/^iconify-/, ''))
+    .sort()
 
+  const styles: Record<string, number> = { stroke: 0, solid: 0, duotone: 0, twotone: 0, sharp: 0 }
+  const colorModels: Record<string, number> = { mono: 0, multicolor: 0 }
+  const licenseCounts: Record<string, number> = { MIT: 0, 'Apache-2.0': 0, CC0: 0, OFL: 0, ISC: 0, Other: 0 }
+  const sourceTypes: Record<string, number> = { curated: 0, iconify: 0 }
+
+  for (let i = 0; i < icons.length; i++) {
+    const icon = icons[i]
+    if (icon.style && styles[icon.style] !== undefined) {
+      styles[icon.style]++
+    }
+    if (icon.colorModel && colorModels[icon.colorModel] !== undefined) {
+      colorModels[icon.colorModel]++
+    }
+    if (icon.isCurated) {
+      sourceTypes.curated++
+    } else {
+      sourceTypes.iconify++
+    }
+    const normLic = normalizeLicenseGroup(icon.license)
+    if (licenseCounts[normLic] !== undefined) {
+      licenseCounts[normLic]++
+    } else {
+      licenseCounts.Other = (licenseCounts.Other || 0) + 1
+    }
+  }
+
+  return {
+    libraries: allLibs,
+    licenses: allLics,
+    iconifySets: allSets,
+    styles,
+    colorModels,
+    licenseCounts,
+    sourceTypes,
+  }
+}
 
 export function loadIcons() {
   if (cachedIcons) return cachedIcons
@@ -188,6 +381,10 @@ export function loadIcons() {
           icon.reactUsage = `<${compName} style={{ fontSize: '24px' }} />`
         }
 
+        icon.style = detectIconStyle(icon)
+        icon.colorModel = detectIconColorModel(icon)
+        icon.isCurated = NAMED_LIBRARY_ID_SET.has(icon.library.toLowerCase()) || !icon.library.startsWith('iconify-')
+
         normalizePreviewUrls(icon)
       })
 
@@ -197,26 +394,13 @@ export function loadIcons() {
       
       cachedIcons = parsedList
 
-      // Pre-compute static facets to optimize query execution latency (Phase 4 Upgrade)
+      // Pre-compute static facets to optimize query execution latency
       console.log('Pre-computing static search facets...')
-      const allLibs = Array.from(new Set(parsedList.map((icon) => icon.library))).sort()
-      const allLics = Array.from(new Set(parsedList.map((icon) => icon.license).filter((license): license is string => typeof license === 'string'))).sort()
-      const allSets = allLibs
-        .filter((name) => name.startsWith('iconify-'))
-        .map((name) => name.replace(/^iconify-/, ''))
-        .sort()
-
       const legalList = parsedList.filter((icon) => Boolean(icon.legalSafe))
-      const legalLibs = Array.from(new Set(legalList.map((icon) => icon.library))).sort()
-      const legalLics = Array.from(new Set(legalList.map((icon) => icon.license).filter((license): license is string => typeof license === 'string'))).sort()
-      const legalSets = legalLibs
-        .filter((name) => name.startsWith('iconify-'))
-        .map((name) => name.replace(/^iconify-/, ''))
-        .sort()
 
       cachedFacets = {
-        all: { libraries: allLibs, licenses: allLics, iconifySets: allSets },
-        legal: { libraries: legalLibs, licenses: legalLics, iconifySets: legalSets }
+        all: computeFacetsForList(parsedList),
+        legal: computeFacetsForList(legalList),
       }
 
       // Pre-compute popularity-sorted and legal-safe subsets to eliminate per-request sorting
@@ -245,8 +429,8 @@ export function loadIcons() {
   
   cachedIcons = []
   cachedFacets = {
-    all: { libraries: [], licenses: [], iconifySets: [] },
-    legal: { libraries: [], licenses: [], iconifySets: [] }
+    all: { libraries: [], licenses: [], iconifySets: [], styles: {}, colorModels: {}, licenseCounts: {}, sourceTypes: {} },
+    legal: { libraries: [], licenses: [], iconifySets: [], styles: {}, colorModels: {}, licenseCounts: {}, sourceTypes: {} },
   }
   return cachedIcons
 }
@@ -280,7 +464,10 @@ export async function GET(request: Request) {
   const lib = searchParams.get('lib') || 'all'
   const iconifySet = searchParams.get('iconifySet') || 'all'
   const sourceSet = searchParams.get('sourceSet') || 'all'
+  const sourceType = searchParams.get('sourceType') || 'all'
   const style = searchParams.get('style') || 'all'
+  const colorModel = searchParams.get('colorModel') || 'all'
+  const license = searchParams.get('license') || 'all'
   const category = searchParams.get('category') || 'all'
   const legalOnly = searchParams.get('legalOnly') !== '0'
   const page = parseInt(searchParams.get('page') || '1', 10)
@@ -293,7 +480,18 @@ export async function GET(request: Request) {
   const allIcons = loadIcons()
 
   // Fast-path: when no filters are active, serve directly from pre-computed cached arrays
-  const noFilters = !query && !idsParam && lib === 'all' && style === 'all' && category === 'all' && iconifySet === 'all' && sourceSet === 'all'
+  const noFilters =
+    !query &&
+    !idsParam &&
+    lib === 'all' &&
+    style === 'all' &&
+    colorModel === 'all' &&
+    license === 'all' &&
+    sourceType === 'all' &&
+    category === 'all' &&
+    iconifySet === 'all' &&
+    sourceSet === 'all'
+
   if (noFilters) {
     let source: SearchIcon[]
     if (legalOnly && sort === 'popular') {
@@ -335,6 +533,11 @@ export async function GET(request: Request) {
         sourceSets: ICON_SOURCE_SET_OPTIONS,
         legalSafeCount,
         legalOnlyApplied: legalOnly,
+        styles: facets?.styles || { stroke: 0, solid: 0, duotone: 0, twotone: 0, sharp: 0 },
+        colorModels: facets?.colorModels || { mono: 0, multicolor: 0 },
+        licenseCounts: facets?.licenseCounts || {},
+        licensesCount: facets?.licenseCounts || {},
+        sourceTypes: facets?.sourceTypes || { curated: 0, iconify: 0 },
       }
     }, {
       headers: {
@@ -355,12 +558,20 @@ export async function GET(request: Request) {
       filtered = filtered.filter(icon => Boolean(icon.legalSafe))
     }
 
+    // 1. Source Type Filter (Curated Named Libraries vs Full Iconify Catalog)
+    if (sourceType === 'curated') {
+      filtered = filtered.filter(icon => Boolean(icon.isCurated))
+    } else if (sourceType === 'iconify') {
+      filtered = filtered.filter(icon => !icon.isCurated || icon.library.startsWith('iconify-'))
+    }
+
+    // 2. Canonical Source Set Filter
     if (sourceSet !== 'all') {
       const normalizedSourceSet = sourceSet.toLowerCase()
       filtered = filtered.filter(icon => getIconSourceSetId(icon.library) === normalizedSourceSet)
     }
     
-    // 1. Library Filter
+    // 3. Library Filter
     if (lib !== 'all') {
       if (lib === 'iconify') {
         filtered = filtered.filter(icon => icon.library.startsWith('iconify-'))
@@ -379,68 +590,93 @@ export async function GET(request: Request) {
       }
     }
     
-    // 2. Style Filter
+    // 4. Style Filter
     if (style !== 'all') {
+      const targetStyle = style.toLowerCase()
+      filtered = filtered.filter(icon => icon.style === targetStyle)
+    }
+
+    // 5. Color Model Filter (Monochromatic vs Multi-color)
+    if (colorModel !== 'all') {
+      const targetColorModel = colorModel.toLowerCase()
+      filtered = filtered.filter(icon => icon.colorModel === targetColorModel)
+    }
+
+    // 6. License Filter
+    if (license !== 'all') {
+      const licLower = license.toLowerCase().trim()
       filtered = filtered.filter(icon => {
-        const nameLower = icon.name.toLowerCase()
-        const libLower = icon.library.toLowerCase()
-        if (style === 'solid') {
-          return nameLower.includes('solid') || nameLower.includes('fill') || nameLower.includes('bold') ||
-                 libLower.includes('bootstrap') && nameLower.includes('fill') ||
-                 libLower.includes('remix') && nameLower.includes('fill')
-        } else if (style === 'duotone') {
-          return nameLower.includes('duotone')
-        } else if (style === 'twotone') {
-          return nameLower.includes('twotone') || nameLower.includes('two-tone')
-        } else if (style === 'stroke') {
-          return nameLower.includes('outline') || nameLower.includes('regular') || nameLower.includes('light') || 
-                 nameLower.includes('thin') || nameLower.includes('line') || libLower.includes('lucide') || 
-                 libLower.includes('feather') || libLower.includes('iconoir')
-        } else if (style === 'sharp') {
-          return nameLower.includes('sharp')
+        const iconLic = (icon.license || '').toLowerCase()
+        if (licLower === 'mit') return iconLic.includes('mit')
+        if (licLower === 'apache-2.0' || licLower === 'apache') return iconLic.includes('apache')
+        if (licLower === 'cc0' || licLower === 'public domain') {
+          return iconLic.includes('cc0') || iconLic.includes('public domain') || iconLic.includes('unlicense') || iconLic.includes('wtfpl')
         }
-        return true
+        if (licLower === 'ofl' || licLower === 'sil ofl') return iconLic.includes('ofl') || iconLic.includes('sil')
+        if (licLower === 'isc') return iconLic.includes('isc')
+        if (licLower === 'cc-by') return iconLic.includes('cc-by')
+        return iconLic === licLower || iconLic.includes(licLower)
       })
     }
     
-    // 3. Category Filter with Tag Mapping
+    // 7. Category Filter with Tag Mapping
     if (category !== 'all') {
-      const CATEGORY_MAP: Record<string, string[]> = {
-        'ai': ['ai', 'brain', 'cpu', 'sparkles', 'bot', 'chip', 'robot', 'wand', 'magic'],
+      const catLower = category.toLowerCase()
+      const aliases: Record<string, string[]> = {
         'alert': ['alert', 'warning', 'info', 'bell', 'clock', 'alarm', 'shield', 'danger', 'triangle', 'octagon'],
-        'arrows': ['arrow', 'chevron', 'direction', 'move', 'left', 'right', 'up', 'down', 'pointer', 'refresh', 'sync'],
-        'media': ['play', 'music', 'video', 'sound', 'audio', 'volume', 'camera', 'image', 'picture', 'disc', 'film', 'mic'],
-        'editor': ['edit', 'write', 'pen', 'align', 'format', 'list', 'trash', 'save', 'copy', 'paste', 'grid', 'table', 'columns'],
-        'communication': ['mail', 'message', 'chat', 'phone', 'call', 'send', 'share', 'envelope', 'inbox'],
-        'commerce': ['cart', 'shop', 'card', 'price', 'wallet', 'dollar', 'euro', 'money', 'bag', 'bank', 'coins', 'percent'],
-        'weather': ['sun', 'cloud', 'rain', 'snow', 'wind', 'temp', 'weather', 'star', 'moon', 'leaf', 'tree', 'flower'],
-        'devices': ['device', 'phone', 'computer', 'monitor', 'cpu', 'keyboard', 'laptop', 'tablet', 'wifi', 'battery', 'tv', 'plug'],
-        'design': ['paint', 'brush', 'color', 'palette', 'ruler', 'pencil', 'layers', 'crop', 'bezier', 'vector'],
-        'security': ['lock', 'shield', 'key', 'eye', 'secure', 'auth', 'unlock', 'password', 'keyhole', 'fingerprint'],
-        'health': ['heart', 'plus', 'aid', 'medical', 'health', 'hospital', 'pill', 'activity', 'thermometer', 'pulse'],
         'users': ['user', 'profile', 'group', 'avatar', 'people', 'person', 'users', 'contact'],
-        'buildings': ['home', 'building', 'house', 'office', 'store', 'warehouse', 'hotel', 'map', 'pin']
+        'buildings': ['home', 'building', 'house', 'office', 'store', 'warehouse', 'hotel', 'map', 'pin'],
       }
-      const keywords = CATEGORY_MAP[category] || []
+      const keywords = CATEGORY_KEYWORDS_MAP[catLower] || aliases[catLower] || [catLower]
       if (keywords.length > 0) {
-        filtered = filtered.filter(icon => {
+        filtered = filtered.filter((icon) => {
           const iconTags = icon.tags || []
           const iconName = icon.name.toLowerCase()
-          return keywords.some(kw => {
+          return keywords.some((kw) => {
             const kwLower = kw.toLowerCase()
-            return iconTags.some((t: string) => t.toLowerCase() === kwLower) || iconName.includes(kwLower)
+            return (
+              iconTags.some((t: string) => t.toLowerCase() === kwLower) ||
+              iconName.includes(kwLower)
+            )
           })
         })
       }
     }
     
-    // 4. Search Query Filter
+    // 8. Search Query Filter
     if (query) {
       filtered = filtered.filter((icon) => iconMatchesIntent(icon, searchIntent))
     }
   }
 
-  // 5. Sorting
+  // Fast single-pass dynamic facet aggregation over filtered results
+  const styleFacetCounts: Record<string, number> = { stroke: 0, solid: 0, duotone: 0, twotone: 0, sharp: 0 }
+  const colorModelFacetCounts: Record<string, number> = { mono: 0, multicolor: 0 }
+  const licenseFacetCounts: Record<string, number> = { MIT: 0, 'Apache-2.0': 0, CC0: 0, OFL: 0, ISC: 0, Other: 0 }
+  const sourceTypeFacetCounts: Record<string, number> = { curated: 0, iconify: 0 }
+
+  for (let i = 0; i < filtered.length; i++) {
+    const icon = filtered[i]
+    if (icon.style && styleFacetCounts[icon.style] !== undefined) {
+      styleFacetCounts[icon.style]++
+    }
+    if (icon.colorModel && colorModelFacetCounts[icon.colorModel] !== undefined) {
+      colorModelFacetCounts[icon.colorModel]++
+    }
+    if (icon.isCurated) {
+      sourceTypeFacetCounts.curated++
+    } else {
+      sourceTypeFacetCounts.iconify++
+    }
+    const normLic = normalizeLicenseGroup(icon.license)
+    if (licenseFacetCounts[normLic] !== undefined) {
+      licenseFacetCounts[normLic]++
+    } else {
+      licenseFacetCounts.Other = (licenseFacetCounts.Other || 0) + 1
+    }
+  }
+
+  // 9. Sorting
   if (sort === 'relevance' && query) {
     const intentScores = new Map(filtered.map((icon) => [icon, scoreIconIntent(icon, searchIntent)]))
     filtered.sort((a, b) => {
@@ -471,8 +707,7 @@ export async function GET(request: Request) {
   const total = filtered.length
   const paginated = filtered.slice((page - 1) * limit, page * limit)
   
-  // Use precomputed facets for incredible speed boost! (Phase 4 Upgrade)
-  const facets = legalOnly ? cachedFacets?.legal : cachedFacets?.all
+  const baseFacets = legalOnly ? cachedFacets?.legal : cachedFacets?.all
 
   const elapsed = (performance.now() - startTime).toFixed(2)
   console.log(`[API Search] query: "${query || idsParam || '(none)'}", results: ${total}, taken: ${elapsed}ms`)
@@ -495,13 +730,18 @@ export async function GET(request: Request) {
       interpretedAs: describeIconSearchIntent(searchIntent),
     },
     facets: {
-      libraries: facets?.libraries || [],
+      libraries: baseFacets?.libraries || [],
       libraryOptions: LIBRARY_OPTIONS,
-      licenses: facets?.licenses || [],
-      iconifySets: facets?.iconifySets || [],
+      licenses: baseFacets?.licenses || [],
+      iconifySets: baseFacets?.iconifySets || [],
       sourceSets: ICON_SOURCE_SET_OPTIONS,
       legalSafeCount,
       legalOnlyApplied: legalOnly,
+      styles: styleFacetCounts,
+      colorModels: colorModelFacetCounts,
+      licenseCounts: licenseFacetCounts,
+      licensesCount: licenseFacetCounts,
+      sourceTypes: sourceTypeFacetCounts,
     }
   }, {
     headers: {

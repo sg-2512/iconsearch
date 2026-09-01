@@ -1,6 +1,22 @@
 import JSZip from 'jszip'
 import { getCleanSvgUrl } from './icon-preview'
 
+export type FrameShape = 'none' | 'circle' | 'rounded' | 'squircle'
+
+export interface ExportOptions {
+  size?: number
+  strokeWidth?: number
+  color?: string
+  padding?: number
+  frameShape?: FrameShape
+  frameColor?: string
+  frameStroke?: string
+  frameStrokeWidth?: number
+  secondaryColor?: string
+  secondaryOpacity?: number
+  className?: string
+}
+
 export type Icon = {
   id: string
   name: string
@@ -25,6 +41,49 @@ export type CartItem = {
   color: string
 }
 
+export interface ExportIconItem {
+  id?: string
+  name: string
+  displayName?: string
+  library?: string
+  libraryName?: string
+  npmPackage?: string
+  license?: string
+  tags?: string[]
+  reactImport?: string
+  reactUsage?: string
+  svgUrl?: string
+  legalSafe?: boolean
+  svg?: string
+  size?: number
+  stroke?: number
+  color?: string
+  options?: ExportOptions
+}
+
+export interface ZipConfig {
+  packageName?: string
+  formats?: {
+    svg?: boolean
+    png?: boolean
+    react?: boolean
+    vue?: boolean
+    svelte?: boolean
+    tailwind?: boolean
+    sprite?: boolean
+  }
+  pngScale?: number
+  usePreset?: boolean
+  presetSize?: number
+  presetStroke?: number
+  presetColor?: string
+  padding?: number
+  frameShape?: FrameShape
+  frameColor?: string
+  frameStroke?: string
+  frameStrokeWidth?: number
+}
+
 export type ExportConfig = {
   packageName: string
   items: CartItem[]
@@ -33,6 +92,7 @@ export type ExportConfig = {
     png: boolean
     react: boolean
     vue: boolean
+    svelte?: boolean
     tailwind: boolean
     sprite: boolean
   }
@@ -57,25 +117,160 @@ type ExportMetadata = {
   }
 }
 
+/**
+ * Extract or infer the viewBox from an SVG string.
+ */
+function parseViewBox(svg: string): { minX: number; minY: number; width: number; height: number; raw: string } {
+  const match = svg.match(/viewBox=["']([-\d.]+)[,\s]+([-\d.]+)[,\s]+([-\d.]+)[,\s]+([-\d.]+)["']/)
+  if (match) {
+    return {
+      minX: parseFloat(match[1]),
+      minY: parseFloat(match[2]),
+      width: parseFloat(match[3]),
+      height: parseFloat(match[4]),
+      raw: `${match[1]} ${match[2]} ${match[3]} ${match[4]}`
+    }
+  }
+
+  // Fallback if width and height are present on root
+  const wMatch = svg.match(/(?:^|[\s<])width=["']([\d.]+)["']/)
+  const hMatch = svg.match(/(?:^|[\s<])height=["']([\d.]+)["']/)
+  const w = wMatch ? parseFloat(wMatch[1]) : 24
+  const h = hMatch ? parseFloat(hMatch[1]) : 24
+  return { minX: 0, minY: 0, width: w, height: h, raw: `0 0 ${w} ${h}` }
+}
+
+/**
+ * Customizes an SVG with size, stroke width, color, canvas padding, container frames, and duotone options.
+ * Overloaded to accept either positional args (size, stroke, color) or an ExportOptions object.
+ */
 export function customizeSvg(
   rawSvg: string,
-  size: number,
-  stroke: number,
-  color: string
+  sizeOrOptions?: number | ExportOptions,
+  strokeParam?: number,
+  colorParam?: string
 ): string {
   if (!rawSvg) return ''
+
+  let size = 24
+  let stroke = 2
+  let color = 'currentColor'
+  let padding = 0
+  let frameShape: FrameShape = 'none'
+  let frameColor = 'rgba(129, 140, 248, 0.15)'
+  let frameStroke = 'none'
+  let frameStrokeWidth = 1
+  let secondaryColor: string | undefined
+  let secondaryOpacity: number | undefined
+
+  if (typeof sizeOrOptions === 'object' && sizeOrOptions !== null) {
+    if (sizeOrOptions.size !== undefined) size = sizeOrOptions.size
+    if (sizeOrOptions.strokeWidth !== undefined) stroke = sizeOrOptions.strokeWidth
+    if (sizeOrOptions.color !== undefined) color = sizeOrOptions.color
+    if (sizeOrOptions.padding !== undefined) padding = sizeOrOptions.padding
+    if (sizeOrOptions.frameShape !== undefined) frameShape = sizeOrOptions.frameShape
+    if (sizeOrOptions.frameColor !== undefined) frameColor = sizeOrOptions.frameColor
+    if (sizeOrOptions.frameStroke !== undefined) frameStroke = sizeOrOptions.frameStroke
+    if (sizeOrOptions.frameStrokeWidth !== undefined) frameStrokeWidth = sizeOrOptions.frameStrokeWidth
+    if (sizeOrOptions.secondaryColor !== undefined) secondaryColor = sizeOrOptions.secondaryColor
+    if (sizeOrOptions.secondaryOpacity !== undefined) secondaryOpacity = sizeOrOptions.secondaryOpacity
+  } else {
+    if (typeof sizeOrOptions === 'number') size = sizeOrOptions
+    if (strokeParam !== undefined) stroke = strokeParam
+    if (colorParam !== undefined) color = colorParam
+  }
+
   let parsed = rawSvg
-  parsed = parsed.replace(/width="[^"]*"/g, `width="${size}"`)
-  parsed = parsed.replace(/height="[^"]*"/g, `height="${size}"`)
+
+  // 1. Dimension replacement / injection
+  parsed = parsed.replace(/(?<=[\s<])width="[^"]*"/g, `width="${size}"`)
+  parsed = parsed.replace(/(?<=[\s<])height="[^"]*"/g, `height="${size}"`)
+  if (!/(?:^|[\s<])width=/.test(parsed)) parsed = parsed.replace('<svg', `<svg width="${size}"`)
+  if (!/(?:^|[\s<])height=/.test(parsed)) parsed = parsed.replace('<svg', `<svg height="${size}"`)
+
+  // 2. Stroke width replacement / injection
   parsed = parsed.replace(/stroke-width="[^"]*"/g, `stroke-width="${stroke}"`)
+  if (!parsed.includes('stroke-width=')) parsed = parsed.replace('<svg', `<svg stroke-width="${stroke}"`)
+
+  // 3. Primary Color replacement
   parsed = parsed.replace(/stroke="currentColor"/g, `stroke="${color}"`)
   parsed = parsed.replace(/fill="currentColor"/g, `fill="${color}"`)
-  if (!parsed.includes('width=')) parsed = parsed.replace('<svg', `<svg width="${size}"`)
-  if (!parsed.includes('height=')) parsed = parsed.replace('<svg', `<svg height="${size}"`)
-  if (!parsed.includes('stroke-width=')) parsed = parsed.replace('<svg', `<svg stroke-width="${stroke}"`)
+
+  // 4. Secondary Duotone Tinting & Opacity
+  if (secondaryOpacity !== undefined) {
+    parsed = parsed.replace(/opacity=["'][0-9.]+["']/g, `opacity="${secondaryOpacity}"`)
+    parsed = parsed.replace(/fill-opacity=["'][0-9.]+["']/g, `fill-opacity="${secondaryOpacity}"`)
+    parsed = parsed.replace(/stroke-opacity=["'][0-9.]+["']/g, `stroke-opacity="${secondaryOpacity}"`)
+  }
+  if (secondaryColor) {
+    // Replace secondary classes or secondary opacity elements' fill/stroke if designated
+    parsed = parsed.replace(/class=["'][^"']*duotone-secondary[^"']*["']/g, (match) => {
+      return `${match} fill="${secondaryColor}"`
+    })
+  }
+
+  // 5. Canvas Padding (viewBox expansion while preserving coordinates)
+  let vb = parseViewBox(parsed)
+  if (padding > 0) {
+    const scaleFactor = vb.width / (size > 0 ? size : 24)
+    const padCoordX = parseFloat((padding * scaleFactor).toFixed(2))
+    const padCoordY = parseFloat((padding * scaleFactor).toFixed(2))
+    const newMinX = parseFloat((vb.minX - padCoordX).toFixed(2))
+    const newMinY = parseFloat((vb.minY - padCoordY).toFixed(2))
+    const newWidth = parseFloat((vb.width + 2 * padCoordX).toFixed(2))
+    const newHeight = parseFloat((vb.height + 2 * padCoordY).toFixed(2))
+    const newViewBox = `${newMinX} ${newMinY} ${newWidth} ${newHeight}`
+
+    if (/viewBox="[^"]*"/.test(parsed)) {
+      parsed = parsed.replace(/viewBox="[^"]*"/, `viewBox="${newViewBox}"`)
+    } else {
+      parsed = parsed.replace('<svg', `<svg viewBox="${newViewBox}"`)
+    }
+    vb = { minX: newMinX, minY: newMinY, width: newWidth, height: newHeight, raw: newViewBox }
+  } else if (!/viewBox="[^"]*"/.test(parsed)) {
+    parsed = parsed.replace('<svg', `<svg viewBox="${vb.raw}"`)
+  }
+
+  // 6. Container Frame Shapes
+  if (frameShape && frameShape !== 'none') {
+    let frameElement = ''
+    const strokeAttr = frameStroke && frameStroke !== 'none' && frameStroke !== 'transparent' ? ` stroke="${frameStroke}" stroke-width="${frameStrokeWidth}"` : ''
+    
+    if (frameShape === 'circle') {
+      const cx = parseFloat((vb.minX + vb.width / 2).toFixed(2))
+      const cy = parseFloat((vb.minY + vb.height / 2).toFixed(2))
+      const r = parseFloat((Math.min(vb.width, vb.height) / 2).toFixed(2))
+      frameElement = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${frameColor}"${strokeAttr} />`
+    } else if (frameShape === 'rounded') {
+      const rx = parseFloat((vb.width * 0.2).toFixed(2))
+      const ry = parseFloat((vb.height * 0.2).toFixed(2))
+      frameElement = `<rect x="${vb.minX}" y="${vb.minY}" width="${vb.width}" height="${vb.height}" rx="${rx}" ry="${ry}" fill="${frameColor}"${strokeAttr} />`
+    } else if (frameShape === 'squircle') {
+      const rx = parseFloat((vb.width * 0.35).toFixed(2))
+      const ry = parseFloat((vb.height * 0.35).toFixed(2))
+      frameElement = `<rect x="${vb.minX}" y="${vb.minY}" width="${vb.width}" height="${vb.height}" rx="${rx}" ry="${ry}" fill="${frameColor}"${strokeAttr} />`
+    }
+
+    if (frameElement) {
+      // Inject inside <svg> right after opening tag
+      parsed = parsed.replace(/(<svg[^>]*>)/, (_, openTag) => `${openTag}\n  ${frameElement}`)
+    }
+  }
+
   return parsed
 }
 
+/**
+ * Generates clean, customized raw SVG snippet.
+ */
+export function generateSvgSnippet(svg: string, options?: ExportOptions): string {
+  if (!svg) return ''
+  return customizeSvg(svg, options)
+}
+
+/**
+ * Rasterizes SVG to PNG Blob via Canvas in browser environments.
+ */
 export function renderSvgToPng(
   svgString: string,
   targetSize: number
@@ -121,6 +316,21 @@ export function renderSvgToPng(
   })
 }
 
+/**
+ * Convenience wrapper to customize and rasterize SVG directly to PNG blob.
+ */
+export function renderSvgToPngBlob(
+  svg: string,
+  size: number,
+  padding: number = 0
+): Promise<Blob> {
+  const customized = customizeSvg(svg, { size, padding })
+  return renderSvgToPng(customized, size)
+}
+
+/**
+ * Compiles a set of SVGs into a single unified <svg> sprite sheet with <symbol> tags.
+ */
 export function compileSvgSprite(
   items: { item: CartItem; svg: string }[],
   usePreset: boolean,
@@ -150,16 +360,28 @@ export function compileSvgSprite(
   return `<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">\n${symbols}</svg>`
 }
 
-export function generateReactComponent(
-  name: string,
-  svgContent: string
-): string {
-  const componentName = name
+/**
+ * Convert an icon name to PascalCase with standard formatting.
+ */
+export function toPascalCase(name: string): string {
+  return name
     .split(/[-_]+/)
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join('')
+}
 
-  let jsxSvg = svgContent
+/**
+ * Generates a production-ready React TSX component.
+ */
+export function generateReactComponent(
+  name: string,
+  svgContent: string,
+  options?: ExportOptions
+): string {
+  const componentName = toPascalCase(name)
+  const customized = options ? customizeSvg(svgContent, options) : svgContent
+
+  let jsxSvg = customized
     .replace(/class=/g, 'className=')
     .replace(/stroke-width=/g, 'strokeWidth=')
     .replace(/stroke-linecap=/g, 'strokeLinecap=')
@@ -168,8 +390,10 @@ export function generateReactComponent(
     .replace(/clip-rule=/g, 'clipRule=')
     .replace(/stroke-dasharray=/g, 'strokeDasharray=')
     .replace(/stroke-dashoffset=/g, 'strokeDashoffset=')
-    .replace(/width="[^"]*"/, 'width={size}')
-    .replace(/height="[^"]*"/, 'height={size}')
+    .replace(/fill-opacity=/g, 'fillOpacity=')
+    .replace(/stroke-opacity=/g, 'strokeOpacity=')
+    .replace(/(?<=[\s<])width="[^"]*"/, 'width={size}')
+    .replace(/(?<=[\s<])height="[^"]*"/, 'height={size}')
 
   if (!jsxSvg.includes('width={size}')) {
     jsxSvg = jsxSvg.replace('<svg', '<svg width={size}')
@@ -192,10 +416,29 @@ export default function Icon${componentName}({ size = 24, ...props }: IconProps)
 `
 }
 
-export function generateVueComponent(svgContent: string): string {
-  let vueSvg = svgContent
-    .replace(/width="[^"]*"/, ':width="size"')
-    .replace(/height="[^"]*"/, ':height="size"')
+/**
+ * Alias for React snippet generation.
+ */
+export function generateReactSnippet(
+  name: string,
+  svg: string,
+  options?: ExportOptions
+): string {
+  return generateReactComponent(name, svg, options)
+}
+
+/**
+ * Generates a production-ready Vue 3 SFC component with <script setup lang="ts">.
+ */
+export function generateVueComponent(
+  svgContent: string,
+  options?: ExportOptions
+): string {
+  const customized = options ? customizeSvg(svgContent, options) : svgContent
+
+  let vueSvg = customized
+    .replace(/(?<=[\s<])width="[^"]*"/, ':width="size"')
+    .replace(/(?<=[\s<])height="[^"]*"/, ':height="size"')
 
   if (!vueSvg.includes(':width=')) {
     vueSvg = vueSvg.replace('<svg', '<svg :width="size"')
@@ -219,6 +462,90 @@ defineProps({
 `
 }
 
+/**
+ * Alias for Vue snippet generation.
+ */
+export function generateVueSnippet(
+  name: string,
+  svg: string,
+  options?: ExportOptions
+): string {
+  return generateVueComponent(svg, options)
+}
+
+/**
+ * Generates a valid Svelte 4/5 component snippet with typed props and restProps forwarding.
+ */
+export function generateSvelteComponent(
+  name: string,
+  svgContent: string,
+  options?: ExportOptions
+): string {
+  const customized = options ? customizeSvg(svgContent, options) : svgContent
+
+  let svelteSvg = customized
+    .replace(/(?<=[\s<])width="[^"]*"/, 'width={size}')
+    .replace(/(?<=[\s<])height="[^"]*"/, 'height={size}')
+
+  if (!svelteSvg.includes('width={size}')) {
+    svelteSvg = svelteSvg.replace('<svg', '<svg width={size}')
+  }
+  if (!svelteSvg.includes('height={size}')) {
+    svelteSvg = svelteSvg.replace('<svg', '<svg height={size}')
+  }
+
+  // Add $$restProps forwarding to the root svg tag using replacer function
+  svelteSvg = svelteSvg.replace('<svg', () => '<svg {...$$restProps}')
+
+  return `<script lang="ts">
+  export let size: number | string = 24
+  export let color: string = 'currentColor'
+  export let strokeWidth: number | string = 2
+</script>
+
+${svelteSvg}
+`
+}
+
+/**
+ * Alias for Svelte snippet generation.
+ */
+export function generateSvelteSnippet(
+  name: string,
+  svg: string,
+  options?: ExportOptions
+): string {
+  return generateSvelteComponent(name, svg, options)
+}
+
+/**
+ * Generates an inline Tailwind CSS ready <svg className="..." ...> snippet.
+ */
+export function generateTailwindInlineSnippet(
+  svgContent: string,
+  options?: ExportOptions
+): string {
+  const customized = options ? customizeSvg(svgContent, options) : svgContent
+  const className = options?.className || 'w-6 h-6 text-current'
+
+  let tailwindSvg = customized
+    .replace(/class="[^"]*"/g, `className="${className}"`)
+    .replace(/stroke-width=/g, 'strokeWidth=')
+    .replace(/stroke-linecap=/g, 'strokeLinecap=')
+    .replace(/stroke-linejoin=/g, 'strokeLinejoin=')
+    .replace(/fill-rule=/g, 'fillRule=')
+    .replace(/clip-rule=/g, 'clipRule=')
+
+  if (!tailwindSvg.includes('className=')) {
+    tailwindSvg = tailwindSvg.replace('<svg', `<svg className="${className}"`)
+  }
+
+  return tailwindSvg
+}
+
+/**
+ * Fetches all SVGs in a cart in parallel.
+ */
 export async function fetchAllCartSvgs(
   items: CartItem[],
   onProgress?: (text: string) => void
@@ -238,6 +565,9 @@ export async function fetchAllCartSvgs(
   return Promise.all(promises)
 }
 
+/**
+ * Generates a full multi-format ZIP archive bundle.
+ */
 export async function generateZipPackage(
   config: ExportConfig,
   onProgress?: (text: string) => void
@@ -257,6 +587,7 @@ export async function generateZipPackage(
   const pngFolder = formats.png ? zip.folder('png') : null
   const reactFolder = formats.react ? zip.folder('react') : null
   const vueFolder = formats.vue ? zip.folder('vue') : null
+  const svelteFolder = formats.svelte ? zip.folder('svelte') : null
   const tailwindFolder = formats.tailwind ? zip.folder('tailwind-html') : null
 
   // 3. Loop through fetched assets and customize
@@ -268,10 +599,7 @@ export async function generateZipPackage(
     const color = usePreset ? presetColor : item.color
 
     const customizedSvg = customizeSvg(svg, size, stroke, color)
-    const componentName = item.icon.name
-      .split(/[-_]+/)
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join('')
+    const componentName = toPascalCase(item.icon.name)
 
     // A. SVG Format
     if (svgFolder) {
@@ -288,12 +616,17 @@ export async function generateZipPackage(
       vueFolder.file(`Icon${componentName}.vue`, generateVueComponent(customizedSvg))
     }
 
-    // D. HTML/Tailwind Format
-    if (tailwindFolder) {
-      tailwindFolder.file(`${item.icon.name}.html`, customizedSvg)
+    // D. Svelte Format
+    if (svelteFolder) {
+      svelteFolder.file(`Icon${componentName}.svelte`, generateSvelteComponent(item.icon.name, customizedSvg))
     }
 
-    // E. PNG Format (batch render via canvas)
+    // E. HTML/Tailwind Format
+    if (tailwindFolder) {
+      tailwindFolder.file(`${item.icon.name}.html`, generateTailwindInlineSnippet(customizedSvg))
+    }
+
+    // F. PNG Format (batch render via canvas)
     if (pngFolder) {
       if (onProgress) onProgress(`Rasterizing ${item.icon.name} to PNG...`)
       try {

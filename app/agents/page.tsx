@@ -14,7 +14,7 @@ import {
   ShieldCheck,
   Sparkles,
 } from 'lucide-react'
-import { ICONIFY_COLLECTION_COUNT, SEARCHABLE_ICON_COUNT } from '../../data/library-catalog'
+import { ICON_COLLECTION_COUNT, SEARCHABLE_ICON_COUNT } from '../../data/library-catalog'
 import { createPageMetadata, SITE_URL } from '../../lib/seo'
 import CopyInstallCommand from './CopyInstallCommand'
 import styles from './agents.module.css'
@@ -78,7 +78,7 @@ export default function AgentsPage() {
         </div>
         <h1>Give your agent an icon system—not another guess.</h1>
         <p className={styles.heroLead}>
-          Search {SEARCHABLE_ICON_COUNT.toLocaleString('en-US')} production-ready icons across {ICONIFY_COLLECTION_COUNT} collections,
+          Search {SEARCHABLE_ICON_COUNT.toLocaleString('en-US')} production-ready icons across {ICON_COLLECTION_COUNT} collections,
           save approved SVGs with your code, and keep every screen visually consistent.
         </p>
         <div className={styles.actions}>
