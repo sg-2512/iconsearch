@@ -52,9 +52,12 @@
     "typescript": "^5"
   },
   "browserslist": [
-    "chrome >= 90",
-    "firefox >= 88",
-    "safari >= 15",
-    "edge >= 90"
+    "last 2 Chrome versions",
+    "last 2 Firefox versions",
+    "last 2 Safari versions",
+    "last 2 Edge versions",
+    "safari >= 15.4",
+    "ios_saf >= 15.4",
+    "not dead"
   ]
 }

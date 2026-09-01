@@ -102,7 +102,7 @@ export function generateWebSiteSchema() {
     '@type': 'WebSite',
     '@id': `${SITE_URL}/#website`,
     name: SITE_NAME,
-    alternateName: ['IconSearch', 'Icon Search', 'IconHub'],
+    alternateName: ['IconSearch', 'Icon Search'],
     url: SITE_URL,
     description:
       'Search, customize, and download 355,000+ free vector SVG icons from 229 open-source icon libraries.',

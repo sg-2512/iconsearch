@@ -4,7 +4,6 @@ import AppShell from './components/AppShell'
 import GoogleAdSense from './components/GoogleAdSense'
 import GoogleAnalytics from './components/GoogleAnalytics'
 import { JetBrains_Mono, Inter } from 'next/font/google'
-import Script from 'next/script'
 import { Analytics } from "@vercel/analytics/next"
 import { NAMED_LIBRARY_COUNT, SEARCHABLE_ICON_COUNT } from '../data/library-catalog'
 import {
@@ -103,52 +102,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             ]),
           }}
         />
-        <Script id="strip-extension-hydration-attrs" strategy="beforeInteractive">
-          {`
-            (function () {
-              var attrs = ['fdprocessedid'];
-              function clean(root) {
-                if (!root || !root.querySelectorAll) return;
-                attrs.forEach(function (attr) {
-                  if (root.nodeType === 1 && root.hasAttribute && root.hasAttribute(attr)) {
-                    root.removeAttribute(attr);
-                  }
-                  root.querySelectorAll('[' + attr + ']').forEach(function (el) {
-                    el.removeAttribute(attr);
-                  });
-                });
-              }
-              clean(document);
-              if (typeof MutationObserver === 'undefined') return;
-              var observer = new MutationObserver(function (mutations) {
-                mutations.forEach(function (mutation) {
-                  if (mutation.type === 'attributes' && attrs.indexOf(mutation.attributeName) !== -1) {
-                    mutation.target.removeAttribute(mutation.attributeName);
-                  }
-                  mutation.addedNodes.forEach(clean);
-                });
-              });
-              observer.observe(document.documentElement, {
-                subtree: true,
-                childList: true,
-                attributes: true,
-                attributeFilter: attrs
-              });
-              window.addEventListener('load', function () {
-                window.setTimeout(function () {
-                  observer.disconnect();
-                  clean(document);
-                }, 1000);
-              });
-            })();
-          `}
-        </Script>
-        <link rel="preconnect" href="https://fundingchoicesmessages.google.com" />
-        <link rel="dns-prefetch" href="https://fundingchoicesmessages.google.com" />
-        <link rel="preconnect" href="https://pagead2.googlesyndication.com" crossOrigin="anonymous" />
-        <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com" />
-        <link rel="preconnect" href="https://www.googletagmanager.com" />
-        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
       </head>
       <body suppressHydrationWarning>
         <AppShell>{children}</AppShell>

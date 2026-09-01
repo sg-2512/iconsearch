@@ -116,20 +116,6 @@ export function App({ oauth }: { oauth: Oauth }) {
     }
   };
 
-  const disconnectAccount = async () => {
-    setAccountBusy(true);
-    setAccountError(false);
-    try {
-      await oauth.deauthorize();
-      setAccount(null);
-      setAccountRevision((current) => current + 1);
-    } catch {
-      setAccountError(true);
-    } finally {
-      setAccountBusy(false);
-    }
-  };
-
   const selectedIcon = useMemo(
     () => icons.find((icon) => icon.id === selectedId) || icons[0],
     [icons, selectedId],
@@ -342,27 +328,13 @@ export function App({ oauth }: { oauth: Oauth }) {
                   />
                 </Text>
               ) : account ? (
-                <>
-                  <Text size="small">
-                    <FormattedMessage
-                      defaultMessage="Connected as {email}"
-                      description="Account status showing the email address connected to IconSearch."
-                      values={{ email: account.email }}
-                    />
-                  </Text>
-                  <Button
-                    variant="secondary"
-                    loading={accountBusy}
-                    disabled={accountBusy}
-                    onClick={() => void disconnectAccount()}
-                    stretch
-                  >
-                    {intl.formatMessage({
-                      defaultMessage: "Disconnect IconSearch account",
-                      description: "Button label that disconnects an IconSearch account from Canva.",
-                    })}
-                  </Button>
-                </>
+                <Text size="small" tone="secondary">
+                  <FormattedMessage
+                    defaultMessage="Connected as {email}"
+                    description="Account status showing the email address connected to IconSearch."
+                    values={{ email: account.email }}
+                  />
+                </Text>
               ) : (
                 <>
                   <Text size="small" tone="secondary">

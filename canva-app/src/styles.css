@@ -20,9 +20,6 @@ body {
 }
 
 .selected-icon-panel {
-  position: sticky;
-  top: 0;
-  z-index: 10;
   padding-block: var(--ui-kit-space-100);
   background: var(--ui-kit-elevation-surface-bg);
 }

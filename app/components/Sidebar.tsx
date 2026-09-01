@@ -183,7 +183,7 @@ export default function Sidebar() {
                 width: '100%',
                 padding: '9px 14px',
                 borderRadius: '10px',
-                background: 'var(--accent, #818cf8)',
+                background: 'var(--accent-accessible, #4f46e5)',
                 color: '#ffffff',
                 border: 'none',
                 fontSize: '13px',
@@ -194,7 +194,7 @@ export default function Sidebar() {
                 justifyContent: 'center',
                 gap: '8px',
                 boxSizing: 'border-box',
-                boxShadow: '0 4px 14px rgba(129,140,248,0.3)',
+                boxShadow: '0 4px 14px rgba(79,70,229,0.35)',
                 transition: 'all 0.15s ease'
               }}
             >

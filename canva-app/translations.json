@@ -119,10 +119,6 @@
     "defaultMessage": "The account connection could not be completed. Please try again.",
     "description": "Error shown when the IconSearch OAuth account flow fails."
   },
-  "vTjpIe": {
-    "defaultMessage": "Disconnect IconSearch account",
-    "description": "Button label that disconnects an IconSearch account from Canva."
-  },
   "z7d1y/": {
     "defaultMessage": "The selected icon was added to your design.",
     "description": "Status message shown after an icon is added to the design."

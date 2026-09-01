@@ -15,6 +15,22 @@ const libraryAliasRedirects = (allLibrariesData as LibraryRoute[])
   }));
 
 const nextConfig: NextConfig = {
+  reactStrictMode: true,
+  poweredByHeader: false,
+  compress: true,
+  experimental: {
+    optimizePackageImports: [
+      "lucide-react",
+      "@heroicons/react",
+      "@tabler/icons-react",
+      "@phosphor-icons/react",
+      "iconoir-react",
+      "bootstrap-icons",
+      "remixicon",
+      "@untitledui/icons",
+      "@radix-ui/react-icons",
+    ],
+  },
   async redirects() {
     return [
       {

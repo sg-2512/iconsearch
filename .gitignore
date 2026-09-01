@@ -90,3 +90,6 @@ next-env.d.ts
 /.office-addin-debugging
 /dist/
 /public/downloads/iconsearch-chrome-extension.zip
+/.agents/
+/ORIGINAL_REQUEST.md
+/PROJECT.md

@@ -73,8 +73,8 @@ function fireGtagEvent(eventName: string, params: Record<string, unknown>) {
 /** Get a stable anonymous session ID (persisted in localStorage). */
 function getSessionId(): string {
   if (typeof window === 'undefined') return 'ssr'
-  const KEY = 'iconhub_session_id'
-  let id = localStorage.getItem(KEY)
+  const KEY = 'iconsearch_session_id'
+  let id = localStorage.getItem(KEY) || localStorage.getItem('iconhub_session_id')
   if (!id) {
     id = crypto.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
     localStorage.setItem(KEY, id)

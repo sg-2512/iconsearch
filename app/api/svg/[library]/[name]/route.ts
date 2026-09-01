@@ -74,34 +74,171 @@ function setSvgRootAttribute(svg: string, name: string, value: string) {
   )
 }
 
+const LIBRARY_ALIASES: Record<string, string[]> = {
+  // Akar Icons
+  'akar-icons': ['akar-icons', 'akar'],
+  akar: ['akar-icons', 'akar'],
+
+  // Bootstrap Icons
+  'bootstrap-icons': ['bi', 'bootstrap-icons', 'bootstrap'],
+  bi: ['bi', 'bootstrap-icons', 'bootstrap'],
+  bootstrap: ['bi', 'bootstrap-icons', 'bootstrap'],
+
+  // Phosphor Icons
+  'phosphor-icons': ['ph', 'phosphor-icons', 'phosphor'],
+  ph: ['ph', 'phosphor-icons', 'phosphor'],
+  phosphor: ['ph', 'phosphor-icons', 'phosphor'],
+
+  // Remix Icon
+  'remix-icon': ['ri', 'remix-icon', 'remixicon', 'remix-icons', 'remix'],
+  'remix-icons': ['ri', 'remix-icon', 'remixicon', 'remix-icons', 'remix'],
+  remixicon: ['ri', 'remix-icon', 'remixicon', 'remix-icons', 'remix'],
+  ri: ['ri', 'remix-icon', 'remixicon', 'remix-icons', 'remix'],
+  remix: ['ri', 'remix-icon', 'remixicon', 'remix-icons', 'remix'],
+
+  // Ant Design Icons
+  'ant-design': ['ant-design', 'ant-design-icons'],
+  'ant-design-icons': ['ant-design', 'ant-design-icons'],
+
+  // Radix Icons
+  'radix-icons': ['radix-icons', 'radix-ui', 'radix'],
+  'radix-ui': ['radix-icons', 'radix-ui', 'radix'],
+  radix: ['radix-icons', 'radix-ui', 'radix'],
+
+  // File Icons
+  'file-icons': ['file-icons', 'file'],
+  file: ['file-icons', 'file'],
+
+  // Flag Icons
+  'flag-icons': ['flag', 'flag-icons', 'circle-flags', 'flagpack'],
+  flag: ['flag', 'flag-icons', 'circle-flags', 'flagpack'],
+
+  // Lucide Icons
+  'lucide-icons': ['lucide', 'lucide-icons'],
+  lucide: ['lucide', 'lucide-icons'],
+
+  // Tabler Icons
+  'tabler-icons': ['tabler', 'tabler-icons'],
+  tabler: ['tabler', 'tabler-icons'],
+
+  // Feather Icons
+  'feather-icons': ['feather', 'feather-icons', 'fe'],
+  feather: ['feather', 'feather-icons', 'fe'],
+  fe: ['feather', 'feather-icons', 'fe'],
+
+  // Ionicons
+  ionicons: ['ion', 'ionicons', 'ion-icons'],
+  ion: ['ion', 'ionicons', 'ion-icons'],
+  'ion-icons': ['ion', 'ionicons', 'ion-icons'],
+
+  // Octicons
+  octicons: ['octicon', 'octicons'],
+  octicon: ['octicon', 'octicons'],
+
+  // Devicons
+  devicons: ['devicon', 'devicons', 'devicon-plain'],
+  devicon: ['devicon', 'devicons', 'devicon-plain'],
+  'devicon-plain': ['devicon-plain', 'devicon', 'devicons'],
+
+  // Circum Icons
+  'circum-icons': ['circum', 'circum-icons'],
+  circum: ['circum', 'circum-icons'],
+
+  // Elusive Icons
+  'elusive-icons': ['el', 'elusive', 'elusive-icons'],
+  elusive: ['el', 'elusive', 'elusive-icons'],
+  el: ['el', 'elusive', 'elusive-icons'],
+
+  // Teenyicons
+  teenyicons: ['teenyicons', 'teeny'],
+  teeny: ['teenyicons', 'teeny'],
+
+  // Heroicons
+  heroicons: ['heroicons', 'heroicons-outline', 'heroicons-solid'],
+  'heroicons-outline': ['heroicons-outline', 'heroicons'],
+  'heroicons-solid': ['heroicons-solid', 'heroicons'],
+
+  // Weather Icons
+  'weather-icons': ['wi', 'weather-icons', 'weather'],
+  wi: ['wi', 'weather-icons', 'weather'],
+  weather: ['wi', 'weather-icons', 'weather'],
+
+  // VS Code Icons
+  'vscode-icons': ['vscode-icons', 'vscode', 'vs'],
+  vscode: ['vscode-icons', 'vscode', 'vs'],
+  vs: ['vscode-icons', 'vscode', 'vs'],
+
+  // Patternfly
+  'patternfly-icons': ['patternfly-icons', 'patternfly'],
+  patternfly: ['patternfly-icons', 'patternfly'],
+
+  // Other libraries with -icons suffix
+  'bitcoin-icons': ['bitcoin-icons', 'bitcoin'],
+  bitcoin: ['bitcoin-icons', 'bitcoin'],
+  'dinkie-icons': ['dinkie-icons', 'dinkie'],
+  dinkie: ['dinkie-icons', 'dinkie'],
+  'duo-icons': ['duo-icons', 'duo'],
+  duo: ['duo-icons', 'duo'],
+  'eos-icons': ['eos-icons', 'eos'],
+  eos: ['eos-icons', 'eos'],
+  'flat-color-icons': ['flat-color-icons', 'flat-color'],
+  'flat-color': ['flat-color-icons', 'flat-color'],
+  'game-icons': ['game-icons', 'game'],
+  game: ['game-icons', 'game'],
+  'grommet-icons': ['grommet-icons', 'grommet'],
+  grommet: ['grommet-icons', 'grommet'],
+  'lets-icons': ['lets-icons', 'lets'],
+  lets: ['lets-icons', 'lets'],
+  'mono-icons': ['mono-icons', 'mono'],
+  mono: ['mono-icons', 'mono'],
+  'rivet-icons': ['rivet-icons', 'rivet'],
+  rivet: ['rivet-icons', 'rivet'],
+  'simple-icons': ['simple-icons', 'simple'],
+  simple: ['simple-icons', 'simple'],
+  'simple-line-icons': ['simple-line-icons', 'simple-line'],
+  'simple-line': ['simple-line-icons', 'simple-line'],
+  'skill-icons': ['skill-icons', 'skill'],
+  skill: ['skill-icons', 'skill'],
+}
+
 function findLocalSvgFile(library: string, name: string): string {
-  if (library === 'patternfly-icons') {
-    const candidate = path.join(
-      process.cwd(),
-      'node_modules',
-      '@patternfly',
-      'react-icons',
-      'dist',
-      'static',
-      `${name}.svg`,
-    )
-    if (existsSync(candidate)) return candidate
+  const normalizedLib = library.replace(/^iconify-/i, '').toLowerCase().replace(/_/g, '-')
+  const aliases = new Set([normalizedLib, ...(LIBRARY_ALIASES[normalizedLib] || [])])
+  const nameVariants = Array.from(new Set([name, name.replace(/_/g, '-'), name.replace(/-/g, '_')]))
+
+  if (aliases.has('patternfly-icons') || aliases.has('patternfly')) {
+    for (const n of nameVariants) {
+      const candidate = path.join(
+        process.cwd(),
+        'node_modules',
+        '@patternfly',
+        'react-icons',
+        'dist',
+        'static',
+        `${n}.svg`,
+      )
+      if (existsSync(candidate)) return candidate
+    }
   }
 
-  if (library === 'bootstrap-icons') {
-    const candidate = path.join(
-      process.cwd(),
-      'node_modules',
-      'bootstrap-icons',
-      'icons',
-      `${name}.svg`,
-    )
-    if (existsSync(candidate)) return candidate
+  if (aliases.has('bootstrap-icons') || aliases.has('bi') || aliases.has('bootstrap')) {
+    for (const n of nameVariants) {
+      const candidate = path.join(
+        process.cwd(),
+        'node_modules',
+        'bootstrap-icons',
+        'icons',
+        `${n}.svg`,
+      )
+      if (existsSync(candidate)) return candidate
+    }
   }
 
-  if (library === 'untitled-ui-icons') {
-    const candidate = path.join(process.cwd(), 'public', 'untitled-ui-icons', `${name}.svg`)
-    if (existsSync(candidate)) return candidate
+  if (aliases.has('untitled-ui-icons') || aliases.has('untitled-ui') || aliases.has('untitledui')) {
+    for (const n of nameVariants) {
+      const candidate = path.join(process.cwd(), 'public', 'untitled-ui-icons', `${n}.svg`)
+      if (existsSync(candidate)) return candidate
+    }
   }
 
   return ''
@@ -120,88 +257,78 @@ function getUpstreamCandidateUrls(library: string, name: string): string[] {
 
   const add = (url: string) => candidates.add(url)
 
+  const baseLib = library.replace(/^iconify-/i, '').toLowerCase()
+  const normalizedLib = baseLib.replace(/_/g, '-')
+  const strippedLib = normalizedLib.replace(/-icons?$/, '')
+  const withIconsLib = strippedLib.endsWith('-icons') ? strippedLib : `${strippedLib}-icons`
+  const withIconLib = strippedLib.endsWith('-icon') ? strippedLib : `${strippedLib}-icon`
+
+  const prefixSet = new Set<string>()
   if (library.startsWith('iconify-')) {
-    const prefix = library.replace(/^iconify-/, '')
+    prefixSet.add(baseLib)
+  }
+  const aliases = LIBRARY_ALIASES[normalizedLib] || LIBRARY_ALIASES[baseLib]
+  if (aliases) {
+    for (const a of aliases) prefixSet.add(a)
+  }
+  prefixSet.add(normalizedLib)
+  prefixSet.add(strippedLib)
+  prefixSet.add(withIconsLib)
+  prefixSet.add(withIconLib)
+
+  const prefixes = Array.from(prefixSet)
+
+  // Primary: standard Iconify URLs for each prefix and variant
+  for (const prefix of prefixes) {
     for (const v of variants) {
       add(`https://api.iconify.design/${prefix}/${v}.svg`)
     }
-  } else if (library === 'elusive-icons') {
+  }
+
+  // Secondary: CDN / package fallbacks for specific icon collections
+  const allAliases = new Set(prefixes)
+
+  if (allAliases.has('ant-design') || allAliases.has('ant-design-icons')) {
     for (const v of variants) {
-      add(`https://api.iconify.design/el/${v}.svg`)
-      add(`https://api.iconify.design/elusive/${v}.svg`)
-    }
-  } else if (library === 'teenyicons') {
-    for (const v of variants) {
-      add(`https://api.iconify.design/teenyicons/${v}.svg`)
-      add(`https://api.iconify.design/teeny/${v}.svg`)
-    }
-  } else if (library === 'circum-icons') {
-    for (const v of variants) {
-      add(`https://api.iconify.design/circum/${v}.svg`)
-    }
-  } else if (library === 'radix-icons') {
-    for (const v of variants) {
-      add(`https://api.iconify.design/radix-icons/${v}.svg`)
-      add(`https://api.iconify.design/radix-ui/${v}.svg`)
-      add(`https://api.iconify.design/radix/${v}.svg`)
-    }
-  } else if (library === 'devicons') {
-    for (const v of variants) {
-      add(`https://api.iconify.design/devicon/${v}.svg`)
-      add(`https://cdn.jsdelivr.net/gh/devicons/devicon/icons/${v}/${v}-original.svg`)
-    }
-  } else if (library === 'lucide-icons') {
-    for (const v of variants) {
-      add(`https://cdn.jsdelivr.net/npm/lucide-static/icons/${v}.svg`)
-      add(`https://api.iconify.design/lucide/${v}.svg`)
-    }
-  } else if (library === 'tabler-icons') {
-    for (const v of variants) {
-      add(`https://cdn.jsdelivr.net/npm/@tabler/icons/icons/${v}.svg`)
-      add(`https://api.iconify.design/tabler/${v}.svg`)
-    }
-  } else if (library === 'phosphor-icons') {
-    for (const v of variants) {
-      add(`https://cdn.jsdelivr.net/npm/@phosphor-icons/core/assets/regular/${v}.svg`)
-      add(`https://api.iconify.design/ph/${v}.svg`)
-    }
-  } else if (library === 'heroicons') {
-    for (const v of variants) {
-      add(`https://api.iconify.design/heroicons/${v}.svg`)
-      add(`https://api.iconify.design/heroicons-outline/${v}.svg`)
-      add(`https://api.iconify.design/heroicons-solid/${v}.svg`)
-    }
-  } else if (library === 'feather-icons') {
-    for (const v of variants) {
-      add(`https://unpkg.com/feather-icons/dist/icons/${v}.svg`)
-      add(`https://api.iconify.design/feather/${v}.svg`)
-    }
-  } else if (library === 'remix-icon') {
-    for (const v of variants) {
-      add(`https://api.iconify.design/ri/${v}.svg`)
-    }
-  } else if (library === 'iconoir') {
-    for (const v of variants) {
-      add(`https://api.iconify.design/iconoir/${v}.svg`)
-    }
-  } else if (library === 'ionicons') {
-    for (const v of variants) {
-      add(`https://api.iconify.design/ion/${v}.svg`)
-    }
-  } else if (library === 'octicons') {
-    for (const v of variants) {
-      add(`https://api.iconify.design/octicon/${v}.svg`)
-    }
-  } else if (library === 'ant-design-icons') {
-    for (const v of variants) {
-      add(`https://api.iconify.design/ant-design/${v}.svg`)
       add(`https://api.iconify.design/ant-design/${v}-outlined.svg`)
       add(`https://api.iconify.design/ant-design/${v}-filled.svg`)
     }
-  } else {
-    const prefix = library.replace(/-icons?$/, '').replace(/_/g, '-')
+  }
+
+  if (allAliases.has('lucide') || allAliases.has('lucide-icons')) {
     for (const v of variants) {
-      add(`https://api.iconify.design/${prefix}/${v}.svg`)
+      add(`https://cdn.jsdelivr.net/npm/lucide-static/icons/${v}.svg`)
+    }
+  }
+
+  if (allAliases.has('tabler') || allAliases.has('tabler-icons')) {
+    for (const v of variants) {
+      add(`https://cdn.jsdelivr.net/npm/@tabler/icons/icons/${v}.svg`)
+    }
+  }
+
+  if (allAliases.has('ph') || allAliases.has('phosphor-icons') || allAliases.has('phosphor')) {
+    for (const v of variants) {
+      add(`https://cdn.jsdelivr.net/npm/@phosphor-icons/core/assets/regular/${v}.svg`)
+    }
+  }
+
+  if (allAliases.has('feather') || allAliases.has('feather-icons') || allAliases.has('fe')) {
+    for (const v of variants) {
+      add(`https://unpkg.com/feather-icons/dist/icons/${v}.svg`)
+    }
+  }
+
+  if (allAliases.has('devicon') || allAliases.has('devicons') || allAliases.has('devicon-plain')) {
+    for (const v of variants) {
+      add(`https://cdn.jsdelivr.net/gh/devicons/devicon/icons/${v}/${v}-original.svg`)
+    }
+  }
+
+  if (allAliases.has('heroicons') || allAliases.has('heroicons-outline') || allAliases.has('heroicons-solid')) {
+    for (const v of variants) {
+      add(`https://api.iconify.design/heroicons-outline/${v}.svg`)
+      add(`https://api.iconify.design/heroicons-solid/${v}.svg`)
     }
   }
 

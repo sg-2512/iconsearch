@@ -24,7 +24,14 @@ export default function HomeSearch() {
 
   return (
     <div className={styles.searchStack}>
-      <form className={styles.searchForm} onSubmit={handleSearch}>
+      <form
+        className={styles.searchForm}
+        action="/icon-search"
+        method="get"
+        onSubmit={handleSearch}
+        role="search"
+        aria-label="Icon search form"
+      >
         <label className={styles.visuallyHidden} htmlFor="home-icon-search">
           Search the icon catalog
         </label>
@@ -33,6 +40,7 @@ export default function HomeSearch() {
           <input
             suppressHydrationWarning
             id="home-icon-search"
+            name="q"
             className={styles.searchInput}
             type="search"
             placeholder={`Search ${SEARCHABLE_ICON_COUNT.toLocaleString('en-US')} icons...`}
