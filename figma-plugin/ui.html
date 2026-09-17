@@ -713,7 +713,7 @@
     <div class="auth-card">
       <div class="auth-logo">IS</div>
       <div class="auth-title">Connect IconSearch</div>
-      <p class="auth-copy">Sign in securely in your browser. The first 500 verified Figma users receive lifetime Founder access.</p>
+      <p class="auth-copy">Sign in securely in your browser to sync collections and presets. IconSearch is 100% free and unlimited for all Figma designers.</p>
       <button class="auth-button" id="authButton" type="button">Sign in with IconSearch</button>
       <a class="auth-open-link hidden" id="authOpenLink" href="#" target="_blank" rel="noopener noreferrer">Open approval page</a>
       <div class="auth-message" id="authMessage">Your password never enters this plugin.</div>
@@ -1763,8 +1763,8 @@
 
         if (message.unlocked) {
           const plan = access.tier === 'founder' && access.founderNumber
-            ? `Founder #${access.founderNumber}`
-            : 'Free';
+            ? `Founder #${access.founderNumber} · Free`
+            : '100% Free Lifetime';
           accountLabel.textContent = `${access.email || 'Connected'} - ${plan}`;
           startApp();
         } else {

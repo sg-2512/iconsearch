@@ -37,6 +37,7 @@ const eslintConfig = defineConfig([
     "vscode-extension/**",
     "vscode-extension/out/**",
     "eslint-report*.json",
+    ".agents/**",
   ]),
   {
     plugins: {

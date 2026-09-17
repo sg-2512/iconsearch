@@ -14,8 +14,8 @@ export default function GoogleAnalytics({ gaId }: { gaId: string }) {
     // 1. Initialize dataLayer & gtag immediately to capture any early events in memory without error
     window.dataLayer = window.dataLayer || []
     if (!window.gtag) {
-      window.gtag = function gtag() {
-        window.dataLayer.push(arguments)
+      window.gtag = function gtag(...args: unknown[]) {
+        window.dataLayer.push(args)
       }
       window.gtag('js', new Date())
       window.gtag('config', gaId)

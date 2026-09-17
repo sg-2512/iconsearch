@@ -1,13 +1,33 @@
 import { icons } from '../../lib/icons'
 import Link from 'next/link'
-import { createPageMetadata } from '../../lib/seo'
+import {
+  createPageMetadata,
+  generateBreadcrumbSchema,
+  generateFAQSchema,
+  generateFrameworkHubSchema,
+} from '../../lib/seo'
+import { getDynamicYear, getFormattedCurrentMonthYear } from '../../lib/date'
 
-export const metadata = createPageMetadata({
-  title: 'Tailwind CSS Icons Guide (2026) — Sizing, Dark Mode & currentColor',
-  description: 'Learn how to integrate and style SVG icons with Tailwind CSS v4. Explore currentColor, size utilities, hover micro-animations, and Heroicons vs Lucide comparison.',
-  path: '/tailwind-icons',
-  type: 'article',
-})
+export function generateMetadata() {
+  const year = getDynamicYear()
+  return createPageMetadata({
+    title: `Tailwind CSS Icons Guide (${year}) — Sizing, Dark Mode & currentColor`,
+    description: 'Learn how to integrate and style SVG icons with Tailwind CSS v4. Explore currentColor, size utilities, hover micro-animations, and Heroicons vs Lucide comparison.',
+    path: '/tailwind-icons',
+    type: 'article',
+    keywords: [
+      'tailwind icons',
+      'tailwind css svg icons',
+      'currentcolor tailwind',
+      'heroicons tailwind',
+      'icon sizing tailwind v4',
+      'tailwind css vector icons',
+      'tailwind hover icon animation',
+      'lucide react tailwind',
+      'dark mode icons tailwind',
+    ],
+  })
+}
 
 const tailwindFaqs = [
   {
@@ -28,40 +48,55 @@ const tailwindFaqs = [
   },
   {
     q: 'What is the difference between Heroicons and Lucide for Tailwind projects?',
-    a: 'Heroicons was created by Tailwind Labs to match Tailwind UI components natively with 20px (mini), 24px (outline/solid), and 16px (micro) variants. Lucide Icons is a broader community library with 1,550+ icons and customizable stroke-width properties (`strokeWidth={1.75}`).',
+    a: 'Heroicons was created by Tailwind Labs to match Tailwind UI components natively with 20px (mini), 24px (outline/solid), and 16px (micro) variants. Lucide Icons is a broader community library with 1,900+ icons and customizable stroke-width properties (`strokeWidth={1.75}`).',
   },
 ]
 
 export default function TailwindIconsPage() {
+  const currentYear = getDynamicYear()
+  const lastUpdated = getFormattedCurrentMonthYear()
   const tailwindFriendly = icons.filter((i) => i.frameworks.includes('react'))
 
-  const faqSchema = {
+  const hubSchema = generateFrameworkHubSchema({
+    name: `Tailwind CSS Icons Guide (${currentYear}) — Sizing, Dark Mode & currentColor`,
+    description:
+      'Learn how to integrate and style SVG icons with Tailwind CSS v4. Explore currentColor, size utilities, hover micro-animations, and Heroicons vs Lucide comparison.',
+    path: '/tailwind-icons',
+    datePublished: '2026-08-17',
+    dateModified: '2026-08-20',
+  })
+
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: 'Home', url: '/' },
+    { name: 'Tailwind Icons', url: '/tailwind-icons' },
+  ])
+
+  const faqSchema = generateFAQSchema(tailwindFaqs)
+
+  const schemaGraph = {
     '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: tailwindFaqs.map((faq) => ({
-      '@type': 'Question',
-      name: faq.q,
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: faq.a,
-      },
-    })),
+    '@graph': [hubSchema, breadcrumbSchema, faqSchema],
   }
 
   return (
     <main style={{ maxWidth: '1200px', margin: '0 auto', padding: '40px 48px' }}>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema).replace(/</g, '\\u003c') }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaGraph).replace(/</g, '\\u003c') }}
       />
 
       {/* Header */}
       <section style={{ marginBottom: '48px', paddingBottom: '48px', borderBottom: '1px solid var(--border)' }}>
-        <div style={{ fontSize: '12px', color: 'var(--accent)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '2px', marginBottom: '12px' }}>
-          TAILWIND CSS STYLING
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '16px' }}>
+          <div style={{ fontSize: '12px', color: 'var(--accent)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '2px' }}>
+            TAILWIND CSS STYLING & UTILITIES
+          </div>
+          <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace', background: 'var(--bg-card)', border: '1px solid var(--border)', padding: '4px 12px', borderRadius: '999px' }}>
+            Last updated: {lastUpdated}
+          </div>
         </div>
         <h1 style={{ fontSize: 'clamp(32px, 5vw, 52px)', fontWeight: 800, lineHeight: 1.15, marginBottom: '20px' }}>
-          Tailwind CSS Icons: <span style={{ color: 'var(--accent)' }}>Sizing, Dark Mode & currentColor</span> (2026)
+          Tailwind CSS Icons: <span style={{ color: 'var(--accent)' }}>Sizing, Dark Mode & currentColor</span> ({currentYear})
         </h1>
         <p style={{ color: 'var(--text-muted)', fontSize: '17px', maxWidth: '780px', lineHeight: 1.8, marginBottom: '20px' }}>
           Master SVG icon styling in modern Tailwind CSS. Learn how <code>currentColor</code> handles seamless dark mode transitions, 
@@ -77,10 +112,10 @@ export default function TailwindIconsPage() {
       {/* Tailwind Utility Patterns */}
       <section style={{ marginBottom: '56px' }}>
         <h2 style={{ fontSize: '24px', fontWeight: 800, marginBottom: '16px', color: 'var(--text)' }}>
-          1. Core Tailwind Styling Patterns: Sizing, Colors & Hover
+          How does currentColor enable dark mode and dynamic text coloring in Tailwind CSS?
         </h2>
         <p style={{ color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.8, marginBottom: '20px' }}>
-          Because modern SVG icons accept <code>className</code> and default to <code>currentColor</code>, you can style icons using standard Tailwind utility classes without extra CSS declarations:
+          SVG icons styled with <code>currentColor</code> automatically inherit the computed CSS <code>color</code> property from their parent container or direct utility class list. Applying Tailwind classes like <code>text-zinc-600 dark:text-zinc-300 hover:text-indigo-600</code> dynamically recolors stroke and fill attributes across light mode, dark mode, and interactive hover states without requiring bespoke CSS rules. This approach guarantees that vector graphics always synchronize with your application theme, typography hierarchy, and active focus states across your entire frontend stack.
         </p>
 
         <div style={{ background: 'var(--code-bg)', border: '1px solid var(--border)', borderRadius: '10px', padding: '20px', marginBottom: '24px', overflowX: 'auto' }}>
@@ -99,6 +134,60 @@ export default function TailwindIconsPage() {
   <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
 </button>`}
           </pre>
+        </div>
+      </section>
+
+      {/* Semantic Comparison Table */}
+      <section style={{ marginBottom: '56px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '16px', padding: '32px' }}>
+        <h2 style={{ fontSize: '22px', fontWeight: 800, marginBottom: '16px', color: 'var(--text)' }}>
+          Which icon libraries integrate best with Tailwind CSS utility classes?
+        </h2>
+        <p style={{ color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.8, marginBottom: '20px' }}>
+          Tailwind CSS compatible libraries forward the <code>className</code> prop directly to the root <code>&lt;svg&gt;</code> tag and default their paths to <code>currentColor</code>. The comparison table below outlines top Tailwind-ready libraries, licenses, TypeScript support, and primary packages:
+        </p>
+
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px', textAlign: 'left' }}>
+            <caption style={{ textAlign: 'left', fontWeight: 600, fontSize: '13px', color: 'var(--text-muted)', marginBottom: '12px', captionSide: 'top' }}>
+              Comparison of Tailwind CSS Compatible Vector Icon Libraries ({currentYear})
+            </caption>
+            <thead>
+              <tr style={{ borderBottom: '1px solid var(--border)', color: 'var(--text)', fontFamily: 'JetBrains Mono, monospace', fontSize: '12px' }}>
+                <th style={{ padding: '12px 14px' }}>Library</th>
+                <th style={{ padding: '12px 14px' }}>Total Icons</th>
+                <th style={{ padding: '12px 14px' }}>License</th>
+                <th style={{ padding: '12px 14px' }}>TypeScript</th>
+                <th style={{ padding: '12px 14px' }}>Tailwind Fit</th>
+                <th style={{ padding: '12px 14px' }}>Primary NPM Package</th>
+              </tr>
+            </thead>
+            <tbody>
+              {tailwindFriendly.slice(0, 8).map((lib) => (
+                <tr key={lib.slug} style={{ borderBottom: '1px solid var(--border)' }}>
+                  <td style={{ padding: '12px 14px', fontWeight: 600 }}>
+                    <Link href={`/icons/${lib.slug}`} style={{ color: 'var(--accent)', textDecoration: 'none' }}>
+                      {lib.name}
+                    </Link>
+                  </td>
+                  <td style={{ padding: '12px 14px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace' }}>
+                    {lib.iconCount.toLocaleString('en-US')}
+                  </td>
+                  <td style={{ padding: '12px 14px', color: 'var(--green)', fontFamily: 'JetBrains Mono, monospace' }}>
+                    {lib.license}
+                  </td>
+                  <td style={{ padding: '12px 14px', color: 'var(--cyan)' }}>
+                    {lib.typescript ? 'Native .d.ts' : 'Community'}
+                  </td>
+                  <td style={{ padding: '12px 14px', color: 'var(--text-muted)' }}>
+                    {lib.slug === 'heroicons' ? 'Official Tailwind UI' : 'className prop / currentColor'}
+                  </td>
+                  <td style={{ padding: '12px 14px', color: 'var(--text)', fontFamily: 'JetBrains Mono, monospace', fontSize: '12px' }}>
+                    <code>{lib.installCommand.replace('npm install ', '')}</code>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </section>
 
@@ -174,7 +263,7 @@ export default function TailwindIconsPage() {
       </section>
 
       {/* Footer Navigation */}
-      <section style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', padding: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
+      <section style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', padding: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px', marginBottom: '48px' }}>
         <div>
           <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '6px' }}>Next: Explore TypeScript & Framework Guides</h3>
           <p style={{ color: 'var(--text-muted)', fontSize: '14px', margin: 0 }}>Type-safe icon components in React, Next.js, Vue, and Svelte.</p>
@@ -188,6 +277,13 @@ export default function TailwindIconsPage() {
           </Link>
         </div>
       </section>
+
+      {/* Non-Affiliation Disclaimer */}
+      <footer style={{ borderTop: '1px solid var(--border)', paddingTop: '24px', textAlign: 'center' }}>
+        <p style={{ fontSize: '12px', color: 'var(--text-muted)', maxWidth: '800px', margin: '0 auto', lineHeight: 1.7 }}>
+          Disclaimer: IconSearch is an independent open-source discovery platform and is not affiliated with, sponsored by, or endorsed by Tailwind Labs, Tailwind CSS, or any featured icon library maintainers.
+        </p>
+      </footer>
     </main>
   )
 }

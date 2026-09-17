@@ -11,6 +11,7 @@ import {
   generateSvelteSnippet,
   generateTailwindInlineSnippet,
   generateSvgSnippet,
+  generateBase64Snippet,
   compileSvgSprite,
   renderSvgToPng,
   renderSvgToPngBlob,
@@ -756,6 +757,39 @@ describe('Universal Exporter & Code Generation Suite', () => {
       assert.ok(unzipped.file('react/IconArrowRight.tsx'))
       assert.ok(unzipped.file('vue/IconArrowRight.vue'))
       assert.ok(unzipped.file('svg/arrow-right.svg'))
+    })
+
+    it('T5.19: customizeSvg applies rotation transform centered on viewBox', () => {
+      const rotated = customizeSvg(sampleSvg1, { rotate: 90 })
+      assert.ok(rotated.includes('transform="rotate(90 12 12)"'))
+    })
+
+    it('T5.20: customizeSvg applies horizontal and vertical flip transforms', () => {
+      const flippedH = customizeSvg(sampleSvg1, { flipHorizontal: true })
+      assert.ok(flippedH.includes('transform="translate(24 0) scale(-1 1)"'))
+
+      const flippedV = customizeSvg(sampleSvg1, { flipVertical: true })
+      assert.ok(flippedV.includes('transform="translate(0 24) scale(1 -1)"'))
+
+      const flippedBoth = customizeSvg(sampleSvg1, { flipHorizontal: true, flipVertical: true })
+      assert.ok(flippedBoth.includes('translate(24 0) scale(-1 1)'))
+      assert.ok(flippedBoth.includes('translate(0 24) scale(1 -1)'))
+    })
+
+    it('T5.21: customizeSvg combines rotation and flipping seamlessly', () => {
+      const combined = customizeSvg(sampleSvg1, { rotate: 180, flipHorizontal: true })
+      assert.ok(combined.includes('rotate(180 12 12)'))
+      assert.ok(combined.includes('translate(24 0) scale(-1 1)'))
+    })
+
+    it('T5.22: generateBase64Snippet generates valid data URI with base64 encoded SVG', () => {
+      const base64Uri = generateBase64Snippet(sampleSvg1, { size: 32, color: '#3b82f6' })
+      assert.ok(base64Uri.startsWith('data:image/svg+xml;base64,'))
+      const rawBase64 = base64Uri.replace('data:image/svg+xml;base64,', '')
+      const decoded = Buffer.from(rawBase64, 'base64').toString('utf-8')
+      assert.ok(decoded.includes('<svg'))
+      assert.ok(decoded.includes('width="32"'))
+      assert.ok(decoded.includes('stroke="#3b82f6"'))
     })
   })
 })

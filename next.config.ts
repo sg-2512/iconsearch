@@ -130,26 +130,6 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
-        source: "/icons/category/:slug*",
-        destination: "/free-svg-icons",
-        permanent: true,
-      },
-      {
-        source: "/icons/category",
-        destination: "/free-svg-icons",
-        permanent: true,
-      },
-      {
-        source: "/icons/collection/:slug*",
-        destination: "/free-svg-icons",
-        permanent: true,
-      },
-      {
-        source: "/icons/collection",
-        destination: "/free-svg-icons",
-        permanent: true,
-      },
-      {
         source: "/blog/icon-library-pricing-comparison-2026",
         destination: "/free-svg-icons",
         permanent: true,

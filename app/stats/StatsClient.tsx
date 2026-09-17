@@ -3,8 +3,11 @@
 import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import { allLibraries, SEARCHABLE_ICON_COUNT } from '../../data/library-catalog'
+import { getFormattedCurrentMonthYear, getDynamicYear } from '../../lib/date'
 
 export default function StatsClient() {
+  const currentYear = getDynamicYear()
+  const lastUpdated = getFormattedCurrentMonthYear()
   const [searchQuery, setSearchQuery] = useState('')
   const [licenseFilter, setLicenseFilter] = useState('all')
 
@@ -48,12 +51,17 @@ export default function StatsClient() {
       
       {/* Header */}
       <header style={{ marginBottom: '48px', paddingBottom: '32px', borderBottom: '1px solid var(--border)' }}>
-        <div style={{ fontSize: '12px', color: 'var(--accent)', fontFamily: 'var(--font-mono, monospace)', letterSpacing: '2px', marginBottom: '12px', textTransform: 'uppercase' }}>
-          ECOSYSTEM ANALYTICS & RANKINGS
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '12px' }}>
+          <div style={{ fontSize: '12px', color: 'var(--accent)', fontFamily: 'var(--font-mono, monospace)', letterSpacing: '2px', textTransform: 'uppercase' }}>
+            ECOSYSTEM ANALYTICS & RANKINGS
+          </div>
+          <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono, monospace)', background: 'var(--bg-card)', border: '1px solid var(--border)', padding: '4px 12px', borderRadius: '999px' }}>
+            Last updated: {lastUpdated}
+          </div>
         </div>
         <h1 style={{ fontSize: 'clamp(32px, 5vw, 56px)', fontWeight: 800, lineHeight: 1.1, marginBottom: '16px', letterSpacing: '-0.02em' }}>
           Icon Library<br />
-          <span style={{ color: 'var(--accent)' }}>Stats & Ecosystem Breakdown</span>
+          <span style={{ color: 'var(--accent)' }}>Stats & Ecosystem Breakdown ({currentYear})</span>
         </h1>
         <p style={{ color: 'var(--text-muted)', fontSize: '17px', maxWidth: '640px', lineHeight: '1.6' }}>
           Real-time statistics across all <span style={{ color: '#ffffff', fontWeight: 600 }}>{totalLibraries} open-source icon libraries</span> and <span style={{ color: '#ffffff', fontWeight: 600 }}>{totalIcons.toLocaleString('en-US')} vector icons</span> indexed on IconSearch.

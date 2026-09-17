@@ -45,6 +45,7 @@ import {
   Zap,
   type LucideIcon,
 } from 'lucide-react'
+import { getDynamicYear } from '../../lib/date'
 import styles from './framer-template.module.css'
 
 type Category = 'All' | 'Essentials' | 'Commerce' | 'Social' | 'Objects'
@@ -206,7 +207,7 @@ export default function FramerTemplateClient({
         <div className={styles.heroCopy}>
           <div className={styles.eyebrow}>
             <span />
-            Free Framer template · 2026
+            Free Framer template · {getDynamicYear()}
           </div>
           <h1>
             Tiny shapes.

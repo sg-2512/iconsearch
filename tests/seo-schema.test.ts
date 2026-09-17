@@ -13,6 +13,8 @@ import {
   generateBreadcrumbSchema,
   generateImageObjectSchema,
   generateFAQSchema,
+  generateWebApplicationSchema,
+  generateFrameworkHubSchema,
 } from '../lib/seo'
 
 describe('SEO & Schema.org JSON-LD Test Suite', () => {
@@ -214,51 +216,52 @@ describe('SEO & Schema.org JSON-LD Test Suite', () => {
       assert.equal(collectionSchema['@graph'][0].mainEntity.itemListElement.length, 2)
     })
 
-    it('T1.12: TechArticle schema generator validates framework guide structured data', () => {
-      const techArticleSchema = {
-        '@context': 'https://schema.org',
-        '@type': 'TechArticle',
-        headline: 'React Icons Guide 2026 — Architecture & Performance',
+    it('T1.12: TechArticle schema generator validates framework guide structured data with dates and connected graph', () => {
+      const techArticleSchema = generateFrameworkHubSchema({
+        name: 'React Icons Guide 2026 — Architecture & Performance',
         description: 'Complete guide on tree-shaking and SVG component rendering in React.',
-        author: {
-          '@id': `${SITE_URL}/#organization`,
-        },
-        publisher: {
-          '@id': `${SITE_URL}/#organization`,
-        },
-        mainEntityOfPage: `${SITE_URL}/react-icons`,
-      }
+        path: '/react-icons',
+        datePublished: '2026-08-17',
+        dateModified: '2026-08-20',
+      })
 
       assert.equal(techArticleSchema['@context'], 'https://schema.org')
       assert.equal(techArticleSchema['@type'], 'TechArticle')
+      assert.equal(techArticleSchema['@id'], 'https://iconsearch.info/react-icons#article')
       assert.equal(techArticleSchema.headline.includes('React Icons Guide'), true)
+      assert.equal(techArticleSchema.datePublished, '2026-08-17')
+      assert.equal(techArticleSchema.dateModified, '2026-08-20')
+      assert.equal(techArticleSchema.inLanguage, 'en')
+      assert.equal(techArticleSchema.isPartOf['@id'], 'https://iconsearch.info/#website')
+      assert.equal(techArticleSchema.author['@id'], 'https://iconsearch.info/#organization')
+      assert.equal(techArticleSchema.publisher['@id'], 'https://iconsearch.info/#organization')
     })
 
-    it('T1.13: Category landing page schema generates valid CollectionPage metadata', () => {
-      const categorySchema = {
-        '@context': 'https://schema.org',
-        '@type': 'CollectionPage',
-        name: 'AI & Machine Learning SVG Icons',
-        description: 'Free open-source artificial intelligence, neural network, and bot vector icons.',
-        url: 'https://iconsearch.info/categories/ai',
-      }
+    it('T1.13: generateWebApplicationSchema outputs WebApplication entity with connected graph and rich properties', () => {
+      const schema = generateWebApplicationSchema({
+        name: 'IconSearch Vector Icon Engine',
+        description: 'Search 355,000+ free SVG icons.',
+        path: '/icon-search',
+        featureList: ['Universal vector search', 'Customizer sandbox'],
+      })
 
-      assert.equal(categorySchema['@type'], 'CollectionPage')
-      assert.equal(categorySchema.url, 'https://iconsearch.info/categories/ai')
+      assert.equal(schema['@context'], 'https://schema.org')
+      assert.equal(schema['@type'], 'WebApplication')
+      assert.equal(schema['@id'], 'https://iconsearch.info/icon-search#webapp')
+      assert.equal(schema.name, 'IconSearch Vector Icon Engine')
+      assert.equal(schema.url, 'https://iconsearch.info/icon-search')
+      assert.equal(schema.applicationCategory, 'DesignApplication')
+      assert.equal(schema.operatingSystem, 'All (Web Browser, macOS, Windows, Linux, iOS, Android)')
+      assert.equal(schema.browserRequirements, 'Requires JavaScript. Requires HTML5.')
+      assert.equal(schema.offers.price, '0')
+      assert.equal(schema.offers.priceCurrency, 'USD')
+      assert.equal(schema.offers.availability, 'https://schema.org/InStock')
+      assert.equal(schema.featureList?.length, 2)
+      assert.equal(schema.isPartOf['@id'], 'https://iconsearch.info/#website')
+      assert.equal(schema.author['@id'], 'https://iconsearch.info/#organization')
+      assert.equal(schema.publisher['@id'], 'https://iconsearch.info/#organization')
     })
 
-    it('T1.14: Head-to-head comparison page schema generates valid comparison metadata', () => {
-      const comparisonSchema = {
-        '@context': 'https://schema.org',
-        '@type': 'TechArticle',
-        headline: 'Lucide Icons vs Heroicons: In-Depth Comparison (2026)',
-        description: 'Compare Lucide Icons vs Heroicons on icon count, framework support, licenses, and bundle weight.',
-        url: 'https://iconsearch.info/compare/lucide-icons-vs-heroicons',
-      }
-
-      assert.equal(comparisonSchema['@type'], 'TechArticle')
-      assert.ok(comparisonSchema.headline.includes('vs'))
-    })
 
     it('T1.15: createPageMetadata supports custom robots meta tag settings', () => {
       const meta = createPageMetadata({
@@ -448,8 +451,8 @@ describe('SEO & Schema.org JSON-LD Test Suite', () => {
     it('T2.12: createPageMetadata handles special characters and quotes in title and description', () => {
       const meta = createPageMetadata({
         title: 'Lucide & Heroicons: "Top 10" <Vector> Icons in 2026',
-        description: 'Compare "Lucide" & "Heroicons" with 100% precision & speed.',
-        path: '/compare',
+        description: 'Explore "Lucide" & "Heroicons" with 100% precision & speed.',
+        path: '/icon-search',
       })
 
       assert.ok(meta.title?.toString().includes('Lucide & Heroicons'))
@@ -559,16 +562,7 @@ describe('SEO & Schema.org JSON-LD Test Suite', () => {
       assert.equal(meta.keywords?.length, 3)
     })
 
-    it('T3.06: Pair 6: /categories/ai CollectionPage Schema + ItemList (24 items) + Breadcrumbs', () => {
-      const breadcrumbs = generateBreadcrumbSchema([
-        { name: 'Home', url: '/' },
-        { name: 'Categories', url: '/categories' },
-        { name: 'AI Icons', url: '/categories/ai' },
-      ])
-      assert.equal(breadcrumbs.itemListElement[2].name, 'AI Icons')
-    })
-
-    it('T3.07: Pair 7: /categories/commerce CollectionPage + ImageObject Schema', () => {
+    it('T3.07: Pair 7: Icon ImageObject Schema with ISC License', () => {
       const img = generateImageObjectSchema({
         name: 'Shopping Cart SVG',
         description: 'Cart icon',
@@ -576,15 +570,6 @@ describe('SEO & Schema.org JSON-LD Test Suite', () => {
         license: 'ISC',
       })
       assert.equal(img.license, 'https://spdx.org/licenses/ISC.html')
-    })
-
-    it('T3.08: Pair 8: /compare/lucide-vs-heroicons TechArticle Schema + Breadcrumbs', () => {
-      const breadcrumbs = generateBreadcrumbSchema([
-        { name: 'Home', url: '/' },
-        { name: 'Comparisons', url: '/compare' },
-        { name: 'Lucide vs Heroicons', url: '/compare/lucide-icons-vs-heroicons' },
-      ])
-      assert.equal(breadcrumbs.itemListElement[2].name, 'Lucide vs Heroicons')
     })
 
     it('T3.09: Pair 9: /icons/tabler-icons Library CollectionPage + Organization Schema', () => {
@@ -609,36 +594,6 @@ describe('SEO & Schema.org JSON-LD Test Suite', () => {
 
   // ── TIER 4: REAL-WORLD DEVELOPER WORKLOADS ────────────────────────────────
   describe('Tier 4: Real-World Developer Workloads', () => {
-    it('T4.01: Workload 1: Category landing page complete SEO payload (Metadata + CollectionPage + ItemList + Breadcrumbs)', () => {
-      const category = 'finance'
-      const title = 'Finance & Banking SVG Icons (1,240+ Free Icons) — MIT & Apache 2.0'
-      const description = 'Download free finance, credit card, and currency SVG vector icons.'
-      const path = `/categories/${category}` as const
-
-      const metadata = createPageMetadata({ title, description, path })
-      const breadcrumbs = generateBreadcrumbSchema([
-        { name: 'Home', url: '/' },
-        { name: 'Categories', url: '/categories' },
-        { name: 'Finance Icons', url: path },
-      ])
-
-      const graph = {
-        '@context': 'https://schema.org',
-        '@graph': [
-          {
-            '@type': 'CollectionPage',
-            name: title,
-            description,
-            url: `${SITE_URL}${path}`,
-            breadcrumb: breadcrumbs,
-          },
-        ],
-      }
-
-      assert.equal(metadata.alternates?.canonical, `https://iconsearch.info/categories/${category}`)
-      assert.equal(graph['@graph'][0]['@type'], 'CollectionPage')
-    })
-
     it('T4.02: Workload 2: Framework Hub documentation page validation (Metadata + FAQPage + WebSite)', () => {
       const metadata = createPageMetadata({
         title: 'Vue Icons Guide — Component Patterns & Vite Optimization',

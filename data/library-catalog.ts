@@ -48,7 +48,6 @@ export const namedLibraries: NamedLibrary[] = [
 ]
 
 export const NAMED_LIBRARY_COUNT = allLibraries.length
-export const COMPARISON_COUNT = namedLibraries.length * (namedLibraries.length - 1) / 2
 
 const libraryMapById = new Map<string, IconLibraryMeta>()
 const libraryMapBySlug = new Map<string, IconLibraryMeta>()

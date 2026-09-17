@@ -16,29 +16,33 @@ import {
 } from 'lucide-react'
 import { NAMED_LIBRARY_COUNT, SEARCHABLE_ICON_COUNT } from '../../data/library-catalog'
 import { createPageMetadata, generateBreadcrumbSchema, generateSoftwareAppSchema } from '../../lib/seo'
+import { getDynamicYear } from '../../lib/date'
 import styles from './figma-plugin.module.css'
 
 const FIGMA_PLUGIN_URL = 'https://www.figma.com/community/plugin/1652731113142368438/iconsearch-free-svg-icons'
 const formattedIconCount = SEARCHABLE_ICON_COUNT.toLocaleString('en-US')
 
-export const metadata = createPageMetadata({
-  title: `IconSearch for Figma — 355k+ Free SVG Icons & UI Components Plugin (2026)`,
-  description: `Install the live IconSearch Figma plugin to search, filter, and insert ${formattedIconCount} free SVG icons from ${NAMED_LIBRARY_COUNT} open-source libraries directly into your canvas.`,
-  path: '/figma-plugin',
-  image: 'https://iconsearch.info/figma-plugin-thumbnail.png',
-  imageAlt: 'IconSearch Figma plugin interface',
-  imageWidth: 1920,
-  imageHeight: 1080,
-  keywords: [
-    'figma icons svg',
-    'figma plugin for icons',
-    'free figma icons',
-    'figma svg icon',
-    'vector icons library',
-    'free svg icons',
-    'figma icon search',
-  ],
-})
+export function generateMetadata() {
+  const year = getDynamicYear()
+  return createPageMetadata({
+    title: `IconSearch for Figma — 355k+ Free SVG Icons & UI Components Plugin (${year})`,
+    description: `Install the live IconSearch Figma plugin to search, filter, and insert ${formattedIconCount} free SVG icons from ${NAMED_LIBRARY_COUNT} open-source libraries directly into your canvas.`,
+    path: '/figma-plugin',
+    image: 'https://iconsearch.info/figma-plugin-thumbnail.png',
+    imageAlt: 'IconSearch Figma plugin interface',
+    imageWidth: 1920,
+    imageHeight: 1080,
+    keywords: [
+      'figma icons svg',
+      'figma plugin for icons',
+      'free figma icons',
+      'figma svg icon',
+      'vector icons library',
+      'free svg icons',
+      'figma icon search',
+    ],
+  })
+}
 
 const stats = [
   { value: formattedIconCount, label: 'searchable SVG icons' },

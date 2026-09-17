@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { NAMED_LIBRARY_COUNT, SEARCHABLE_ICON_COUNT } from '../../../data/library-catalog'
 import { createPageMetadata, DEFAULT_OG_IMAGE } from '../../../lib/seo'
+import { getDynamicYear } from '../../../lib/date'
 
 export type IntegrationSlug =
   | 'webflow-extension'
@@ -325,7 +326,7 @@ export const integrationCatalog: Record<IntegrationSlug, IntegrationConfig> = {
     status: 'Available on npm',
     statusTone: 'ready',
     eyebrow: 'ICONS FOR AI WORKFLOWS',
-    title: 'Give coding agents a consistent icon system.',
+    title: 'Give coding agents consistent icon sets.',
     description: 'Search by UI intent, retrieve exact SVGs with attribution, remember approved choices in the repository, and audit icon usage before shipping.',
     accent: '#34d399',
     accentMuted: 'rgba(52, 211, 153, 0.14)',
@@ -605,9 +606,11 @@ export function createIntegrationMetadata(config: IntegrationConfig): Metadata {
     'open source icons',
   ]
 
+  const currentYear = getDynamicYear()
+
   return createPageMetadata({
     title: isLive
-      ? `IconSearch for ${config.platform} — Search & Insert Free SVG Icons (2026)`
+      ? `IconSearch for ${config.platform} — Search & Insert Free SVG Icons (${currentYear})`
       : `IconSearch for ${config.platform} — Launching Soon`,
     description,
     path: `/${config.slug}`,

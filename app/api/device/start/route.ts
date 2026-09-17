@@ -62,10 +62,10 @@ export async function POST(request: Request) {
         ? body.clientName.trim().slice(0, 80) || 'IconSearch'
         : 'IconSearch'
 
-    // Auto-ensure product exists in products table
+    // Auto-ensure product exists in products table (100% completely free forever)
     try {
       await admin.from('products').upsert(
-        { id: product, name: `IconSearch for ${product.charAt(0).toUpperCase() + product.slice(1)}`, founder_limit: 500 },
+        { id: product, name: `IconSearch for ${product.charAt(0).toUpperCase() + product.slice(1)}`, founder_limit: 2147483647 },
         { onConflict: 'id' }
       )
     } catch (_) {}

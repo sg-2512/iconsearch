@@ -192,10 +192,10 @@ export function App() {
   }), [iconColor, iconSize, useOriginalColors])
   const accessLabel = useMemo(() => {
     const access = activeSession?.access
-    if (!access) return 'Free access'
+    if (!access) return '100% Free'
     const tier = access.tier === 'founder' && access.founderNumber
-      ? `Founder #${access.founderNumber}`
-      : 'Free access'
+      ? `Founder #${access.founderNumber} · Free`
+      : '100% Free'
     return access.email ? `${access.email} - ${tier}` : tier
   }, [activeSession])
 

@@ -7,6 +7,18 @@ export const metadata = createPageMetadata({
   title: 'Icon Categories Directory (2026) — 25 High-Intent SVG Taxonomies',
   description: 'Browse 355,000+ vector SVG icons organized across 25 curated categories including AI, Commerce, Security, Arrows, Media, Development, and Healthcare.',
   path: '/categories',
+  keywords: [
+    'svg icon categories',
+    'vector icon categories',
+    'icon taxonomy',
+    'free icon categories',
+    'ai icons svg',
+    'ecommerce icons svg',
+    'security icons vector',
+    'arrow icons svg',
+    'ui icons directory',
+    'commercial use svg icons',
+  ],
 })
 
 export default function CategoriesIndexPage() {

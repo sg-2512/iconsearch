@@ -4,6 +4,7 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react'
 import {
   customizeSvg,
   generateSvgSnippet,
+  generateBase64Snippet,
   generateReactSnippet,
   generateVueSnippet,
   generateSvelteSnippet,
@@ -16,7 +17,7 @@ import {
 import { getBestIconPreviewUrl } from '../../lib/icon-preview'
 import { trackExport } from '../../lib/analytics'
 
-export type ExportTab = 'svg' | 'react' | 'vue' | 'svelte' | 'tailwind' | 'png'
+export type ExportTab = 'svg' | 'react' | 'vue' | 'svelte' | 'tailwind' | 'base64' | 'png'
 
 export interface UniversalExporterModalProps {
   isOpen: boolean
@@ -70,6 +71,9 @@ export default function UniversalExporterModal({
   const [frameStrokeWidth, setFrameStrokeWidth] = useState<number>(initialOptions.frameStrokeWidth ?? 1)
   const [secondaryColor, setSecondaryColor] = useState<string>(initialOptions.secondaryColor ?? '#c084fc')
   const [secondaryOpacity, setSecondaryOpacity] = useState<number>(initialOptions.secondaryOpacity ?? 0.3)
+  const [rotate, setRotate] = useState<number>(initialOptions.rotate ?? 0)
+  const [flipH, setFlipH] = useState<boolean>(initialOptions.flipHorizontal ?? false)
+  const [flipV, setFlipV] = useState<boolean>(initialOptions.flipVertical ?? false)
   const [tailwindClass, setTailwindClass] = useState<string>('w-6 h-6 text-current')
 
   // Load SVG content when icon changes or modal opens
@@ -85,6 +89,9 @@ export default function UniversalExporterModal({
     if (initialOptions.frameColor !== undefined) setFrameColor(initialOptions.frameColor)
     if (initialOptions.frameStroke !== undefined) setFrameStroke(initialOptions.frameStroke)
     if (initialOptions.frameStrokeWidth !== undefined) setFrameStrokeWidth(initialOptions.frameStrokeWidth)
+    if (initialOptions.rotate !== undefined) setRotate(initialOptions.rotate)
+    if (initialOptions.flipHorizontal !== undefined) setFlipH(initialOptions.flipHorizontal)
+    if (initialOptions.flipVertical !== undefined) setFlipV(initialOptions.flipVertical)
 
     if (initialSvgContent) {
       setRawSvg(initialSvgContent)
@@ -121,6 +128,9 @@ export default function UniversalExporterModal({
     frameStrokeWidth,
     secondaryColor,
     secondaryOpacity,
+    rotate,
+    flipHorizontal: flipH,
+    flipVertical: flipV,
     className: tailwindClass
   }), [
     size,
@@ -133,6 +143,9 @@ export default function UniversalExporterModal({
     frameStrokeWidth,
     secondaryColor,
     secondaryOpacity,
+    rotate,
+    flipH,
+    flipV,
     tailwindClass
   ])
 
@@ -156,6 +169,8 @@ export default function UniversalExporterModal({
         return generateSvelteSnippet(icon.name, rawSvg, exportOptions)
       case 'tailwind':
         return generateTailwindInlineSnippet(rawSvg, exportOptions)
+      case 'base64':
+        return generateBase64Snippet(rawSvg, exportOptions)
       case 'png':
         return `<!-- PNG Export: ${size * pngResolution}px × ${size * pngResolution}px (@${pngResolution}x) -->`
       default:
@@ -383,6 +398,7 @@ export default function UniversalExporterModal({
             { id: 'vue', label: 'Vue 3 SFC', icon: '💚' },
             { id: 'svelte', label: 'Svelte 4/5', icon: '🔥' },
             { id: 'tailwind', label: 'Tailwind CSS', icon: '🎨' },
+            { id: 'base64', label: 'Base64 URI', icon: '⚡' },
             { id: 'png', label: 'PNG Download', icon: '🖼️' },
           ].map((tab) => {
             const isActive = activeTab === tab.id
@@ -603,6 +619,78 @@ export default function UniversalExporterModal({
                     </button>
                   )
                 })}
+              </div>
+            </div>
+
+            {/* Vector Transformations: Rotate & Flip */}
+            <div
+              style={{
+                border: '1px solid var(--border)',
+                borderRadius: '10px',
+                padding: '10px 12px',
+                background: 'var(--bg)',
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                <label style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600 }}>Transforms</label>
+                <span style={{ fontSize: '10px', color: 'var(--text-dim)', fontFamily: 'JetBrains Mono, monospace' }}>
+                  {rotate}° {flipH ? '· Flip H' : ''} {flipV ? '· Flip V' : ''}
+                </span>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px', marginBottom: '8px' }}>
+                {[0, 90, 180, 270].map((deg) => (
+                  <button
+                    key={deg}
+                    type="button"
+                    onClick={() => setRotate(deg)}
+                    style={{
+                      padding: '5px 2px',
+                      borderRadius: '6px',
+                      border: rotate === deg ? '1px solid var(--accent)' : '1px solid var(--border)',
+                      background: rotate === deg ? 'rgba(129, 140, 248, 0.15)' : 'transparent',
+                      color: rotate === deg ? 'var(--accent)' : 'var(--text-muted)',
+                      fontSize: '11px',
+                      cursor: 'pointer',
+                      fontWeight: rotate === deg ? 700 : 500,
+                    }}
+                  >
+                    {deg}°
+                  </button>
+                ))}
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
+                <button
+                  type="button"
+                  onClick={() => setFlipH((v) => !v)}
+                  style={{
+                    padding: '5px 8px',
+                    borderRadius: '6px',
+                    border: flipH ? '1px solid var(--accent)' : '1px solid var(--border)',
+                    background: flipH ? 'rgba(129, 140, 248, 0.15)' : 'transparent',
+                    color: flipH ? 'var(--accent)' : 'var(--text-muted)',
+                    fontSize: '11px',
+                    cursor: 'pointer',
+                    fontWeight: flipH ? 700 : 500,
+                  }}
+                >
+                  Flip H {flipH ? '✓' : ''}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFlipV((v) => !v)}
+                  style={{
+                    padding: '5px 8px',
+                    borderRadius: '6px',
+                    border: flipV ? '1px solid var(--accent)' : '1px solid var(--border)',
+                    background: flipV ? 'rgba(129, 140, 248, 0.15)' : 'transparent',
+                    color: flipV ? 'var(--accent)' : 'var(--text-muted)',
+                    fontSize: '11px',
+                    cursor: 'pointer',
+                    fontWeight: flipV ? 700 : 500,
+                  }}
+                >
+                  Flip V {flipV ? '✓' : ''}
+                </button>
               </div>
             </div>
 

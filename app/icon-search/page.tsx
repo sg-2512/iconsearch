@@ -3,18 +3,45 @@ import fs from 'fs'
 import path from 'path'
 import IconSearchClient from './IconSearchClient'
 import { NAMED_LIBRARY_COUNT, SEARCHABLE_ICON_COUNT } from '../../data/library-catalog'
-import { createPageMetadata } from '../../lib/seo'
+import { createPageMetadata, generateWebApplicationSchema } from '../../lib/seo'
 
-const title = `Free SVG Icon Search — ${SEARCHABLE_ICON_COUNT.toLocaleString('en-US')} Icons`
-const description = `Search ${SEARCHABLE_ICON_COUNT.toLocaleString('en-US')} free SVG icons from ${NAMED_LIBRARY_COUNT} open-source libraries. Customize icons, copy SVG or JSX, and export code for React, Vue, and Svelte.`
+const title = `SVG Icon Search Engine — Filter & Copy 355,000+ Icons | IconSearch`
+const description = `Instantly search 355,000+ free vector SVG icons across 229 libraries. Filter by stroke, solid, duotone, or license. One-click React JSX and clean SVG export.`
 
 export const metadata = createPageMetadata({
   title,
   description,
   path: '/icon-search',
+  keywords: [
+    'svg icon search engine',
+    'find svg icons',
+    'vector icon finder',
+    'svg to jsx converter',
+    'search open source icons',
+    'filter icons by stroke',
+    'duotone icons search',
+    'react icon component search',
+    'copy svg code',
+    'online svg editor',
+    'download vector icons',
+    'free commercial svg icons',
+  ],
 })
 
 export default async function IconSearchServerPage() {
+  const webApplicationSchema = generateWebApplicationSchema({
+    name: 'IconSearch Vector Icon Engine',
+    description,
+    path: '/icon-search',
+    featureList: [
+      'Universal 355,000+ vector SVG icon search',
+      'Real-time color, stroke width, and size customization',
+      'One-click React, Vue, Svelte, and TSX component export',
+      'Multi-library search with 229 open-source icon sets',
+      'Bulk batch download and workspace export collections',
+    ],
+  })
+
   // Pre-load popular initial data for SSR to avoid Google "empty layout box" penalty
   let initialData = undefined
   try {
@@ -39,6 +66,12 @@ export default async function IconSearchServerPage() {
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(webApplicationSchema).replace(/</g, '\\u003c'),
+        }}
+      />
       <header style={{ maxWidth: '1500px', margin: '0 auto', padding: '40px 48px 0' }}>
         <h1 style={{ fontSize: 'clamp(34px, 5vw, 56px)', fontWeight: 900, lineHeight: 1.1, marginBottom: '12px' }}>
           Search {SEARCHABLE_ICON_COUNT.toLocaleString('en-US')} Free SVG Icons
@@ -53,3 +86,4 @@ export default async function IconSearchServerPage() {
     </>
   )
 }
+

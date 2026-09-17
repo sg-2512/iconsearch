@@ -4,8 +4,10 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useEffect, useMemo, useState } from 'react'
 import type { User } from '@supabase/supabase-js'
-import AuthModal from '@/app/components/AuthModal'
+import dynamic from 'next/dynamic'
 import { createClient, isSupabaseConfigured } from '@/lib/supabase'
+
+const AuthModal = dynamic(() => import('@/app/components/AuthModal'), { ssr: false })
 
 type ConnectClientProps = {
   product: string
@@ -153,8 +155,8 @@ export default function ConnectClient({ product, code, authError }: ConnectClien
           ) : approval ? (
             <StatusCard tone="success" title="Connection approved">
               {approval.tier === 'founder' && approval.founderNumber
-                ? `You claimed lifetime Founder access #${approval.founderNumber} for the ${productNames[approval.product]}.`
-                : `Your free ${productNames[approval.product]} access is active.`}
+                ? `Your unlimited lifetime access for ${productNames[approval.product]} is active (Honorary Founder #${approval.founderNumber}).`
+                : `Your 100% free unlimited access for ${productNames[approval.product]} is active.`}
               {' '}You can close this browser tab and return to the app.
             </StatusCard>
           ) : (
@@ -194,7 +196,7 @@ export default function ConnectClient({ product, code, authError }: ConnectClien
                     Sign in or create a free account
                   </button>
                   <p className="connect-founder-note">
-                    The first 500 verified users of each product receive lifetime Founder access.
+                    IconSearch is 100% completely free and unlimited for all developers. No subscriptions, no paywalls.
                   </p>
                 </div>
               )}
@@ -210,7 +212,7 @@ export default function ConnectClient({ product, code, authError }: ConnectClien
         <div className="connect-side-panel">
           <div className="connect-product-pill">
             <span>{productShortNames[product] || 'App'}</span>
-            <strong>Free launch</strong>
+            <strong>100% Free Forever</strong>
           </div>
           <div className="connect-step-list">
             <div>

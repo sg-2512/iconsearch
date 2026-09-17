@@ -8,26 +8,40 @@ export const DEFAULT_TWITTER_IMAGE = `${SITE_URL}/twitter-image`
 export const DEFAULT_KEYWORDS = [
   'free svg icons',
   'svg icons',
-  'free iconography',
-  'app icons',
-  'app icon maker',
-  'google icons',
-  'material icons',
+  'free vector icons',
+  'download svg icons',
+  'vector icons free download',
+  'free icons for commercial use',
+  'open source icons',
   'react icons',
-  'nextjs icons',
   'tailwind icons',
+  'tailwind css icons',
+  'nextjs icons',
+  'vue icons',
+  'svelte icons',
+  'typescript icons',
   'lucide icons',
+  'heroicons',
   'tabler icons',
   'phosphor icons',
   'feather icons',
-  'open source icons',
-  'vector icons library',
+  'material symbols',
+  'material icons',
+  'remix icon',
+  'bootstrap icons',
+  'ui icons',
+  'web icons',
+  'app icons',
+  'svg icon library',
+  'icon search engine',
   'svg maker free',
-  'logo icons',
+  'app icon maker',
+  'logo maker',
+  'copy svg',
+  'svg to jsx',
+  'royalty free svg icons',
   'powerpoint icons',
   'google slides icons',
-  'icon search engine',
-  'download free svg',
 ]
 
 export type PageMetadataOptions = {
@@ -240,6 +254,84 @@ export function generateFAQSchema(faqs: { q: string; a: string }[]) {
   }
 }
 
+export function generateWebApplicationSchema({
+  name,
+  description,
+  path,
+  featureList = [],
+}: {
+  name: string
+  description: string
+  path: string
+  featureList?: string[]
+}) {
+  const url = `${SITE_URL}${path}`
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    '@id': `${url}#webapp`,
+    name,
+    description,
+    url,
+    applicationCategory: 'DesignApplication',
+    operatingSystem: 'All (Web Browser, macOS, Windows, Linux, iOS, Android)',
+    browserRequirements: 'Requires JavaScript. Requires HTML5.',
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'USD',
+      availability: 'https://schema.org/InStock',
+    },
+    ...(featureList.length > 0 ? { featureList } : {}),
+    isPartOf: {
+      '@id': `${SITE_URL}/#website`,
+    },
+    author: {
+      '@id': `${SITE_URL}/#organization`,
+    },
+    publisher: {
+      '@id': `${SITE_URL}/#organization`,
+    },
+  }
+}
+
+export function generateFrameworkHubSchema({
+  name,
+  description,
+  path,
+  datePublished = '2026-08-17',
+  dateModified = '2026-08-20',
+}: {
+  name: string
+  description: string
+  path: string
+  datePublished?: string
+  dateModified?: string
+}) {
+  const url = `${SITE_URL}${path}`
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'TechArticle',
+    '@id': `${url}#article`,
+    headline: name,
+    description,
+    url,
+    mainEntityOfPage: url,
+    datePublished,
+    dateModified,
+    inLanguage: 'en',
+    isPartOf: {
+      '@id': `${SITE_URL}/#website`,
+    },
+    author: {
+      '@id': `${SITE_URL}/#organization`,
+    },
+    publisher: {
+      '@id': `${SITE_URL}/#organization`,
+    },
+  }
+}
+
 export function generateCategoryPageSchema({
   name,
   description,
@@ -275,66 +367,7 @@ export function generateCategoryPageSchema({
           },
         }
       : {}),
-    publisher: {
-      '@id': `${SITE_URL}/#organization`,
-    },
   }
 }
 
-export function generateFrameworkHubSchema({
-  name,
-  description,
-  path,
-}: {
-  name: string
-  description: string
-  path: string
-}) {
-  const url = `${SITE_URL}${path}`
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'TechArticle',
-    headline: name,
-    description,
-    url,
-    mainEntityOfPage: url,
-    author: {
-      '@id': `${SITE_URL}/#organization`,
-    },
-    publisher: {
-      '@id': `${SITE_URL}/#organization`,
-    },
-  }
-}
 
-export function generateComparisonSchema({
-  libA,
-  libB,
-  path,
-  description,
-}: {
-  libA: string
-  libB: string
-  path: string
-  description?: string
-}) {
-  const url = `${SITE_URL}${path}`
-  const headline = `${libA} vs ${libB}: In-Depth Vector Icon Library Comparison (2026)`
-  const desc =
-    description ||
-    `Compare ${libA} and ${libB} on icon count, framework support, bundle weight, licenses, and visual styles.`
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'TechArticle',
-    headline,
-    description: desc,
-    url,
-    mainEntityOfPage: url,
-    author: {
-      '@id': `${SITE_URL}/#organization`,
-    },
-    publisher: {
-      '@id': `${SITE_URL}/#organization`,
-    },
-  }
-}

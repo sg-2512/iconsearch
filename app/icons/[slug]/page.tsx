@@ -3,7 +3,8 @@ import { join } from 'path'
 import { gunzipSync } from 'zlib'
 import { notFound } from 'next/navigation'
 import { allLibraries, resolveLibraryMeta, type IconLibraryMeta } from '../../../data/library-catalog'
-import { createPageMetadata, SITE_URL } from '../../../lib/seo'
+import { getLibraryDetailData } from '../../../data/libraries'
+import { createPageMetadata, generateFAQSchema, SITE_URL } from '../../../lib/seo'
 import CollectionPageClient from './CollectionPageClient'
 
 export const dynamicParams = false
@@ -23,7 +24,7 @@ type RawDbIcon = {
   svgUrl?: string
 }
 
-type CollectionIcon = {
+export type CollectionIcon = {
   id: string
   name: string
   displayName: string
@@ -64,7 +65,7 @@ function loadIconsDatabase(): CollectionIcon[] {
   return []
 }
 
-function getIconsForLibrary(meta: IconLibraryMeta): CollectionIcon[] {
+export function getIconsForLibrary(meta: IconLibraryMeta): CollectionIcon[] {
   const db = loadIconsDatabase()
   const targetId = meta.id.toLowerCase()
   const targetSlug = meta.slug.toLowerCase()
@@ -83,8 +84,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!meta) return {}
 
   const count = meta.iconCount.toLocaleString('en-US')
-  const title = `${meta.name} (${count} Free SVG Icons) — ${meta.license} License`
-  const description = `Browse ${count} open-source ${meta.name} SVG icons under the ${meta.license} license. Customize color and stroke width, then copy React JSX or download SVG, PNG, and WebP.`
+  const title = `${meta.name} — ${count} Free SVG Icons for React, Tailwind & Web (${meta.license})`
+  const description = `Download and search ${count} free ${meta.name} SVG icons under the ${meta.license} license. Customize color, size, and stroke width. Copy clean SVG, React JSX, or Vue code with one click.`
 
   return createPageMetadata({
     title,
@@ -94,13 +95,16 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     keywords: [
       meta.name,
       `${meta.name} icons`,
-      `${meta.name} svg`,
-      `free ${meta.name}`,
-      `download ${meta.name} svg`,
-      `${meta.name} react icons`,
+      `${meta.name} svg icons`,
+      `download ${meta.name}`,
+      `free ${meta.name} svg`,
+      `${meta.name} react`,
+      `${meta.name} tailwind`,
       'free svg icons',
       'vector icons library',
       'open source icons',
+      'commercial use icons',
+      'copy svg',
     ],
   })
 }
@@ -115,6 +119,8 @@ export default async function LibraryPage({ params }: { params: Promise<{ slug: 
 
   const icons = getIconsForLibrary(meta)
   const canonicalUrl = `${SITE_URL}/icons/${encodeURIComponent(meta.slug)}`
+  const libraryDetail = getLibraryDetailData(meta)
+  const faqSchema = generateFAQSchema(libraryDetail.faqs)
 
   const collectionSchema = {
     '@context': 'https://schema.org',
@@ -123,7 +129,7 @@ export default async function LibraryPage({ params }: { params: Promise<{ slug: 
         '@type': 'CollectionPage',
         '@id': `${canonicalUrl}#collection`,
         name: meta.name,
-        description: `Collection of ${meta.iconCount} open-source vector SVG icons in ${meta.name}.`,
+        description: `Collection of ${meta.iconCount.toLocaleString('en-US')} open-source vector SVG icons in ${meta.name}.`,
         url: canonicalUrl,
         inLanguage: 'en',
         isPartOf: {
@@ -152,6 +158,14 @@ export default async function LibraryPage({ params }: { params: Promise<{ slug: 
           { '@type': 'ListItem', position: 3, name: meta.name, item: canonicalUrl },
         ],
       },
+      {
+        '@type': 'FAQPage',
+        '@id': `${canonicalUrl}#faq`,
+        isPartOf: {
+          '@id': `${SITE_URL}/#website`,
+        },
+        mainEntity: faqSchema.mainEntity,
+      },
     ],
   }
 
@@ -161,7 +175,7 @@ export default async function LibraryPage({ params }: { params: Promise<{ slug: 
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionSchema).replace(/</g, '\\u003c') }}
       />
-      <CollectionPageClient meta={meta} icons={icons} />
+      <CollectionPageClient meta={meta} icons={icons} libraryDetail={libraryDetail} />
     </main>
   )
 }

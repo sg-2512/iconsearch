@@ -71,12 +71,12 @@ export default function AgentsPage() {
 
       <section className={styles.hero}>
         <div className={styles.heroMeta}>
-          <div className={styles.eyebrow}><Sparkles size={16} /> Icon systems for coding agents</div>
+          <div className={styles.eyebrow}><Sparkles size={16} /> Icon sets for coding agents</div>
           <a className={styles.releaseBadge} href={npmPackageUrl} target="_blank" rel="noopener noreferrer">
             <span /> Available on npm · v{packageVersion} <ExternalLink size={13} />
           </a>
         </div>
-        <h1>Give your agent an icon system—not another guess.</h1>
+        <h1>Give your agent approved icon sets—not another guess.</h1>
         <p className={styles.heroLead}>
           Search {SEARCHABLE_ICON_COUNT.toLocaleString('en-US')} production-ready icons across {ICON_COLLECTION_COUNT} collections,
           save approved SVGs with your code, and keep every screen visually consistent.
@@ -94,7 +94,7 @@ export default function AgentsPage() {
             <span className={styles.avatar}><Bot size={20} /></span>
             <div>
               <small>You</small>
-              <p>Build the billing settings screen using our approved icon system.</p>
+              <p>Build the billing settings screen using our approved icon sets.</p>
             </div>
           </div>
           <div className={styles.memoryPanel}>

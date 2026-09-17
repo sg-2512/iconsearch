@@ -410,12 +410,3 @@ export function getIconBySlug(slug: string) {
   return icons.find((i) => i.slug === slug)
 }
 
-export function getComparisonPairs() {
-  const pairs: [IconLibrary, IconLibrary][] = []
-  for (let i = 0; i < icons.length; i++) {
-    for (let j = i + 1; j < icons.length; j++) {
-      pairs.push([icons[i], icons[j]])
-    }
-  }
-  return pairs
-}

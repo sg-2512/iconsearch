@@ -1,0 +1,375 @@
+# IconSearch — Comprehensive Developer & LLM Reference (llms-full.txt)
+
+> IconSearch (https://iconsearch.info) is the independent vector discovery engine, design suite, and API service indexing 355,702 free SVG icons across 229 open-source libraries.
+
+Primary URL: https://iconsearch.info
+API Base URL: https://iconsearch.info/api
+Documentation: https://iconsearch.info/docs/agents
+Last Updated: August 2026
+
+---
+
+## 1. Table of Contents
+
+1. Overview & System Capabilities
+2. All 18 Primary Icon Libraries (Complete Technical Specs)
+3. Public REST API Reference & Parameter Schemas
+4. Model Context Protocol (MCP) Tool Definitions for AI Agents
+5. Multi-Framework Code Integration Patterns
+6. Export Formats & Customization Engine
+7. Licensing, Legal Verification & Non-Affiliation Disclaimers
+
+---
+
+## 2. Overview & System Capabilities
+
+IconSearch provides search, in-browser customization, programmatic vector generation, and direct component exporting for frontend developers and AI agents (Cursor, Claude Desktop, Windsurf, Roo Code, ChatGPT).
+
+- Total Index Size: 355,702 SVG vector icons
+- Commercial-Safe Index: 259,070 royalty-free icons (MIT, Apache 2.0, ISC, CC0, OFL)
+- Primary Curated Libraries: 18 named collections
+- Total Open Source Collections: 229 Iconify-backed icon sets
+- Framework Support: React, Next.js (App Router / RSC), Vue 3, Svelte 5, Tailwind CSS, TypeScript
+- Export Capabilities: Clean SVG, React TSX, Vue SFC, Svelte 5 component, Tailwind inline SVG, PNG (16px–1024px), WebP, ICO, and ZIP packages.
+
+---
+
+## 3. All 18 Primary Icon Libraries
+
+### 1. Lucide Icons (`lucide-icons`)
+- **Total Icons**: 1,960+
+- **License**: ISC (Permissive open source, 100% commercial-safe, no attribution required)
+- **Design Specifications**: 24x24 grid, 2px stroke width, consistent optical balance
+- **Framework Packages**:
+  - React / Next.js: `npm install lucide-react`
+  - Vue 3: `npm install lucide-vue-next`
+  - Svelte 5: `npm install lucide-svelte`
+  - Vanilla JS: `npm install lucide`
+- **TypeScript**: Native `.d.ts` declaration files included
+- **Server Components**: 100% RSC-compatible, zero client-side JavaScript overhead
+- **Official Links**: GitHub (https://github.com/lucide-icons/lucide), Docs (https://lucide.dev)
+
+### 2. Heroicons (`heroicons`)
+- **Total Icons**: 324
+- **License**: MIT (Permissive open source by Tailwind Labs)
+- **Design Specifications**: 24x24 outline (1.5px stroke), 24x24 solid, 20x20 mini, 16x16 micro
+- **Framework Packages**:
+  - React / Next.js: `npm install @heroicons/react`
+  - Vue 3: `npm install @heroicons/vue`
+- **Tailwind Integration**: Native pairing with Tailwind UI components and utility classes
+- **Official Links**: GitHub (https://github.com/tailwindlabs/heroicons), Docs (https://heroicons.com)
+
+### 3. Tabler Icons (`tabler-icons`)
+- **Total Icons**: 6,147
+- **License**: MIT (Created by Paweł Kuna)
+- **Design Specifications**: 24x24 grid, 2px stroke width, massive variety for dashboards
+- **Framework Packages**:
+  - React / Next.js: `npm install @tabler/icons-react`
+  - Vue 3: `npm install @tabler/icons-vue`
+  - Svelte: `npm install @tabler/icons-svelte`
+- **Official Links**: GitHub (https://github.com/tabler/tabler-icons), Docs (https://tabler.io/icons)
+
+### 4. Phosphor Icons (`phosphor-icons`)
+- **Total Icons**: 1,533
+- **License**: MIT (Flexible icon family created by Tobias Fried & Helena Zhang)
+- **Design Specifications**: Six visual weights: Thin, Light, Regular, Bold, Fill, and Duotone
+- **Framework Packages**:
+  - React: `npm install @phosphor-icons/react`
+  - Vue: `npm install @phosphor-icons/vue`
+- **Official Links**: GitHub (https://github.com/phosphor-icons/core), Docs (https://phosphoricons.com)
+
+### 5. Radix Icons (`radix-icons`)
+- **Total Icons**: 318
+- **License**: MIT (By WorkOS / Radix UI team)
+- **Design Specifications**: 15x15 pixel grid, designed specifically for dense UI dashboards and dropdown menus
+- **Framework Packages**:
+  - React: `npm install @radix-ui/react-icons`
+- **Official Links**: GitHub (https://github.com/radix-ui/icons), Docs (https://icons.radix-ui.com)
+
+### 6. Remix Icon (`remix-icon`)
+- **Total Icons**: 3,229
+- **License**: Apache-2.0 (Neutral, consistent system symbols)
+- **Design Specifications**: 24x24 grid, Outlined and Filled styles for every symbol
+- **Framework Packages**:
+  - React: `npm install remixicon-react` or SVG direct
+- **Official Links**: GitHub (https://github.com/Remix-Design/RemixIcon), Docs (https://remixicon.com)
+
+### 7. Feather Icons (`feather-icons`)
+- **Total Icons**: 287
+- **License**: MIT (By Cole Bemis)
+- **Design Specifications**: 24x24 grid, 2px stroke, minimal aesthetic
+- **Framework Packages**:
+  - React: `npm install react-feather`
+- **Official Links**: GitHub (https://github.com/feathericons/feather), Docs (https://feathericons.com)
+
+### 8. Bootstrap Icons (`bootstrap-icons`)
+- **Total Icons**: 2,078
+- **License**: MIT (By The Bootstrap Authors)
+- **Design Specifications**: 16x16 grid, outline and fill variants
+- **Framework Packages**:
+  - React: `npm install bootstrap-icons`
+- **Official Links**: GitHub (https://github.com/twbs/icons), Docs (https://icons.getbootstrap.com)
+
+### 9. Iconoir (`iconoir`)
+- **Total Icons**: 1,384
+- **License**: MIT (By Luca Burgio)
+- **Design Specifications**: 24x24 grid, clean geometric outlines
+- **Framework Packages**:
+  - React: `npm install iconoir-react`
+  - Vue: `npm install iconoir-vue`
+  - Svelte: `npm install iconoir-svelte`
+- **Official Links**: GitHub (https://github.com/iconoir-icons/iconoir), Docs (https://iconoir.com)
+
+### 10. Ionicons (`ionicons`)
+- **Total Icons**: 1,300
+- **License**: MIT (By Ionic team)
+- **Design Specifications**: Material and iOS styles (Outline, Filled, Sharp)
+- **Framework Packages**:
+  - React: `npm install ionicons` / `react-ionicons`
+- **Official Links**: GitHub (https://github.com/ionic-team/ionicons), Docs (https://ionic.io/ionicons)
+
+### 11. Octicons (`octicons`)
+- **Total Icons**: 280
+- **License**: MIT (By GitHub Primer Design System)
+- **Design Specifications**: 16x16 and 24x24 variants optimized for developer tooling and VCS UIs
+- **Framework Packages**:
+  - React: `npm install @primer/octicons-react`
+- **Official Links**: GitHub (https://github.com/primer/octicons), Docs (https://primer.style/octicons)
+
+### 12. Ant Design Icons (`ant-design-icons`)
+- **Total Icons**: 840
+- **License**: MIT (By Ant Group)
+- **Design Specifications**: Outlined, Filled, Two-Tone styles for enterprise UI
+- **Framework Packages**:
+  - React: `npm install @ant-design/icons`
+- **Official Links**: GitHub (https://github.com/ant-design/ant-design-icons), Docs (https://ant.design/components/icon)
+
+### 13. Devicons (`devicons`)
+- **Total Icons**: 800
+- **License**: MIT (By Devicon community)
+- **Design Specifications**: Programming language, framework, database, and developer tool logos
+- **Framework Packages**:
+  - Direct SVG & Font: `npm install devicon`
+- **Official Links**: GitHub (https://github.com/devicons/devicon), Docs (https://devicon.dev)
+
+### 14. Teenyicons (`teenyicons`)
+- **Total Icons**: 1,200
+- **License**: MIT (By Anja van Staden)
+- **Design Specifications**: 15x15 1px stroke minimalist icons for ultra-dense interfaces
+- **Framework Packages**:
+  - React: `npm install teenyicons-react` or direct SVG
+- **Official Links**: GitHub (https://github.com/annst/teenyicons)
+
+### 15. Circum Icons (`circum-icons`)
+- **Total Icons**: 288
+- **License**: MPL-2.0 (By Klarr Agency)
+- **Design Specifications**: Soft rounded circular stroke icons
+- **Framework Packages**:
+  - React: `npm install @klarr-agency/circum-icons-react`
+- **Official Links**: GitHub (https://github.com/Klarr-Agency/Circum-Icons)
+
+### 16. Elusive Icons (`elusive-icons`)
+- **Total Icons**: 304
+- **License**: OFL-1.1
+- **Design Specifications**: Classic vector web glyphs
+- **Official Links**: GitHub (https://github.com/reduxframework/elusive-icons)
+
+### 17. PatternFly Icons (`patternfly-icons`)
+- **Total Icons**: 2,884
+- **License**: MIT (By Red Hat PatternFly Design System)
+- **Design Specifications**: Enterprise console and cloud administration UI icons
+- **Official Links**: GitHub (https://github.com/patternfly/patternfly)
+
+### 18. Untitled UI Icons (`untitled-ui-icons`)
+- **Total Icons**: 1,100+
+- **License**: MIT
+- **Design Specifications**: Modern SaaS interface icons with 24x24 stroke consistency
+- **Official Links**: GitHub (https://github.com/untitledui/icons)
+
+---
+
+## 4. Public REST API Reference
+
+### Base URL
+`https://iconsearch.info/api`
+
+### Rate Limits
+- Public requests: 120 requests / minute per IP
+- No API key required for public search and raw SVG retrieval.
+
+### Endpoint 1: Search Icons (`GET /api/icon-search`)
+Query parameters:
+- `q` (string, optional): Search keyword (e.g. `arrow`, `user`, `settings`, `chart`, `cloud`).
+- `lib` (string, optional): Library slug filter (e.g. `lucide-icons`, `heroicons`, `tabler-icons`, `radix-icons`, or `iconify`).
+- `iconifySet` (string, optional): Specific Iconify collection ID when `lib=iconify` (e.g. `material-symbols`, `carbon`).
+- `style` (string, optional): Style filter: `all`, `stroke`, `solid`, `duotone`, `twotone`, `sharp`.
+- `legalOnly` (number, default: `1`): `1` returns only commercial-friendly licenses; `0` returns all licenses.
+- `sort` (string, default: `relevance`): `relevance`, `popular`, or `name`.
+- `page` (number, default: `1`): Pagination page number.
+- `limit` (number, default: `60`, max: `120`): Number of icons per page.
+- `ids` (string, optional): Comma-separated icon IDs for batch lookup (up to 200).
+
+Response Schema:
+```json
+{
+  "icons": [
+    {
+      "id": "lucide-icons-arrow-right",
+      "name": "arrow-right",
+      "displayName": "Arrow Right",
+      "library": "lucide-icons",
+      "libraryName": "Lucide Icons",
+      "license": "ISC",
+      "tags": ["arrow", "forward", "next", "right"],
+      "svgUrl": "/api/svg/lucide-icons/arrow-right"
+    }
+  ],
+  "total": 1420,
+  "page": 1,
+  "limit": 60,
+  "totalPages": 24
+}
+```
+
+### Endpoint 2: Raw SVG Endpoint (`GET /api/svg/[library]/[iconName]`)
+- URL: `https://iconsearch.info/api/svg/:library/:iconName`
+- Example: `https://iconsearch.info/api/svg/lucide-icons/check`
+- Returns: Clean, optimized XML SVG string with `Content-Type: image/svg+xml`.
+
+---
+
+## 5. Model Context Protocol (MCP) Tool Definitions
+
+For integration with Cursor, Claude Desktop, Windsurf, and custom LLM agent systems:
+
+### Tool 1: `search_icons`
+- **Description**: Search 355,000+ open-source vector SVG icons by keyword, library, and style.
+- **Parameters**:
+  - `query` (string, required): Keyword describing the desired icon (e.g. "shopping cart", "user profile", "warning triangle").
+  - `library` (string, optional): Target icon library slug (e.g. "lucide-icons", "heroicons", "tabler-icons").
+  - `style` (string, optional): "stroke", "solid", or "all".
+  - `limit` (number, optional, default: 10): Max number of results to return.
+
+### Tool 2: `get_icon_svg`
+- **Description**: Retrieve the raw SVG code for a specific icon by library slug and icon name.
+- **Parameters**:
+  - `library` (string, required): Library slug (e.g. "lucide-icons").
+  - `name` (string, required): Icon identifier (e.g. "arrow-right").
+  - `color` (string, optional): Hex color or "currentColor" (default: "currentColor").
+  - `size` (number, optional): Pixel dimension width and height (default: 24).
+  - `strokeWidth` (number, optional): Stroke width in pixels (default: 2).
+
+### Tool 3: `get_icon_component`
+- **Description**: Generate a ready-to-use framework component snippet (React TSX, Vue 3, Svelte 5, or Tailwind SVG).
+- **Parameters**:
+  - `library` (string, required): Library slug.
+  - `name` (string, required): Icon identifier.
+  - `framework` (string, required): "react", "nextjs", "vue", "svelte", or "tailwind".
+  - `typescript` (boolean, optional, default: true): Generate TypeScript code.
+
+---
+
+## 6. Multi-Framework Code Integration Patterns
+
+### React & Next.js 15 App Router (Server Component — Zero Client JS)
+```tsx
+// app/components/Header.tsx
+import { Search, ShoppingBag, User } from 'lucide-react'
+
+export default function Header() {
+  return (
+    <header className="flex items-center justify-between p-4 bg-zinc-900 border-b border-zinc-800">
+      <div className="flex items-center gap-2">
+        <Search className="size-5 text-zinc-400" />
+        <input type="text" placeholder="Search..." className="bg-transparent text-sm text-zinc-100" />
+      </div>
+      <div className="flex items-center gap-4">
+        <button aria-label="Cart">
+          <ShoppingBag className="size-5 text-zinc-300 hover:text-white transition-colors" />
+        </button>
+        <button aria-label="Profile">
+          <User className="size-5 text-zinc-300 hover:text-white transition-colors" />
+        </button>
+      </div>
+    </header>
+  )
+}
+```
+
+### Vue 3 Composition API (`<script setup>`)
+```vue
+<!-- components/Navigation.vue -->
+<script setup lang="ts">
+import { Home, Settings, Bell } from 'lucide-vue-next'
+</script>
+
+<template>
+  <nav class="flex items-center gap-4">
+    <Home :size="20" class="text-zinc-300 hover:text-emerald-400 transition-colors" />
+    <Settings :size="20" class="text-zinc-300 hover:text-emerald-400 transition-colors" />
+    <Bell :size="20" class="text-zinc-300 hover:text-emerald-400 transition-colors" />
+  </nav>
+</template>
+```
+
+### Svelte 5 with Runes
+```svelte
+<!-- src/lib/FavoriteButton.svelte -->
+<script lang="ts">
+  import { Heart } from 'lucide-svelte'
+  let active = $state(false)
+</script>
+
+<button onclick={() => active = !active} class="p-2 rounded-lg border border-zinc-800 bg-zinc-900">
+  <Heart size={20} class={active ? 'text-rose-500 fill-rose-500' : 'text-zinc-400'} />
+</button>
+```
+
+### Tailwind CSS v4 Utility Styling
+```html
+<!-- Responsive micro-animated icon button -->
+<button class="group flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium transition">
+  <span>Explore Features</span>
+  <svg class="size-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+  </svg>
+</button>
+```
+
+### Strictly Typed TypeScript Polymorphic Icon Wrapper
+```tsx
+// components/ui/icon.tsx
+import React from 'react'
+import type { LucideIcon, LucideProps } from 'lucide-react'
+
+export interface IconProps extends Omit<LucideProps, 'ref'> {
+  icon: LucideIcon
+  label?: string
+  className?: string
+}
+
+export function AppIcon({ icon: Icon, label, className = '', size = 20, ...rest }: IconProps) {
+  return (
+    <Icon
+      size={size}
+      className={className}
+      aria-hidden={!label}
+      aria-label={label}
+      role={label ? 'img' : 'presentation'}
+      {...rest}
+    />
+  )
+}
+```
+
+---
+
+## 7. Licensing & Non-Affiliation Disclaimers
+
+### Open-Source Licenses Supported
+- **Permissive (No Attribution Required)**: MIT, ISC, CC0 1.0, Unlicense, BSD-2-Clause, BSD-3-Clause.
+- **Permissive with Attribution**: Apache-2.0 (e.g. Remix Icon), CC-BY 4.0.
+- **Copyleft / Reciprocal**: MPL-2.0 (e.g. Circum Icons), OFL-1.1 (e.g. Elusive Icons).
+
+### Non-Affiliation Statement
+IconSearch is an independent open-source discovery platform and design suite. IconSearch is not affiliated with, sponsored by, or endorsed by Lucide, Tailwind Labs, Heroicons, Iconify, Vercel, Next.js, React, Meta, Vue.js, Svelte, GitHub, Red Hat, Figma, Microsoft, Google, or any featured open-source icon library maintainers. All trademarks, logos, and brand assets are the property of their respective owners.

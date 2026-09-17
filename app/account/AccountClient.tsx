@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from 'react'
 import type { User } from '@supabase/supabase-js'
-import AuthModal from '@/app/components/AuthModal'
+import dynamic from 'next/dynamic'
 import { createClient } from '@/lib/supabase'
 import ApiKeyPanel from './ApiKeyPanel'
+
+const AuthModal = dynamic(() => import('@/app/components/AuthModal'), { ssr: false })
 
 type Entitlement = {
   id: string
@@ -130,14 +132,16 @@ export default function AccountClient() {
                   {entitlement ? (
                     <p style={{ color: 'var(--text-muted)', lineHeight: 1.7 }}>
                       <strong style={{ color: 'var(--text)' }}>
-                        {entitlement.tier === 'founder' ? `Founder #${entitlement.founder_number}` : 'Free'}
+                        {entitlement.tier === 'founder' && entitlement.founder_number
+                          ? `Founder #${entitlement.founder_number} · 100% Free Lifetime`
+                          : '100% Free Lifetime Access'}
                       </strong>
                       <br />
                       Status: {entitlement.status}
                     </p>
                   ) : (
                     <p style={{ color: 'var(--text-muted)', lineHeight: 1.7 }}>
-                      Not claimed yet. Start sign-in from this product to claim access.
+                      100% Free. Start sign-in from this product to enable cloud sync.
                     </p>
                   )}
                 </div>

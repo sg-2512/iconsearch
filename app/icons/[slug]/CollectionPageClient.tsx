@@ -3,6 +3,8 @@
 import React, { useState, useMemo, useEffect } from 'react'
 import Link from 'next/link'
 import type { IconLibraryMeta } from '../../../data/library-catalog'
+import { getLibraryDetailData, type LibraryDetailData } from '../../../data/libraries'
+import { getFormattedCurrentMonthYear } from '../../../lib/date'
 
 type CollectionIcon = {
   id: string
@@ -18,11 +20,14 @@ type CollectionIcon = {
 type Props = {
   meta: IconLibraryMeta
   icons: CollectionIcon[]
+  libraryDetail?: LibraryDetailData
 }
 
 const SIZE_OPTIONS = [16, 24, 32, 48, 64, 128, 256, 512]
 
-export default function CollectionPageClient({ meta, icons }: Props) {
+export default function CollectionPageClient({ meta, icons, libraryDetail }: Props) {
+  const detail = libraryDetail || getLibraryDetailData(meta)
+  const lastUpdated = getFormattedCurrentMonthYear()
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedIcon, setSelectedIcon] = useState<CollectionIcon | null>(null)
   const [pinned, setPinned] = useState(false)
@@ -172,31 +177,35 @@ export default function CollectionPageClient({ meta, icons }: Props) {
         }
       `}</style>
 
-      {/* Visual Breadcrumb Navigation */}
-      <nav style={{ display: 'flex', gap: '8px', fontSize: '13px', fontFamily: 'var(--font-mono, monospace)', marginBottom: '24px' }}>
-        <Link href="/" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>Home</Link>
-        <span style={{ color: 'var(--text-dim)' }}>/</span>
-        <Link href="/free-svg-icons" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>Libraries</Link>
-        <span style={{ color: 'var(--text-dim)' }}>/</span>
-        <span style={{ color: 'var(--accent)' }}>{meta.name}</span>
-      </nav>
+      {/* Visual Breadcrumb Navigation & Freshness Badge */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' }}>
+        <nav style={{ display: 'flex', gap: '8px', fontSize: '13px', fontFamily: 'var(--font-mono, monospace)' }}>
+          <Link href="/" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>Home</Link>
+          <span style={{ color: 'var(--text-dim)' }}>/</span>
+          <Link href="/free-svg-icons" style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>Libraries</Link>
+          <span style={{ color: 'var(--text-dim)' }}>/</span>
+          <span style={{ color: 'var(--accent)' }}>{meta.name}</span>
+        </nav>
+        <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono, monospace)', background: 'var(--bg-card)', border: '1px solid var(--border)', padding: '4px 12px', borderRadius: '999px' }}>
+          Last updated: {lastUpdated}
+        </div>
+      </div>
 
-      {/* Hero Intro (Matching Screenshot) */}
+      {/* Hero Intro */}
       <section style={{ marginBottom: '32px' }}>
         <h1 style={{ fontSize: 'clamp(32px, 4vw, 48px)', fontWeight: 800, lineHeight: 1.15, marginBottom: '16px', color: 'var(--text)' }}>
           {meta.name}
         </h1>
-        <p style={{ color: 'var(--text-muted)', fontSize: '16px', maxWidth: '850px', lineHeight: 1.7, marginBottom: '24px' }}>
-          Browse {meta.iconCount.toLocaleString('en-US')} high-quality icons in the {meta.name} collection.
-          The collection uses the {meta.license} license; review the{' '}
+        <p style={{ color: 'var(--text-muted)', fontSize: '16px', maxWidth: '850px', lineHeight: 1.7, marginBottom: '20px' }}>
+          {detail.description.intro} {detail.description.detail} The collection is licensed under {meta.license}; review the{' '}
           <Link href={`/licenses#${meta.slug}`} style={{ color: 'var(--accent)', textDecoration: 'none' }}>
             icon license guide
           </Link>{' '}
-          for commercial-use and attribution details.
+          for commercial-use details.
         </p>
 
-        {/* Action Buttons */}
-        <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+        {/* Upstream Links & Action Buttons */}
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap', marginBottom: '8px' }}>
           <button
             onClick={togglePin}
             style={{
@@ -238,6 +247,75 @@ export default function CollectionPageClient({ meta, icons }: Props) {
           >
             <span>🔗</span> Share Collection
           </button>
+
+          {detail.links.github && (
+            <a
+              href={detail.links.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '10px 18px',
+                borderRadius: '999px',
+                background: 'rgba(255, 255, 255, 0.05)',
+                border: '1px solid var(--border)',
+                color: 'var(--text-muted)',
+                fontSize: '13px',
+                textDecoration: 'none',
+                fontFamily: 'var(--font-mono, monospace)',
+              }}
+            >
+              GitHub ↗
+            </a>
+          )}
+
+          {detail.links.npm && (
+            <a
+              href={detail.links.npm}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '10px 18px',
+                borderRadius: '999px',
+                background: 'rgba(255, 255, 255, 0.05)',
+                border: '1px solid var(--border)',
+                color: 'var(--text-muted)',
+                fontSize: '13px',
+                textDecoration: 'none',
+                fontFamily: 'var(--font-mono, monospace)',
+              }}
+            >
+              npm ↗
+            </a>
+          )}
+
+          {detail.links.website && (
+            <a
+              href={detail.links.website}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '10px 18px',
+                borderRadius: '999px',
+                background: 'rgba(255, 255, 255, 0.05)',
+                border: '1px solid var(--border)',
+                color: 'var(--text-muted)',
+                fontSize: '13px',
+                textDecoration: 'none',
+                fontFamily: 'var(--font-mono, monospace)',
+              }}
+            >
+              Docs ↗
+            </a>
+          )}
         </div>
       </section>
 
@@ -302,10 +380,20 @@ export default function CollectionPageClient({ meta, icons }: Props) {
               {displayedIcons.map((icon) => {
                 const isSelected = selectedIcon?.id === icon.id
                 const previewUrl = `/api/svg/${encodeURIComponent(icon.library)}/${encodeURIComponent(icon.name)}`
+                const iconHref = `/icons/${encodeURIComponent(meta.slug)}/${encodeURIComponent(icon.name)}`
 
                 return (
-                  <div
+                  <Link
                     key={icon.id}
+                    href={iconHref}
+                    title={`${icon.displayName || icon.name} free vector SVG icon from ${meta.name}`}
+                    aria-label={`Customize ${icon.displayName || icon.name} vector SVG icon`}
+                    onClick={(e) => {
+                      if (!e.metaKey && !e.ctrlKey && !e.shiftKey) {
+                        e.preventDefault()
+                        setSelectedIcon(icon)
+                      }
+                    }}
                     style={{
                       display: 'flex',
                       flexDirection: 'column',
@@ -319,21 +407,18 @@ export default function CollectionPageClient({ meta, icons }: Props) {
                       position: 'relative',
                       transition: 'all 0.15s ease',
                       padding: '10px',
+                      textDecoration: 'none',
+                      color: 'inherit',
+                      cursor: 'pointer',
                     }}
                   >
-                    <button
-                      type="button"
-                      aria-label={`Customize ${icon.displayName || icon.name}`}
-                      onClick={() => setSelectedIcon(icon)}
+                    <div
                       style={{
                         width: '100%',
                         flex: 1,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        background: 'transparent',
-                        border: 0,
-                        cursor: 'pointer',
                         padding: '6px',
                       }}
                     >
@@ -345,28 +430,22 @@ export default function CollectionPageClient({ meta, icons }: Props) {
                         loading="lazy"
                         style={{ objectFit: 'contain' }}
                       />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setSelectedIcon(icon)}
-                      aria-label={`Customize ${icon.displayName || icon.name}`}
+                    </div>
+                    <span
                       style={{
-                      fontSize: '11px',
-                      color: '#475569',
-                      fontWeight: 500,
-                      maxWidth: '100%',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
-                      fontFamily: 'var(--font-mono, monospace)',
-                      background: 'transparent',
-                      border: 0,
-                      padding: 0,
-                      cursor: 'pointer',
-                    }}>
+                        fontSize: '11px',
+                        color: '#475569',
+                        fontWeight: 500,
+                        maxWidth: '100%',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                        fontFamily: 'var(--font-mono, monospace)',
+                      }}
+                    >
                       {icon.displayName || icon.name}
-                    </button>
-                  </div>
+                    </span>
+                  </Link>
                 )
               })}
             </div>
@@ -412,6 +491,132 @@ export default function CollectionPageClient({ meta, icons }: Props) {
           </>
         )}
       </section>
+
+      {/* Semantic Specifications Table */}
+      <section style={{ margin: '56px 0', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '16px', padding: '32px' }}>
+        <h2 style={{ fontSize: '22px', fontWeight: 800, marginBottom: '16px', color: 'var(--text)' }}>
+          {meta.name} Specifications & Framework Compatibility
+        </h2>
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px', textAlign: 'left' }}>
+            <caption style={{ textAlign: 'left', fontWeight: 600, fontSize: '13px', color: 'var(--text-muted)', marginBottom: '12px', captionSide: 'top' }}>
+              {meta.name} Specifications, Licensing, and Framework Compatibility
+            </caption>
+            <thead>
+              <tr style={{ borderBottom: '1px solid var(--border)', color: 'var(--text)', fontFamily: 'var(--font-mono, monospace)', fontSize: '12px' }}>
+                <th style={{ padding: '12px 16px' }}>Property</th>
+                <th style={{ padding: '12px 16px' }}>Specification Details</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style={{ borderBottom: '1px solid var(--border)' }}>
+                <td style={{ padding: '12px 16px', fontWeight: 600, color: 'var(--text)' }}>Total Icons</td>
+                <td style={{ padding: '12px 16px', color: 'var(--text-muted)' }}>{meta.iconCount.toLocaleString('en-US')} vector SVG icons</td>
+              </tr>
+              <tr style={{ borderBottom: '1px solid var(--border)' }}>
+                <td style={{ padding: '12px 16px', fontWeight: 600, color: 'var(--text)' }}>License</td>
+                <td style={{ padding: '12px 16px', color: 'var(--text-muted)' }}>{meta.license} (Commercial & Personal Use)</td>
+              </tr>
+              <tr style={{ borderBottom: '1px solid var(--border)' }}>
+                <td style={{ padding: '12px 16px', fontWeight: 600, color: 'var(--text)' }}>TypeScript Support</td>
+                <td style={{ padding: '12px 16px', color: 'var(--text-muted)' }}>Native .d.ts definitions included</td>
+              </tr>
+              <tr style={{ borderBottom: '1px solid var(--border)' }}>
+                <td style={{ padding: '12px 16px', fontWeight: 600, color: 'var(--text)' }}>Framework Support</td>
+                <td style={{ padding: '12px 16px', color: 'var(--text-muted)' }}>React, Next.js, Vue, Svelte, Tailwind CSS</td>
+              </tr>
+              <tr style={{ borderBottom: '1px solid var(--border)' }}>
+                <td style={{ padding: '12px 16px', fontWeight: 600, color: 'var(--text)' }}>Primary NPM Package</td>
+                <td style={{ padding: '12px 16px', color: 'var(--accent)', fontFamily: 'var(--font-mono, monospace)' }}>
+                  <code>{detail.installation?.react?.package || (meta.slug.startsWith('iconify-') ? `@iconify-json/${meta.slug.replace('iconify-', '')}` : meta.slug)}</code>
+                </td>
+              </tr>
+              <tr>
+                <td style={{ padding: '12px 16px', fontWeight: 600, color: 'var(--text)' }}>Source Repository</td>
+                <td style={{ padding: '12px 16px' }}>
+                  <a href={detail.links?.github || 'https://github.com/iconify/icon-sets'} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', textDecoration: 'none', fontWeight: 600 }}>
+                    Official GitHub Repository →
+                  </a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      {/* Question-Based Answer-First Headings */}
+      <section style={{ marginBottom: '56px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '14px', padding: '28px' }}>
+            <h2 style={{ fontSize: '20px', fontWeight: 800, marginBottom: '12px', color: 'var(--text)' }}>
+              How many icons does {meta.name} have?
+            </h2>
+            <p style={{ color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.8, margin: 0 }}>
+              {meta.name} currently includes <strong>{meta.iconCount.toLocaleString('en-US')} vector icons</strong> indexed in the IconSearch catalog. Every icon is available in clean SVG format with customizable stroke widths, colors, and direct multi-framework code exports for modern web applications.
+            </p>
+          </div>
+
+          <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '14px', padding: '28px' }}>
+            <h2 style={{ fontSize: '20px', fontWeight: 800, marginBottom: '12px', color: 'var(--text)' }}>
+              Is {meta.name} free for commercial use?
+            </h2>
+            <p style={{ color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.8, margin: 0 }}>
+              Yes, {meta.name} is distributed under the <strong>{meta.license} license</strong>. This permissive open-source license allows unrestricted commercial and personal usage in proprietary software, SaaS platforms, client websites, and digital products without licensing fees.
+            </p>
+          </div>
+
+          <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '14px', padding: '28px' }}>
+            <h2 style={{ fontSize: '20px', fontWeight: 800, marginBottom: '12px', color: 'var(--text)' }}>
+              How do you install and use {meta.name} in React, Next.js, and Vue?
+            </h2>
+            <p style={{ color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.8, marginBottom: '16px' }}>
+              Install the package using <code>{detail.installation?.react?.command || `npm install ${meta.slug}`}</code>, then import icons directly into your JSX, TSX, or Vue components. Alternatively, copy raw customized SVG markup directly from IconSearch with zero client-side JavaScript overhead.
+            </p>
+            <div style={{ background: 'var(--code-bg, #090a0f)', border: '1px solid var(--border)', borderRadius: '8px', padding: '16px', overflowX: 'auto' }}>
+              <pre style={{ margin: 0, fontFamily: 'var(--font-mono, monospace)', fontSize: '13px', color: 'var(--green, #34d399)', lineHeight: 1.6 }}>
+{`// Install package
+${detail.installation?.react?.command || `npm install ${meta.slug}`}
+
+// React & Next.js App Router usage
+import { ${icons[0]?.name ? icons[0].name.split('-').map(s=>s.charAt(0).toUpperCase()+s.slice(1)).join('') : 'Icon'} } from '${detail.installation?.react?.package || meta.slug}'
+
+export default function Header() {
+  return <${icons[0]?.name ? icons[0].name.split('-').map(s=>s.charAt(0).toUpperCase()+s.slice(1)).join('') : 'Icon'} className="w-5 h-5 text-indigo-500" />
+}`}
+              </pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* On-Page FAQ Section */}
+      <section style={{ marginBottom: '56px', borderTop: '1px solid var(--border)', paddingTop: '48px' }}>
+        <div style={{ fontSize: '12px', color: 'var(--accent)', fontFamily: 'var(--font-mono, monospace)', letterSpacing: '2px', marginBottom: '12px', textTransform: 'uppercase' }}>
+          FREQUENTLY ASKED QUESTIONS
+        </div>
+        <h2 style={{ fontSize: '24px', fontWeight: 800, marginBottom: '24px', color: 'var(--text)' }}>
+          {meta.name} FAQ & Technical Guide
+        </h2>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          {detail.faqs.map((faq, i) => (
+            <div key={i} style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', padding: '24px' }}>
+              <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '10px', color: 'var(--text)' }}>
+                {faq.q}
+              </h3>
+              <p style={{ fontSize: '14px', color: 'var(--text-muted)', lineHeight: 1.8, margin: 0 }}>
+                {faq.a}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Visible Non-Affiliation Disclaimer */}
+      <footer style={{ marginTop: '56px', paddingTop: '32px', borderTop: '1px solid var(--border)', textAlign: 'center', marginBottom: '40px' }}>
+        <p style={{ fontSize: '12px', color: 'var(--text-muted)', maxWidth: '800px', margin: '0 auto', lineHeight: 1.7 }}>
+          Disclaimer: IconSearch is an independent open-source discovery platform and is not affiliated with, sponsored by, or endorsed by the {meta.name} maintainers or any featured open-source projects. All trademarks, logos, and brand names are the property of their respective owners.
+        </p>
+      </footer>
 
       {/* Interactive Floating Selected Icon Modal (Matching Screenshot) */}
       {selectedIcon && (

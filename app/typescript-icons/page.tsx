@@ -1,13 +1,32 @@
 import { icons } from '../../lib/icons'
 import Link from 'next/link'
-import { createPageMetadata } from '../../lib/seo'
+import {
+  createPageMetadata,
+  generateBreadcrumbSchema,
+  generateFAQSchema,
+  generateFrameworkHubSchema,
+} from '../../lib/seo'
+import { getDynamicYear, getFormattedCurrentMonthYear } from '../../lib/date'
 
-export const metadata = createPageMetadata({
-  title: 'TypeScript Icons Guide (2026) — Strict Typing & Polymorphic SVG Wrappers',
-  description: 'Master type-safe SVG icons in TypeScript. Learn prop interfaces, generic polymorphic Icon components, verbatimModuleSyntax, and VS Code autocomplete ergonomics.',
-  path: '/typescript-icons',
-  type: 'article',
-})
+export function generateMetadata() {
+  const year = getDynamicYear()
+  return createPageMetadata({
+    title: `TypeScript Icons Guide (${year}) — Strict Typing & Polymorphic SVG Wrappers`,
+    description: 'Master type-safe SVG icons in TypeScript. Learn prop interfaces, generic polymorphic Icon components, verbatimModuleSyntax, and VS Code autocomplete ergonomics.',
+    path: '/typescript-icons',
+    type: 'article',
+    keywords: [
+      'typescript svg icons',
+      'typed icon props',
+      'react svg component typescript',
+      'type safe icons',
+      'lucide typescript props',
+      'polymorphic icon component',
+      'svg props interface typescript',
+      'verbatimModuleSyntax svg',
+    ],
+  })
+}
 
 const typescriptFaqs = [
   {
@@ -29,36 +48,51 @@ const typescriptFaqs = [
 ]
 
 export default function TypescriptIconsPage() {
+  const currentYear = getDynamicYear()
+  const lastUpdated = getFormattedCurrentMonthYear()
   const tsIcons = icons.filter((i) => i.typescript)
   const nonTsIcons = icons.filter((i) => !i.typescript)
 
-  const faqSchema = {
+  const hubSchema = generateFrameworkHubSchema({
+    name: `TypeScript Icons Guide (${currentYear}) — Strict Typing & Polymorphic SVG Wrappers`,
+    description:
+      'Master type-safe SVG icons in TypeScript. Learn prop interfaces, generic polymorphic Icon components, verbatimModuleSyntax, and VS Code autocomplete ergonomics.',
+    path: '/typescript-icons',
+    datePublished: '2026-08-17',
+    dateModified: '2026-08-20',
+  })
+
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: 'Home', url: '/' },
+    { name: 'TypeScript Icons', url: '/typescript-icons' },
+  ])
+
+  const faqSchema = generateFAQSchema(typescriptFaqs)
+
+  const schemaGraph = {
     '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: typescriptFaqs.map((faq) => ({
-      '@type': 'Question',
-      name: faq.q,
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: faq.a,
-      },
-    })),
+    '@graph': [hubSchema, breadcrumbSchema, faqSchema],
   }
 
   return (
     <main style={{ maxWidth: '1200px', margin: '0 auto', padding: '40px 48px' }}>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema).replace(/</g, '\\u003c') }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaGraph).replace(/</g, '\\u003c') }}
       />
 
       {/* Header */}
       <section style={{ marginBottom: '48px', paddingBottom: '48px', borderBottom: '1px solid var(--border)' }}>
-        <div style={{ fontSize: '12px', color: 'var(--accent)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '2px', marginBottom: '12px' }}>
-          TYPESCRIPT ARCHITECTURE
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '16px' }}>
+          <div style={{ fontSize: '12px', color: 'var(--accent)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '2px' }}>
+            TYPESCRIPT ARCHITECTURE & TYPE SAFETY
+          </div>
+          <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace', background: 'var(--bg-card)', border: '1px solid var(--border)', padding: '4px 12px', borderRadius: '999px' }}>
+            Last updated: {lastUpdated}
+          </div>
         </div>
         <h1 style={{ fontSize: 'clamp(32px, 5vw, 52px)', fontWeight: 800, lineHeight: 1.15, marginBottom: '20px' }}>
-          TypeScript Icons: <span style={{ color: 'var(--accent)' }}>Strict Typing & Polymorphic Wrappers</span> (2026)
+          TypeScript Icons: <span style={{ color: 'var(--accent)' }}>Strict Typing & Polymorphic Wrappers</span> ({currentYear})
         </h1>
         <p style={{ color: 'var(--text-muted)', fontSize: '17px', maxWidth: '780px', lineHeight: 1.8, marginBottom: '20px' }}>
           Eliminate runtime SVG rendering bugs with strict TypeScript interfaces. 
@@ -74,11 +108,10 @@ export default function TypescriptIconsPage() {
       {/* Polymorphic Wrapper Guide */}
       <section style={{ marginBottom: '56px' }}>
         <h2 style={{ fontSize: '24px', fontWeight: 800, marginBottom: '16px', color: 'var(--text)' }}>
-          1. Building a Production Type-Safe Icon Wrapper
+          How do you build a strictly typed polymorphic SVG icon component in TypeScript?
         </h2>
         <p style={{ color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.8, marginBottom: '20px' }}>
-          When architecting a frontend design system, wrap your icon components in a typed polymorphic wrapper. 
-          This centralizes default sizing, accessibility attributes (<code>aria-hidden</code>), and theme classes:
+          A strictly typed polymorphic SVG icon wrapper in TypeScript extends <code>React.ComponentPropsWithoutRef&lt;&apos;svg&apos;&gt;</code> while accepting a generic icon component type like <code>LucideIcon</code>. This centralizes default sizing, accessibility attributes (<code>aria-hidden</code>), and theme utility classes while maintaining full compile-time autocomplete and prop validation. Wrapping primitives ensures that design system tokens remain consistent across your engineering organization while preserving native SVG attribute passthrough.
         </p>
 
         <div style={{ background: 'var(--code-bg)', border: '1px solid var(--border)', borderRadius: '10px', padding: '20px', marginBottom: '24px', overflowX: 'auto' }}>
@@ -109,6 +142,60 @@ export function AppIcon({ icon: IconComponent, label, className = '', size = 20,
 // Usage in your React / Next.js app:
 // <AppIcon icon={Home} size={24} className="text-blue-500" label="Go to homepage" />`}
           </pre>
+        </div>
+      </section>
+
+      {/* Semantic Comparison Table */}
+      <section style={{ marginBottom: '56px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '16px', padding: '32px' }}>
+        <h2 style={{ fontSize: '22px', fontWeight: 800, marginBottom: '16px', color: 'var(--text)' }}>
+          Which icon libraries provide native TypeScript definition files?
+        </h2>
+        <p style={{ color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.8, marginBottom: '20px' }}>
+          Modern icon libraries including Lucide React, Heroicons, Tabler Icons, Radix Icons, and Phosphor Icons ship native `.d.ts` declaration files. These declarations provide instant IntelliSense in VS Code, type-safe prop interfaces, and strict prop checking under TypeScript 5+. The comparison table below highlights TypeScript support across major libraries:
+        </p>
+
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px', textAlign: 'left' }}>
+            <caption style={{ textAlign: 'left', fontWeight: 600, fontSize: '13px', color: 'var(--text-muted)', marginBottom: '12px', captionSide: 'top' }}>
+              TypeScript Type Definition Support Matrix ({currentYear})
+            </caption>
+            <thead>
+              <tr style={{ borderBottom: '1px solid var(--border)', color: 'var(--text)', fontFamily: 'JetBrains Mono, monospace', fontSize: '12px' }}>
+                <th style={{ padding: '12px 14px' }}>Library</th>
+                <th style={{ padding: '12px 14px' }}>Total Icons</th>
+                <th style={{ padding: '12px 14px' }}>License</th>
+                <th style={{ padding: '12px 14px' }}>TypeScript Declarations</th>
+                <th style={{ padding: '12px 14px' }}>Module Resolution</th>
+                <th style={{ padding: '12px 14px' }}>Primary NPM Package</th>
+              </tr>
+            </thead>
+            <tbody>
+              {tsIcons.slice(0, 8).map((lib) => (
+                <tr key={lib.slug} style={{ borderBottom: '1px solid var(--border)' }}>
+                  <td style={{ padding: '12px 14px', fontWeight: 600 }}>
+                    <Link href={`/icons/${lib.slug}`} style={{ color: 'var(--accent)', textDecoration: 'none' }}>
+                      {lib.name}
+                    </Link>
+                  </td>
+                  <td style={{ padding: '12px 14px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace' }}>
+                    {lib.iconCount.toLocaleString('en-US')}
+                  </td>
+                  <td style={{ padding: '12px 14px', color: 'var(--green)', fontFamily: 'JetBrains Mono, monospace' }}>
+                    {lib.license}
+                  </td>
+                  <td style={{ padding: '12px 14px', color: 'var(--cyan)' }}>
+                    Native .d.ts / .d.mts
+                  </td>
+                  <td style={{ padding: '12px 14px', color: 'var(--green)' }}>
+                    Bundler & Node16
+                  </td>
+                  <td style={{ padding: '12px 14px', color: 'var(--text)', fontFamily: 'JetBrains Mono, monospace', fontSize: '12px' }}>
+                    <code>{lib.installCommand.replace('npm install ', '')}</code>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </section>
 
@@ -225,7 +312,7 @@ export function AppIcon({ icon: IconComponent, label, className = '', size = 20,
       </section>
 
       {/* Navigation */}
-      <section style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', padding: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
+      <section style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px', padding: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px', marginBottom: '48px' }}>
         <div>
           <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '6px' }}>Explore Next.js & React Guides</h3>
           <p style={{ color: 'var(--text-muted)', fontSize: '14px', margin: 0 }}>Learn how to render typed icons in Next.js Server Components and React.</p>
@@ -239,6 +326,13 @@ export function AppIcon({ icon: IconComponent, label, className = '', size = 20,
           </Link>
         </div>
       </section>
+
+      {/* Non-Affiliation Disclaimer */}
+      <footer style={{ borderTop: '1px solid var(--border)', paddingTop: '24px', textAlign: 'center' }}>
+        <p style={{ fontSize: '12px', color: 'var(--text-muted)', maxWidth: '800px', margin: '0 auto', lineHeight: 1.7 }}>
+          Disclaimer: IconSearch is an independent open-source discovery platform and is not affiliated with, sponsored by, or endorsed by Microsoft, TypeScript, or any featured icon library maintainers.
+        </p>
+      </footer>
     </main>
   )
 }

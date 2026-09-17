@@ -245,8 +245,8 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
           void this.loadCatalog();
 
           const label = access.tier === 'founder' && access.founderNumber
-            ? `Founder #${access.founderNumber}`
-            : 'Free';
+            ? `Founder #${access.founderNumber} · Free`
+            : '100% Free Lifetime';
           vscode.window.showInformationMessage(`IconSearch connected. ${label} access is active.`);
           return;
         }
@@ -621,7 +621,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
           <section id="unlockPanel" class="unlock-card hidden">
             <div class="unlock-title">Connect your IconSearch account</div>
-            <div class="unlock-copy">Sign in securely in your browser. The first 500 verified VS Code users receive lifetime Founder access.</div>
+            <div class="unlock-copy">Sign in securely in your browser to sync collections and presets. IconSearch is 100% free and unlimited for all developers.</div>
             <div class="unlock-row">
               <button id="signInBtn" class="primary-btn" type="button">Sign in with IconSearch</button>
               <div id="unlockError" class="unlock-error"></div>
@@ -859,8 +859,8 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
             unlockPanel.classList.toggle('hidden', unlocked);
             appPanel.classList.toggle('hidden', !unlocked);
             const plan = tier === 'founder' && founderNumber
-              ? 'Founder #' + founderNumber
-              : (tier ? tier.charAt(0).toUpperCase() + tier.slice(1) : '');
+              ? 'Founder #' + founderNumber + ' · Free'
+              : '100% Free';
             accountLabel.textContent = email
               ? 'Signed in: ' + email + (plan ? ' - ' + plan : '')
               : 'Connected';

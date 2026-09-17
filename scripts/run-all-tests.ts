@@ -28,6 +28,8 @@ const SUITES = [
   { name: 'M4 Discoverability & SEO Hubs', file: 'tests/m4-discoverability-seo.test.ts' },
   { name: 'M3 Stress & Idempotency', file: 'tests/challenger-m3-stress.test.ts' },
   { name: 'M3 Adversarial Edge Cases', file: 'tests/challenger-m3-exporter-stress.test.ts' },
+  { name: 'M2 Schema Adversarial', file: 'tests/challenger-m2-schema-adversarial.test.ts' },
+  { name: 'M2 SEO & Sitemaps', file: 'tests/challenger-m2-seo-sitemap.test.ts' },
 ]
 
 const THRESHOLDS = {

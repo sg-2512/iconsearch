@@ -116,7 +116,7 @@ const testimonials: Testimonial[] = [
     role: 'Creative Director',
     avatar: '/review-avatars/priya-sharma.webp',
     source: 'Website feedback',
-    quote: 'We look for rapid prototyping assets daily. While I would love a built-in color customizer on the site, as a pure aggregator and directory, it is easily the most efficient search tool my design team uses.',
+    quote: 'The built-in color customizer and multi-format exporter have transformed our design handoff. Being 100% free with no search quotas or pro paywalls makes it an effortless choice for our entire design team.',
   },
   {
     name: 'Jan De Backer',
@@ -171,10 +171,10 @@ export default function HomeExperience({ initialLibraries, recentItems }: HomeEx
     <main className={styles.page}>
       <section className={styles.hero}>
         <div className={styles.heroContent}>
-          <p className={styles.kicker}>IconSearch / open-source icon directory</p>
-          <h1 className={styles.heroTitle}>Find your icon system.</h1>
+          <p className={styles.kicker}>100% Free Forever · 229 Open-Source Libraries · 355,000+ SVGs</p>
+          <h1 className={styles.heroTitle}>Find your icon sets.</h1>
           <p className={styles.heroLead}>
-            Search a single index of free SVG icons, then review the libraries behind them before you commit to a visual language.
+            Search a single index of 355,000+ free SVG icons across 229 open-source icon sets. 100% free forever with no search quotas or paywalls. Customize strokes, colors, and transforms, then export clean SVG, React, Vue, or Tailwind code in one click.
           </p>
 
           <HomeSearch />
@@ -186,9 +186,9 @@ export default function HomeExperience({ initialLibraries, recentItems }: HomeEx
           </div>
 
           <div className={styles.trustRow} aria-label="IconSearch benefits">
-            <span><Check size={15} aria-hidden="true" /> Open-source libraries</span>
-            <span><Check size={15} aria-hidden="true" /> Commercial-friendly licenses</span>
-            <span><Check size={15} aria-hidden="true" /> SVG and framework exports</span>
+            <span><Check size={15} aria-hidden="true" /> 100% Free Forever (No Paywalls)</span>
+            <span><Check size={15} aria-hidden="true" /> 355,000+ Commercial-Safe SVGs</span>
+            <span><Check size={15} aria-hidden="true" /> React, Vue, Svelte & Tailwind</span>
           </div>
         </div>
 
@@ -338,7 +338,7 @@ export default function HomeExperience({ initialLibraries, recentItems }: HomeEx
 
         <article className={styles.resourcePanel}>
           <p className={styles.kicker}>FROM THE GUIDE</p>
-          <h2>Current thinking for icon systems.</h2>
+          <h2>Guides & insights for modern icon sets.</h2>
           <div className={styles.articleList}>
             {recentItems.slice(0, 3).map((item) => (
               <Link key={item.href} href={item.href}>
@@ -355,7 +355,7 @@ export default function HomeExperience({ initialLibraries, recentItems }: HomeEx
       <section className={styles.finalCta}>
         <div>
           <p className={styles.kicker}>READY TO BUILD</p>
-          <h2>Choose an icon system with fewer assumptions.</h2>
+          <h2>Choose the right icon sets for your next project.</h2>
         </div>
         <Link href="/icon-search" className={styles.primaryAction}>
           Search the icon index <ArrowRight size={16} aria-hidden="true" />

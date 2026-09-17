@@ -7,14 +7,12 @@ import {
   getCategoryBySlug,
 } from '../lib/categories'
 import {
-  generateCategoryPageSchema,
   generateFrameworkHubSchema,
-  generateComparisonSchema,
   generateBreadcrumbSchema,
   generateFAQSchema,
   createPageMetadata,
 } from '../lib/seo'
-import { getComparisonPairs, getIconBySlug } from '../lib/icons'
+import { getIconBySlug } from '../lib/icons'
 
 describe('Milestone M4: Discoverability & Programmatic SEO Test Suite', () => {
   describe('1. Category Taxonomies & Metadata', () => {
@@ -57,79 +55,39 @@ describe('Milestone M4: Discoverability & Programmatic SEO Test Suite', () => {
     })
   })
 
-  describe('2. Schema.org JSON-LD Generation for M4 Hubs', () => {
-    it('M4.04: generateCategoryPageSchema creates valid CollectionPage with ItemList', () => {
-      const schema = generateCategoryPageSchema({
-        name: 'Free AI & Machine Learning SVG Icons',
-        description: '4500+ vector AI icons',
-        path: '/categories/ai',
-        count: 4500,
-        icons: [
-          { name: 'Sparkles', url: '/api/svg/lucide-icons/sparkles' },
-          { name: 'Bot', url: '/api/svg/lucide-icons/bot' },
-        ],
-      })
-
-      assert.equal(schema['@context'], 'https://schema.org')
-      assert.equal(schema['@type'], 'CollectionPage')
-      assert.equal(schema.url, 'https://iconsearch.info/categories/ai')
-      assert.equal(schema.numberOfItems, 4500)
-      const mainEntity = schema.mainEntity as any
-      assert.ok(mainEntity)
-      assert.equal(mainEntity['@type'], 'ItemList')
-      assert.equal(mainEntity.numberOfItems, 2)
-      assert.equal(mainEntity.itemListElement[0].name, 'Sparkles')
-      assert.equal(mainEntity.itemListElement[0].url, 'https://iconsearch.info/api/svg/lucide-icons/sparkles')
-    })
-
+  describe('2. Schema.org JSON-LD Generation for Framework Hubs', () => {
     it('M4.05: generateFrameworkHubSchema creates valid TechArticle schema', () => {
       const schema = generateFrameworkHubSchema({
         name: 'React Icons Guide 2026',
         description: 'Complete architecture guide for React icons.',
         path: '/react-icons',
+        datePublished: '2026-08-17',
+        dateModified: '2026-08-20',
       })
 
       assert.equal(schema['@context'], 'https://schema.org')
       assert.equal(schema['@type'], 'TechArticle')
+      assert.equal(schema['@id'], 'https://iconsearch.info/react-icons#article')
       assert.equal(schema.headline, 'React Icons Guide 2026')
       assert.equal(schema.url, 'https://iconsearch.info/react-icons')
-    })
-
-    it('M4.06: generateComparisonSchema creates valid comparison TechArticle schema', () => {
-      const schema = generateComparisonSchema({
-        libA: 'Lucide Icons',
-        libB: 'Heroicons',
-        path: '/compare/lucide-icons-vs-heroicons',
-      })
-
-      assert.equal(schema['@context'], 'https://schema.org')
-      assert.equal(schema['@type'], 'TechArticle')
-      assert.ok(schema.headline.includes('Lucide Icons vs Heroicons'))
-      assert.equal(schema.url, 'https://iconsearch.info/compare/lucide-icons-vs-heroicons')
+      assert.equal(schema.datePublished, '2026-08-17')
+      assert.equal(schema.dateModified, '2026-08-20')
+      assert.equal(schema.isPartOf['@id'], 'https://iconsearch.info/#website')
     })
   })
 
-  describe('3. Comparison Pair Generation & Resolution', () => {
-    it('M4.07: getComparisonPairs generates combinations for all icons', () => {
-      const pairs = getComparisonPairs()
-      assert.ok(pairs.length > 50, 'Should generate numerous comparison combinations')
-      for (const [a, b] of pairs) {
-        assert.notEqual(a.slug, b.slug)
-        assert.ok(a.name && b.name)
-      }
-    })
-
-    it('M4.08: Metadata generator produces canonical URLs and OpenGraph tags for categories', () => {
+  describe('3. Metadata & Canonical URLs', () => {
+    it('M4.08: Metadata generator produces canonical URLs and OpenGraph tags for category search queries', () => {
       const cat = getCategoryBySlug('commerce')!
       const meta = createPageMetadata({
         title: `${cat.title} — IconSearch`,
         description: cat.description,
-        path: `/categories/${cat.slug}`,
+        path: `/icon-search?category=${cat.slug}`,
       })
 
       assert.equal(meta.title, `${cat.title} — IconSearch`)
-      assert.equal(meta.alternates?.canonical, 'https://iconsearch.info/categories/commerce')
-      assert.equal(meta.openGraph?.url, 'https://iconsearch.info/categories/commerce')
+      assert.equal(meta.alternates?.canonical, 'https://iconsearch.info/icon-search?category=commerce')
+      assert.equal(meta.openGraph?.url, 'https://iconsearch.info/icon-search?category=commerce')
     })
   })
 })

@@ -19,12 +19,15 @@ export async function GET() {
   if (error) return publicJson({ error: 'Could not load launch status.' }, { status: 500 })
 
   return publicJson({
+    isCompletelyFree: true,
     products: (data || []).map((product) => ({
       id: product.id,
       name: product.name,
+      isCompletelyFree: true,
       founderLimit: product.founder_limit,
       founderClaimed: product.founder_claimed,
       founderRemaining: Math.max(0, product.founder_limit - product.founder_claimed),
+      tier: 'free_unlimited',
     })),
   })
 }

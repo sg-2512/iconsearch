@@ -171,9 +171,10 @@ Without valid Supabase keys, the app runs in **local-only mode**: search, cart, 
 ### 2. Run database schema
 
 Run every file in `supabase/migrations/` in filename order in the Supabase SQL
-Editor. The first migration creates product counters, atomic first-500 Founder
-claims, short-lived device codes, hashed extension sessions, usage tables,
-audit events, and row-level-security policies.
+Editor. The migrations create product counters, 100% free lifetime entitlements,
+short-lived device codes, hashed extension sessions, usage tables, audit events,
+and row-level-security policies. Migration `202609040001_make_completely_free.sql`
+ensures unlimited capacity and free lifetime access for all users.
 
 The agent workflow additionally requires these migrations in order:
 
@@ -275,7 +276,7 @@ Enable **GitHub** and/or **Google** under **Authentication → Providers**. Use 
 | `packs` | Named workspace carts and their icon items (JSON) |
 | `presets` | Saved size / stroke / color presets |
 | `profiles` | User plan (`free` / `pro`) — schema exists; billing not wired yet |
-| `products` / `entitlements` | VS Code and Figma free or Founder access |
+| `products` / `entitlements` | 100% Free lifetime access across all official developer integrations |
 | `device_codes` | Ten-minute browser approval handshakes |
 | `extension_sessions` | Revocable 90-day app sessions stored only as hashes |
 

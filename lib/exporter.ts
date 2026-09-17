@@ -14,6 +14,9 @@ export interface ExportOptions {
   frameStrokeWidth?: number
   secondaryColor?: string
   secondaryOpacity?: number
+  rotate?: number
+  flipHorizontal?: boolean
+  flipVertical?: boolean
   className?: string
 }
 
@@ -162,6 +165,9 @@ export function customizeSvg(
   let frameStrokeWidth = 1
   let secondaryColor: string | undefined
   let secondaryOpacity: number | undefined
+  let rotate = 0
+  let flipHorizontal = false
+  let flipVertical = false
 
   if (typeof sizeOrOptions === 'object' && sizeOrOptions !== null) {
     if (sizeOrOptions.size !== undefined) size = sizeOrOptions.size
@@ -174,6 +180,9 @@ export function customizeSvg(
     if (sizeOrOptions.frameStrokeWidth !== undefined) frameStrokeWidth = sizeOrOptions.frameStrokeWidth
     if (sizeOrOptions.secondaryColor !== undefined) secondaryColor = sizeOrOptions.secondaryColor
     if (sizeOrOptions.secondaryOpacity !== undefined) secondaryOpacity = sizeOrOptions.secondaryOpacity
+    if (sizeOrOptions.rotate !== undefined) rotate = sizeOrOptions.rotate
+    if (sizeOrOptions.flipHorizontal !== undefined) flipHorizontal = sizeOrOptions.flipHorizontal
+    if (sizeOrOptions.flipVertical !== undefined) flipVertical = sizeOrOptions.flipVertical
   } else {
     if (typeof sizeOrOptions === 'number') size = sizeOrOptions
     if (strokeParam !== undefined) stroke = strokeParam
@@ -231,7 +240,24 @@ export function customizeSvg(
     parsed = parsed.replace('<svg', `<svg viewBox="${vb.raw}"`)
   }
 
-  // 6. Container Frame Shapes
+  // 6. Vector Transformations (Rotate and Flip)
+  if (rotate !== 0 || flipHorizontal || flipVertical) {
+    const cx = parseFloat((vb.minX + vb.width / 2).toFixed(2))
+    const cy = parseFloat((vb.minY + vb.height / 2).toFixed(2))
+    const transforms: string[] = []
+    if (rotate) transforms.push(`rotate(${rotate} ${cx} ${cy})`)
+    if (flipHorizontal) transforms.push(`translate(${2 * cx} 0) scale(-1 1)`)
+    if (flipVertical) transforms.push(`translate(0 ${2 * cy}) scale(1 -1)`)
+
+    if (transforms.length > 0) {
+      const transformAttr = `transform="${transforms.join(' ')}"`
+      parsed = parsed.replace(/(<svg[^>]*>)([\s\S]*)(<\/svg>)/, (_, openTag, inner, closeTag) => {
+        return `${openTag}\n  <g ${transformAttr}>\n${inner}\n  </g>\n${closeTag}`
+      })
+    }
+  }
+
+  // 7. Container Frame Shapes
   if (frameShape && frameShape !== 'none') {
     let frameElement = ''
     const strokeAttr = frameStroke && frameStroke !== 'none' && frameStroke !== 'transparent' ? ` stroke="${frameStroke}" stroke-width="${frameStrokeWidth}"` : ''
@@ -266,6 +292,18 @@ export function customizeSvg(
 export function generateSvgSnippet(svg: string, options?: ExportOptions): string {
   if (!svg) return ''
   return customizeSvg(svg, options)
+}
+
+/**
+ * Generates Base64 Data URI from customized SVG.
+ */
+export function generateBase64Snippet(svg: string, options?: ExportOptions): string {
+  if (!svg) return ''
+  const customized = customizeSvg(svg, options)
+  const base64 = typeof Buffer !== 'undefined'
+    ? Buffer.from(customized, 'utf-8').toString('base64')
+    : btoa(unescape(encodeURIComponent(customized)))
+  return `data:image/svg+xml;base64,${base64}`
 }
 
 /**

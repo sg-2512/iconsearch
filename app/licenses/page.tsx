@@ -1,12 +1,16 @@
 import Link from 'next/link'
 import { createPageMetadata } from '../../lib/seo'
+import { getDynamicYear, getFormattedCurrentMonthYear } from '../../lib/date'
 
-export const metadata = createPageMetadata({
-  title: 'Icon Library Licenses — MIT, ISC and Apache 2.0 Guide',
-  description: 'Check official licenses, commercial-use rules, and attribution for Heroicons, Tabler, Phosphor, Lucide, Feather, Bootstrap, Remix, and Radix icons.',
-  path: '/licenses',
-  type: 'article',
-})
+export function generateMetadata() {
+  const year = getDynamicYear()
+  return createPageMetadata({
+    title: `Icon Library Licenses (${year}) — MIT, ISC and Apache 2.0 Guide`,
+    description: 'Check official licenses, commercial-use rules, and attribution for Heroicons, Tabler, Phosphor, Lucide, Feather, Bootstrap, Remix, and Radix icons.',
+    path: '/licenses',
+    type: 'article',
+  })
+}
 
 const licenseData = [
   {
@@ -119,6 +123,9 @@ const faqs = [
 ]
 
 export default function LicensesPage() {
+  const currentYear = getDynamicYear()
+  const lastUpdated = getFormattedCurrentMonthYear()
+
   const faqSchema = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
@@ -140,12 +147,17 @@ export default function LicensesPage() {
       />
 
       <section style={{ marginBottom: '48px', paddingBottom: '48px', borderBottom: '1px solid var(--border)' }}>
-        <div style={{ fontSize: '12px', color: 'var(--accent)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '2px', marginBottom: '12px' }}>
-          LICENSES
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '16px' }}>
+          <div style={{ fontSize: '12px', color: 'var(--accent)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '2px' }}>
+            OPEN SOURCE LICENSING & COMPLIANCE
+          </div>
+          <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace', background: 'var(--bg-card)', border: '1px solid var(--border)', padding: '4px 12px', borderRadius: '999px' }}>
+            Last updated: {lastUpdated}
+          </div>
         </div>
         <h1 style={{ fontSize: 'clamp(32px, 5vw, 48px)', fontWeight: 800, lineHeight: 1.1, marginBottom: '16px' }}>
           Icon Library Licenses<br />
-          <span style={{ color: 'var(--accent)' }}>Official Guide (2026)</span>
+          <span style={{ color: 'var(--accent)' }}>Official Guide ({currentYear})</span>
         </h1>
         <p style={{ color: 'var(--text-muted)', fontSize: '18px', maxWidth: '640px', lineHeight: 1.7, marginBottom: '24px' }}>
           Can you use these icon libraries in commercial projects? Do you need to provide attribution? This page covers the official license for every major icon library with direct links to the official license files on GitHub.

@@ -2,8 +2,10 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import type { User } from '@supabase/supabase-js'
-import AuthModal from '@/app/components/AuthModal'
+import dynamic from 'next/dynamic'
 import { createClient, isSupabaseConfigured } from '@/lib/supabase'
+
+const AuthModal = dynamic(() => import('@/app/components/AuthModal'), { ssr: false })
 
 type Props = { requestQuery: string }
 

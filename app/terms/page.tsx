@@ -37,7 +37,7 @@ Our Platform provides in-memory fast-path icon search, an interactive SVG custom
           },
           {
             title: '2. User Accounts and Supabase Authentication',
-            content: `To access certain features on the Platform — such as saving icon packs to the cloud, persisting customizer style presets across devices, claiming Founder access entitlements, or authorizing developer integrations — you may create an account using Supabase Authentication (including Email/Password and Google OAuth sign-in).
+            content: `To access certain features on the Platform — such as saving icon packs to the cloud, persisting customizer style presets across devices, activating free integration entitlements, or authorizing developer integrations — you may create an account using Supabase Authentication (including Email/Password and Google OAuth sign-in).
 
 You are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account. You agree to notify us immediately at iconsearchinfo@gmail.com if you suspect any unauthorized access or security breach. We reserve the right to suspend or terminate accounts that violate these Terms or engage in abusive, fraudulent, or automated exploitation of our authentication endpoints.`,
           },
@@ -50,12 +50,12 @@ When connecting an extension or plugin, a temporary 8-character user code and de
 You agree not to reverse-engineer, attempt to forge device approval signatures, bypass rate limits, or use unauthorized automated scripts to generate mass session tokens.`,
           },
           {
-            title: '4. Founder Access and Lifetime Entitlements',
-            content: `As part of our platform launch, IconSearch offers limited "Founder Access" entitlements for up to the first 500 verified users across each of our 18 eligible product integrations.
+            title: '4. 100% Free Platform Access and Unlimited Developer Entitlements',
+            content: `IconSearch is 100% free and open for all users, developers, and designers worldwide. There are no subscription fees, paid tiers, or paywalls for our icon search engine, customizer, code generation, export pipelines, or official developer integrations (including VS Code, Figma, Framer, Chrome, Webflow, Penpot, Canva, Adobe Express, and MCP agent workflows).
 
-Founder Access eligibility is determined on an atomic, first-claimed basis upon successful user account verification and in-app activation. Founder access is personal, non-transferable, limited to one entitlement claim per user account per product, and strictly subject to fair use. We reserve the right to audit and revoke claims obtained through botting, duplicate accounts, temporary email addresses, or system abuse.
+All users receive free, unlimited entitlements to access cloud sync, workspace collections, and developer integrations under standard fair use. We do not restrict access to an arbitrary pool of users or place accounts on artificial free-tier caps. Early users who received honorary Founder numbers retain their status badges as permanent recognition.
 
-"Lifetime" entitlement means access for as long as IconSearch operates and supports the applicable integration. It does not guarantee perpetual operation of third-party software host environments (e.g. changes to VS Code, Figma, or Chrome Extension APIs beyond our control). Users who register after Founder capacity is reached may be placed on free tier plans with default usage limits.`,
+Free access is granted subject to fair use. We reserve the right to audit, rate-limit, or restrict access obtained through botting, automated scraping, DDoS attacks, or malicious system abuse in order to maintain reliable service quality for the entire community.`,
           },
           {
             title: '5. Intellectual Property Rights & Open Source Licensing',

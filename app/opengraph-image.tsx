@@ -56,7 +56,7 @@ export default function OpenGraphImage() {
               fontWeight: 850,
             }}
           >
-            Find your icon system.
+            Find your icon sets.
           </div>
           <div
             style={{

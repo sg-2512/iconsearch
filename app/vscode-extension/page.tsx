@@ -10,6 +10,15 @@ export const metadata = createPageMetadata({
   title: `IconSearch VS Code Extension — Search ${formattedIconCount} SVG Icons`,
   description: `Install the IconSearch VS Code extension to search and insert ${formattedIconCount} free online SVG icons from ${NAMED_LIBRARY_COUNT} open-source libraries.`,
   path: '/vscode-extension',
+  keywords: [
+    'vscode icons extension',
+    'insert svg vscode',
+    'react icons vscode',
+    'developer icons extension',
+    'iconsearch vscode',
+    'svg vector snippet vscode',
+    'icons for visual studio code',
+  ],
 })
 
 const stats = [

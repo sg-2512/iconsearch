@@ -2,14 +2,28 @@ import Link from 'next/link'
 import { icons } from '../../lib/icons'
 import { SEARCHABLE_ICON_COUNT } from '../../data/library-catalog'
 import { createPageMetadata } from '../../lib/seo'
+import { getDynamicYear, getFormattedCurrentMonthYear } from '../../lib/date'
 
-export const metadata = createPageMetadata({
-  title: 'IconSearch Directory — Icon Libraries, Guides and Tools',
-  description: 'Browse every IconSearch icon library, framework guide, search tool, logo maker, and open-source license resource.',
-  path: '/directory',
-})
+export function generateMetadata() {
+  const year = getDynamicYear()
+  return createPageMetadata({
+    title: `IconSearch Directory (${year}) — Icon Libraries, Guides and Tools`,
+    description: 'Browse every IconSearch icon library, framework guide, search tool, logo maker, and open-source license resource.',
+    path: '/directory',
+    keywords: [
+      'iconsearch directory',
+      'icon libraries list',
+      'all svg icon sets',
+      'developer icon guides',
+      'icon search sitemap',
+      'open source icon catalog',
+    ],
+  })
+}
 
 export default function DirectoryPage() {
+  const lastUpdated = getFormattedCurrentMonthYear()
+
   return (
     <main style={{ maxWidth: '1200px', margin: '0 auto', padding: '40px 48px' }}>
       
@@ -22,8 +36,13 @@ export default function DirectoryPage() {
 
       {/* Hero */}
       <section style={{ margin: '0 0 48px', paddingBottom: '48px', borderBottom: '1px solid var(--border)' }}>
-        <div style={{ fontSize: '12px', color: 'var(--accent)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '2px', marginBottom: '12px' }}>
-          SITE DIRECTORY
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '12px' }}>
+          <div style={{ fontSize: '12px', color: 'var(--accent)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '2px' }}>
+            SITE DIRECTORY
+          </div>
+          <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace', background: 'var(--bg-card)', border: '1px solid var(--border)', padding: '4px 12px', borderRadius: '999px' }}>
+            Last updated: {lastUpdated}
+          </div>
         </div>
         <h1 style={{ fontSize: 'clamp(36px, 5vw, 56px)', fontWeight: 800, lineHeight: 1.1, marginBottom: '24px' }}>
           Explore the Full Site

@@ -1,27 +1,31 @@
 import fs from 'fs'
 import path from 'path'
 import { createPageMetadata, generateBreadcrumbSchema, generateSoftwareAppSchema } from '../../lib/seo'
+import { getDynamicYear } from '../../lib/date'
 import LogoMakerStudio, { StudioIcon } from './LogoMakerStudio'
 
-export const metadata = createPageMetadata({
-  title: 'Free App Icon Maker & SVG Logo Generator (2026) — 355k+ Symbols',
-  description: 'Create custom iOS & Android app icons, website favicons, and vector SVG logos for free. Customize background shapes, squircle radius, gradients, padding, and export multi-size PNG, SVG, ICO.',
-  path: '/logo-maker',
-  keywords: [
-    'app icons',
-    'app icon maker',
-    'custom app icons',
-    'app iconography',
-    'svg maker free',
-    'free svg maker',
-    'logo icons',
-    'logo design svg',
-    'design svg logo',
-    'favicon maker',
-    'icon generator free',
-    'site icon maker',
-  ],
-})
+export function generateMetadata() {
+  const year = getDynamicYear()
+  return createPageMetadata({
+    title: `Free App Icon Maker & SVG Logo Generator (${year}) — 355k+ Symbols`,
+    description: 'Create custom iOS & Android app icons, website favicons, and vector SVG logos for free. Customize background shapes, squircle radius, gradients, padding, and export multi-size PNG, SVG, ICO.',
+    path: '/logo-maker',
+    keywords: [
+      'app icons',
+      'app icon maker',
+      'custom app icons',
+      'app iconography',
+      'svg maker free',
+      'free svg maker',
+      'logo icons',
+      'logo design svg',
+      'design svg logo',
+      'favicon maker',
+      'icon generator free',
+      'site icon maker',
+    ],
+  })
+}
 
 export default async function LogoMakerPage() {
   let initialIcons: StudioIcon[] = []

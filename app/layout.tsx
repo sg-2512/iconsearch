@@ -31,10 +31,10 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `Free SVG Icons — Search ${SEARCHABLE_ICON_COUNT.toLocaleString('en-US')} Icons | IconSearch`,
+    default: `Free SVG Icons — 355,000+ Vector Icons for Commercial Use | IconSearch`,
     template: `%s | ${SITE_NAME}`,
   },
-  description: `Search, customize, and download ${SEARCHABLE_ICON_COUNT.toLocaleString('en-US')} free SVG icons from ${NAMED_LIBRARY_COUNT} open-source icon libraries.`,
+  description: `Search, customize, and download 355,000+ free SVG icons for commercial use from 229 open-source icon libraries. Export clean SVG, React JSX, Vue, and Tailwind components in one click.`,
   keywords: DEFAULT_KEYWORDS,
   applicationName: SITE_NAME,
   authors: [{ name: SITE_NAME, url: SITE_URL }],

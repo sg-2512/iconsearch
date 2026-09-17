@@ -7,11 +7,14 @@ import { generateZipPackage, customizeSvg, type FrameShape, type ExportOptions }
 import { ICON_PREVIEW_CACHE_VERSION, getBestIconPreviewUrl, getCleanSvgUrl, getIconPreviewCandidates } from '../../lib/icon-preview'
 import { createClient, isSupabaseConfigured } from '@/lib/supabase'
 import { trackSearch, trackAddToCart, trackCartImport, trackExport } from '@/lib/analytics'
-import AuthModal from '../components/AuthModal'
-import UniversalExporterModal from '../components/UniversalExporterModal'
+import dynamic from 'next/dynamic'
 import LibraryFilter from '../components/LibraryFilter'
-import MultiFacetFilterBar from '../components/MultiFacetFilterBar'
 import { namedLibraries } from '../../data/library-catalog'
+
+const AuthModal = dynamic(() => import('../components/AuthModal'), { ssr: false })
+const UniversalExporterModal = dynamic(() => import('../components/UniversalExporterModal'), { ssr: false })
+const MultiFacetFilterBar = dynamic(() => import('../components/MultiFacetFilterBar'), { ssr: false })
+
 
 type Icon = {
   id: string

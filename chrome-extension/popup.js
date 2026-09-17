@@ -333,8 +333,8 @@ function showSearch() {
   elements.searchView.classList.remove('hidden')
   const access = state.access || {}
   const tier = access.tier === 'founder' && access.founderNumber
-    ? `Founder #${access.founderNumber}`
-    : 'Free access'
+    ? `Founder #${access.founderNumber} · Free`
+    : '100% Free'
   elements.accessLabel.textContent = access.email ? `${access.email} - ${tier}` : tier
 }
 
