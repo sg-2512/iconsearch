@@ -31,6 +31,18 @@ const nextConfig: NextConfig = {
       "@radix-ui/react-icons",
     ],
   },
+  async rewrites() {
+    return {
+      beforeFiles: [
+        {
+          source: "/sitemap.xml",
+          destination: "/api/sitemap-index",
+        },
+      ],
+      afterFiles: [],
+      fallback: [],
+    };
+  },
   async redirects() {
     return [
       {

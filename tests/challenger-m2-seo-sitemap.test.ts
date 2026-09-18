@@ -5,6 +5,7 @@ import robots from '../app/robots'
 import { generateSitemaps } from '../app/sitemap'
 import { allLibraries } from '../data/library-catalog'
 import { SITE_URL } from '../lib/seo'
+import { GET as getSitemapIndex } from '../app/api/sitemap-index/route'
 
 function isValidIsoDate(dateVal?: string | Date): boolean {
   if (!dateVal) return false
@@ -302,4 +303,39 @@ describe('Milestone M2 Challenger Verification: Sitemaps & Robots', () => {
       }
     })
   })
+
+  // ── TIER 8: Root Sitemap Index (/sitemap.xml) Verification ────────────────
+  describe('Tier 8: Root Sitemap Index XML Output', () => {
+    it('C2.X01: getSitemapIndex() returns HTTP 200 with XML content-type', async () => {
+      const res = await getSitemapIndex()
+      assert.equal(res.status, 200)
+      assert.equal(res.headers.get('Content-Type'), 'application/xml; charset=utf-8')
+    })
+
+    it('C2.X02: sitemap index XML contains all 5 segmented sitemap locations', async () => {
+      const res = await getSitemapIndex()
+      const text = await res.text()
+      assert.ok(text.startsWith('<?xml version="1.0" encoding="UTF-8"?>'))
+      assert.ok(text.includes('<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'))
+
+      const expectedSegments = ['core', 'categories', 'libraries', 'frameworks', 'plugins']
+      for (const seg of expectedSegments) {
+        const expectedLoc = `<loc>${SITE_URL}/sitemap/${seg}.xml</loc>`
+        assert.ok(text.includes(expectedLoc), `Sitemap index missing: ${expectedLoc}`)
+      }
+    })
+
+    it('C2.X03: sitemap index entries have valid lastmod tags', async () => {
+      const res = await getSitemapIndex()
+      const text = await res.text()
+      const matches = text.matchAll(/<lastmod>(.*?)<\/lastmod>/g)
+      let count = 0
+      for (const match of matches) {
+        count++
+        assert.ok(isValidIsoDate(match[1]), `Invalid lastmod in sitemap index: ${match[1]}`)
+      }
+      assert.equal(count, 5, 'Must contain 5 lastmod entries')
+    })
+  })
 })
+
