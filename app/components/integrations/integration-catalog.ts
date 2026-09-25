@@ -75,6 +75,7 @@ export type IntegrationConfig = {
   setup: string
   releaseTitle: string
   releaseText: string
+  screenshots?: Array<{ src: string; alt: string; title?: string; description?: string }>
 }
 
 export const integrationCatalog: Record<IntegrationSlug, IntegrationConfig> = {
@@ -268,7 +269,7 @@ export const integrationCatalog: Record<IntegrationSlug, IntegrationConfig> = {
     },
     eyebrow: 'LIVE ON RAYCAST STORE',
     title: 'Find the right icon without leaving Raycast.',
-    description: 'Search the live IconSearch catalog, inspect a clean preview, and copy or paste production-ready icon output into the app in front.',
+    description: 'Search the live IconSearch catalog from Raycast, then copy or paste production-ready icon snippets into the app in front. A free IconSearch account is required.',
     accent: '#f43f5e',
     accentMuted: 'rgba(244, 63, 94, 0.16)',
     previewContext: 'Search Icons - Raycast',
@@ -277,18 +278,76 @@ export const integrationCatalog: Record<IntegrationSlug, IntegrationConfig> = {
     output: '<House className="h-5 w-5" />',
     account: 'Free account',
     dragAndDrop: false,
-    capabilities: ['Recents and favorites', 'Library and style filters', 'Six output formats'],
-    features: [
-      { title: 'Raycast-native search', text: 'A compact list and detail workflow keeps keyboard navigation fast and previews readable.' },
-      { title: 'Copy or paste output', text: 'Send React, SVG, Vue, Svelte, Tailwind, URL, or an SVG file to the active app.' },
-      { title: 'Focused filters', text: 'Narrow results by library, icon collection, style, and commercial-safety status.' },
-      { title: 'Secure connection', text: 'Browser approval stores only a revocable IconSearch product token in Raycast.' },
+    capabilities: [
+      'macOS & Windows',
+      '355,702+ Icons · 229 Sets',
+      '6 Output Formats (React, SVG, Vue, Svelte, Tailwind, URL)',
+      'Recents & Starred Favorites',
+      'Size & Color Presets (8px – 512px)',
+      'License Notice Preservation',
     ],
-    workflow: ['Install IconSearch from the Raycast Store', 'Open Search Icons in Raycast', 'Connect a free IconSearch account', 'Search, filter, and copy or paste the selected output'],
+    features: [
+      {
+        title: 'Live 355k+ catalog search',
+        text: 'Search across 355,702 online icons from 229 upstream collections with fast keyboard navigation, instant collection/style filters, and inline detail previews.',
+      },
+      {
+        title: 'Six production output formats',
+        text: 'Copy or paste React, raw SVG, Vue, Svelte, Tailwind mask snippets, or the direct SVG URL into any text editor or frontmost application.',
+      },
+      {
+        title: 'Instant size and color presets',
+        text: 'Customize icon size from 8 to 512 pixels and choose preset swatches (Ink, Blue, Green, Red, Purple) or custom hex codes directly from the search toolbar.',
+      },
+      {
+        title: 'Design tool paste & drag-drop export',
+        text: 'Copy customized SVG files into design tools like Figma, Canva, or PowerPoint, or export and reveal them in Finder/File Explorer for drag and drop.',
+      },
+      {
+        title: 'License transparency & notice preservation',
+        text: 'View exact upstream author, source, license, and commercial use requirements. Upstream license notices are preserved in copied snippets and exported SVG files.',
+      },
+      {
+        title: 'Raycast-native UI, recents & favorites',
+        text: 'Built for speed with inline detail previews, dedicated full-window previews, starred favorites, and recents keeping your essential icons one keystroke away.',
+      },
+    ],
+    workflow: [
+      'Install IconSearch from the Raycast Store',
+      'Open Search Icons in Raycast and approve the secure browser link',
+      'Search across 355,702 icons with collection, style, and size/color filters',
+      'Copy or paste your icon snippet or SVG file into the active window',
+    ],
     requirements: ['Raycast desktop app on macOS or Windows', 'Free IconSearch account for live search'],
     setup: 'https://raycast.com/iconsearch/iconsearch',
     releaseTitle: 'Officially live on the Raycast Store.',
-    releaseText: 'IconSearch has completed Raycast review and is publicly available. Install the extension to search, customize, and copy production-ready icon output without leaving Raycast.',
+    releaseText: 'IconSearch has completed Raycast review and is publicly available on the official Raycast Store. Install the extension to search, customize, and copy production-ready icons without leaving your keyboard.',
+    screenshots: [
+      {
+        src: '/integrations/raycast-01-search-and-preview.png',
+        alt: 'IconSearch Raycast Extension — Search and Detail Metadata Preview',
+        title: 'Search & Detail Metadata Preview',
+        description: 'Instant search across 355,702 icons with inline license, package, size, and commercial-use metadata.',
+      },
+      {
+        src: '/integrations/raycast-02-size-presets.png',
+        alt: 'IconSearch Raycast Extension — Icon Size Presets Dropdown',
+        title: 'Size Presets (16px – 96px)',
+        description: 'Select standard sizes (16px, 24px, 32px, 48px, 64px, 96px) or customize from 8px to 512px.',
+      },
+      {
+        src: '/integrations/raycast-03-color-presets.png',
+        alt: 'IconSearch Raycast Extension — Icon Color Presets Dropdown',
+        title: 'Color Presets & Themes',
+        description: 'Choose from original colors, Ink, Blue, Green, Red, Purple, or enter a custom hex color code.',
+      },
+      {
+        src: '/integrations/raycast-04-icon-results.png',
+        alt: 'IconSearch Raycast Extension — Output Format Selector with Popular Results',
+        title: 'Output Format Selector & Code Actions',
+        description: 'One-click switching between React, Raw SVG, Vue, Svelte, Tailwind CSS Mask, and SVG URL.',
+      },
+    ],
   },
   'tailwind-plugin': {
     slug: 'tailwind-plugin',

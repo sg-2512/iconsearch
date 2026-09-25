@@ -36,6 +36,7 @@ import {
 import { ICON_COLLECTION_COUNT, NAMED_LIBRARY_COUNT, SEARCHABLE_ICON_COUNT } from '../../../data/library-catalog'
 import { generateBreadcrumbSchema, generateSoftwareAppSchema } from '../../../lib/seo'
 import type { IntegrationConfig, IntegrationIcon, IntegrationSlug } from './integration-catalog'
+import ScreenshotGallery from './ScreenshotGallery'
 import styles from './integration-page.module.css'
 
 const platformIcons: Record<IntegrationIcon, LucideIcon> = {
@@ -409,6 +410,9 @@ export default function IntegrationPage({ config }: { config: IntegrationConfig 
           </div>
         </div>
 
+        {config.screenshots && config.screenshots.length > 0 ? (
+          <ScreenshotGallery screenshots={config.screenshots} platform={config.platform} />
+        ) : (
         <div className={styles.workspace} data-platform={config.slug} aria-label={`${config.name} interface preview`}>
           <div className={styles.workspaceBar}>
             <div className={styles.windowDots} aria-hidden="true"><span /><span /><span /></div>
@@ -499,6 +503,7 @@ export default function IntegrationPage({ config }: { config: IntegrationConfig 
             </aside>
           </div>
         </div>
+        )}
       </section>
 
       <section className={styles.stats} aria-label={`${config.name} overview`}>
@@ -516,7 +521,7 @@ export default function IntegrationPage({ config }: { config: IntegrationConfig 
         </div>
         <div className={styles.featureGrid}>
           {config.features.map((feature, index) => {
-            const FeatureIcon = featureIcons[index]
+            const FeatureIcon = featureIcons[index % featureIcons.length]
             return (
               <article key={feature.title}>
                 <span className={styles.featureIcon}><FeatureIcon size={20} /></span>
