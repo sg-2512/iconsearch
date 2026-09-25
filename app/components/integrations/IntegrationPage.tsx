@@ -519,7 +519,7 @@ export default function IntegrationPage({ config }: { config: IntegrationConfig 
           <h2>A focused IconSearch experience for {config.platform}.</h2>
           <p>The interface keeps discovery, inspection, and the final handoff close together while using the same live catalog as the website.</p>
         </div>
-        <div className={styles.featureGrid}>
+        <div className={styles.featureGrid} data-count={config.features.length}>
           {config.features.map((feature, index) => {
             const FeatureIcon = featureIcons[index % featureIcons.length]
             return (
